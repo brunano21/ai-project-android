@@ -10,6 +10,13 @@
     <string name="add_item_quantity_hint">quantity</string>
     
     
+    <string name="id_label">The ID is</string>
+    <string name="id_value">[id]</string>
+    <string name="content_label">The Content is</string>
+    <string name="content_value">[content]</string>
+    <string name="action_refresh">Refresh</string>
+    
+    
     <!-- fagment List -->
 
 	<string name="string_button_addItem">Add</string>
@@ -31,12 +38,17 @@
     <!-- Nav Drawer Menu Items -->
     <string-array name="nav_drawer_items">
         <item>Home</item>
+        <item><string name="le_tue_liste">Le tue liste</string></item>
+        <item><string name="in_scadenza">In scadenza</string></item>
+        <item><string name="valuta_un_prodotto">Valuta un prodotto</string></item>
+        <item><string name="inserisci_un_prodotto">Inserisci un prodotto</string></item>
+        <item><string name="cerca_un_prodotto">Cerca un prodotto</string></item>
+        <item><string name="statistiche">Statistiche</string></item>
+        <item><string name="i_migliori_affari">I migliori affari</string></item>
+        <item><string name="premium">Premium</string></item>
+        <item>About</item>
         <item>List</item>
         <item>AquireBarCode</item>
-        <item>Communities</item>
-        <item>Pages</item>
-        <item>What\'s Hot</item>
-        <item>About</item>
     </string-array>
 
     <!-- Nav Drawer List Item Icons -->
@@ -54,4 +66,17 @@
     <string name="desc_list_item_icon">Item Icon</string>
 
 
+    <!-- Inserisci un prodotto -->
+    
+    <string name="tv_description">Descrizione</string>
+    <string name="tv_barcode">Codice a barre</string>
+    
+    
+    
+    
+    
+    
+    
+    
+    
 </resources>

@@ -3,13 +3,14 @@ package it.polito.ai.project.andoidside.main;
 import it.polito.ai.project.andoidside.R;
 import it.polito.ai.project.andoidside.adapter.NavDrawerListAdapter;
 import it.polito.ai.project.andoidside.fragment.AboutFragment;
-import it.polito.ai.project.andoidside.fragment.CommunityFragment;
+import it.polito.ai.project.andoidside.fragment.InserisciUnProdottoFragment;
 import it.polito.ai.project.andoidside.fragment.ListFragment;
 import it.polito.ai.project.andoidside.fragment.HomeFragment;
-import it.polito.ai.project.andoidside.fragment.PagesFragment;
+import it.polito.ai.project.andoidside.fragment.HomeRegistrationLoginFragment;
 import it.polito.ai.project.andoidside.fragment.AquireBarCodeFragment;
-import it.polito.ai.project.andoidside.fragment.WhatsHotFragment;
 import it.polito.ai.project.andoidside.model.NavDrawerItem;
+import it.polito.ai.project.androidside.database.DBHelper;
+import it.polito.ai.project.androidside.database.Libri;
 
 import java.util.ArrayList;
 
@@ -19,6 +20,8 @@ import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -72,20 +75,30 @@ public class MainActivity extends Activity {
 		// adding nav drawer items to array
 		// Home
 		navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1)));
-		// Find People
-		navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1)));
-		// Photos
+		// le_tue_liste
+		navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1), true, "22"));
+		// in_scadenza
 		navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons.getResourceId(2, -1)));
-		// Communities, Will add a counter here
-		navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(3, -1), true, "22"));
-		// Pages
+		// valuta_un_prodotto
+		navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(3, -1), true, "50+"));
+		// inserisci_un_prodotto
 		navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons.getResourceId(4, -1)));
-		// What's hot, We  will add a counter here
-		navDrawerItems.add(new NavDrawerItem(navMenuTitles[5], navMenuIcons.getResourceId(5, -1), true, "50+"));
-		// About
+		// cerca_un_prodotto
+		navDrawerItems.add(new NavDrawerItem(navMenuTitles[5], navMenuIcons.getResourceId(5, -1)));
+		// statistiche
 		navDrawerItems.add(new NavDrawerItem(navMenuTitles[6], navMenuIcons.getResourceId(6, -1)));
+		// i_migliori_affari
+		navDrawerItems.add(new NavDrawerItem(navMenuTitles[7], navMenuIcons.getResourceId(7, -1)));
+		// premium
+		navDrawerItems.add(new NavDrawerItem(navMenuTitles[8], navMenuIcons.getResourceId(8, -1)));
+		// about
+		navDrawerItems.add(new NavDrawerItem(navMenuTitles[9], navMenuIcons.getResourceId(9, -1)));
 		
 
+		// List
+		navDrawerItems.add(new NavDrawerItem(navMenuTitles[10], navMenuIcons.getResourceId(10, -1)));
+		// AquireBarCode
+		navDrawerItems.add(new NavDrawerItem(navMenuTitles[11], navMenuIcons.getResourceId(11, -1)));
 		// Recycle the typed array
 		navMenuIcons.recycle();
 
@@ -123,7 +136,66 @@ public class MainActivity extends Activity {
 			// on first time display view for first nav item
 			displayView(0);
 		}
-	}
+
+
+		//creo l'helper per aprire il DB
+        DBHelper databaseHelper = new DBHelper(this);
+        //apro il DB sia in lettura che in scrittura
+        SQLiteDatabase db = databaseHelper.getWritableDatabase();
+ 
+        //Popolo il DB con un pò di dati
+        Libri.insertLibro(db, "Divina Commedia", 15, "Dante nell'inferno, purgatorio, paradiso");
+        Libri.insertLibro(db, "Promessi Sposi", 12, "Storia di un amore");
+        Libri.insertLibro(db, "De bello gallico", 5, "La guerra in gallia di Cesare");
+ 
+        System.err.println("Inseriti 3 libri");
+ 
+        System.err.println("Inseriti 3 clienti");
+ 
+        //Assegno a un cursore tutti i lirbi trovati nel DB
+        Cursor c = Libri.getAllLibri(db);
+        try
+        {
+            System.err.println("Elenco libri:");
+            stampaAll(c);
+ 
+           
+ 
+            System.err.println("Cancello libro con id 1");
+            Libri.deleteLibro(db, 1);
+ 
+            c = Libri.getAllLibri(db);
+            System.err.println("Elenco libri, deve mancare id 1:");
+            stampaAll(c);
+ 
+            System.err.println("Modifico libro con id 2, metto prezzo a 23");
+            Libri.updateLibro(db, 2, "De bello gallico", 23, "La guerra in gallia di Cesare");
+ 
+            c = Libri.getAllLibri(db);
+            System.err.println("Elenco libri, il prezzo di id 2 deve essere 23:");
+            stampaAll(c);
+        }
+        finally
+        {
+            //Chiudo il cursore e il db
+            c.close();
+            db.close();
+            System.err.println("Ho chiuso il cursore e il db");
+        }
+    }
+ 
+    /**
+     * Prende il cursore passato, lo scorre fino alla fine e a mano a mano stampa i record trovati.
+     * @param c
+     */
+    public void stampaAll(Cursor c){
+        while (c.moveToNext())
+        {
+            System.err.println("informaticoonline.it " + c.getLong(0) + " " + 
+                c.getString(1) + " " + c.getString(2) + " " + c.getString(3));
+        }
+    }	
+		
 
 	/**
 	 * Slide menu item click listener
@@ -174,23 +246,32 @@ public class MainActivity extends Activity {
 	 * Diplaying fragment view for selected nav drawer list item
 	 * */
 	private void displayView(int position) {
+		boolean tmpFlagLog = true;
 		// update the main content by replacing fragments
 		String stringFragment = navMenuTitles[position];
 		
 		Fragment fragment = null;
 		
-		if( "Home".equals(stringFragment) )
-			fragment = new HomeFragment();
+		if(tmpFlagLog){
+			if( "Home".equals(stringFragment) )
+				fragment = new HomeFragment();
+			else
+			if( "List".equals(stringFragment) )
+				fragment = new ListFragment();
+			else
+			if( "AquireBarCode".equals(stringFragment) )
+				fragment = new AquireBarCodeFragment();
+			else
+			if( "About".equals(stringFragment) )
+				fragment = new AboutFragment();
+			else
+			if( "Inserisci un prodotto".equals(stringFragment) )
+				fragment = new InserisciUnProdottoFragment();
+		}
 		else
-		if( "List".equals(stringFragment) )
-			fragment = new ListFragment();
-		else
-		if( "AquireBarCode".equals(stringFragment) )
-			fragment = new AquireBarCodeFragment();
-		else
-		if( "About".equals(stringFragment) )
-			fragment = new AboutFragment();
-		
+		{
+			fragment = new HomeRegistrationLoginFragment();
+		}
 		/*switch (position) {
 		case 0:
 			fragment = new HomeFragment();
