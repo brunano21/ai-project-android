@@ -246,13 +246,13 @@ public class MainActivity extends Activity {
 	 * Diplaying fragment view for selected nav drawer list item
 	 * */
 	private void displayView(int position) {
-		boolean tmpFlagLog = true;
+		boolean tmpFlagLog_registrato = true;
 		// update the main content by replacing fragments
 		String stringFragment = navMenuTitles[position];
 		
 		Fragment fragment = null;
 		
-		if(tmpFlagLog){
+		if(tmpFlagLog_registrato){
 			if( "Home".equals(stringFragment) )
 				fragment = new HomeFragment();
 			else
