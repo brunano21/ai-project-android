@@ -1,66 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:layout_height="match_parent" >
 
-    <CheckBox
-        android:id="@+id/iup_checkBox1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="inserisci il prodotto nella lista della spesa" />
-
-    <TextView
-        android:id="@+id/iup_textView_description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/tv_description" />
-
-   <EditText
-        android:id="@+id/iup_editText1"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10" >
-    </EditText>
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/iup_textView_barcode"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/tv_barcode" />
-    
-   <EditText
-        android:id="@+id/iup_editText2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10" >
-    </EditText>
-    
- 
-   <ImageView
-        android:id="@+id/iup_bc_img01" 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_barcode"
-        android:layout_marginTop="10dp"/>
+        <CheckBox
+            android:id="@+id/iup_checkBox1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="inserisci il prodotto nella lista della spesa" />
 
-   <Button
-       android:id="@+id/iup_bc_btnScan"
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:text="Scan codice a barre" />
+        <TextView
+            android:id="@+id/iup_textView_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tv_description" />
 
-<TextView
-       android:id="@+id/textView1"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:text="TextView" />
-    
-   <Button
-       android:id="@+id/button1"
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:text="Inserisci Prodotto" />
+        <EditText
+            android:id="@+id/iup_editText1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10" >
+        </EditText>
 
-   
-</LinearLayout>
+        <TextView
+            android:id="@+id/iup_textView_barcode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tv_barcode" />
+
+        <EditText
+            android:id="@+id/iup_editText2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10" >
+        </EditText>
+
+        <ImageView
+            android:id="@+id/iup_bc_img01"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/ic_barcode" />
+
+        <Button
+            android:id="@+id/iup_bc_btnScan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Scan codice a barre" />
+
+        <TextView
+            android:id="@+id/iup_tv_data_inizio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Inizio promozione" />
+        
+        <DatePicker 
+            android:id="@+id/iup_dp_data_inizio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:spinnersShown="true"
+            android:calendarViewShown="false"/>
+
+        <TextView
+            android:id="@+id/iup_tv_data_fine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fine promozione" />
+        
+        <DatePicker 
+            android:id="@+id/iup_dp_data_fine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:spinnersShown="true"
+            android:calendarViewShown="false"/>
+
+        
+        <TextView
+            android:id="@+id/iup_tv_supermercato"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Supermercato" />
+        
+         <EditText
+            android:id="@+id/iup_et_Supermercato"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10" >
+            
+        </EditText>
+        
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Inserisci Prodotto" />
+    </LinearLayout>
+
+</ScrollView>
