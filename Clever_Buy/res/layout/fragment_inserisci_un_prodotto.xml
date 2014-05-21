@@ -59,6 +59,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Scan codice a barre" />
+        
+        
+        <ImageView
+            android:id="@+id/iup_iv_foto"
+            android:layout_width="fill_parent"
+            android:layout_height="199dp"
+            android:layout_marginTop="10dp" />
+        
+        <Button
+            android:id="@+id/iup_bc_btnFoto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Scatta foto" />
 
         <TextView
             android:id="@+id/iup_tv_data_inizio"
@@ -108,6 +121,40 @@
             
         </EditText>
         
+        
+        <TextView
+            android:id="@+id/iup_tv_categoria"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="Categoria - spinnereTODO" />
+        
+         <EditText
+            android:id="@+id/iup_et_categoria"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:imeOptions="actionDone"
+            android:ems="10" >
+            
+        </EditText>
+        
+        <TextView
+            android:id="@+id/iup_tv_sottocategoria"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="Sottocategoria - spinnereTODO" />
+        
+         <EditText
+            android:id="@+id/iup_et_sottocategoria"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:imeOptions="actionDone"
+            android:ems="10" >
+            
+        </EditText>
         
         <TextView
             android:id="@+id/iup_tv_supermercato"
