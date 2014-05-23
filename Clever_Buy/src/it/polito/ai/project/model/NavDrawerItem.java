@@ -1,4 +1,4 @@
-package it.polito.ai.project.andoidside.model;
+package it.polito.ai.project.model;
 
 public class NavDrawerItem {
 	

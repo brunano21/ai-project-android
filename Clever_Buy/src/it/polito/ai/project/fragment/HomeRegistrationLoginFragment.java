@@ -1,4 +1,4 @@
-package it.polito.ai.project.andoidside.fragment;
+package it.polito.ai.project.fragment;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,7 +13,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import it.polito.ai.project.andoidside.R;
+import it.polito.ai.project.R;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.os.StrictMode;

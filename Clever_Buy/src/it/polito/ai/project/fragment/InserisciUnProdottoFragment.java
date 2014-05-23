@@ -1,8 +1,8 @@
-package it.polito.ai.project.andoidside.fragment;
+package it.polito.ai.project.fragment;
 
 import java.util.Calendar;
 
-import it.polito.ai.project.andoidside.R;
+import it.polito.ai.project.R;
 import android.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;

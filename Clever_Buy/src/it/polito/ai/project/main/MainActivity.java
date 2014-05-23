@@ -1,16 +1,16 @@
-package it.polito.ai.project.andoidside.main;
+package it.polito.ai.project.main;
 
-import it.polito.ai.project.andoidside.R;
-import it.polito.ai.project.andoidside.adapter.NavDrawerListAdapter;
-import it.polito.ai.project.andoidside.fragment.AboutFragment;
-import it.polito.ai.project.andoidside.fragment.InserisciUnProdottoFragment;
-import it.polito.ai.project.andoidside.fragment.ListFragment;
-import it.polito.ai.project.andoidside.fragment.HomeFragment;
-import it.polito.ai.project.andoidside.fragment.HomeRegistrationLoginFragment;
-import it.polito.ai.project.andoidside.fragment.AquireBarCodeFragment;
-import it.polito.ai.project.andoidside.model.NavDrawerItem;
-import it.polito.ai.project.androidside.database.DBHelper;
-import it.polito.ai.project.androidside.database.Libri;
+import it.polito.ai.project.adapter.NavDrawerListAdapter;
+import it.polito.ai.project.R;
+import it.polito.ai.project.database.DBHelper;
+import it.polito.ai.project.database.Libri;
+import it.polito.ai.project.fragment.AboutFragment;
+import it.polito.ai.project.fragment.AquireBarCodeFragment;
+import it.polito.ai.project.fragment.HomeFragment;
+import it.polito.ai.project.fragment.HomeRegistrationLoginFragment;
+import it.polito.ai.project.fragment.InserisciUnProdottoFragment;
+import it.polito.ai.project.fragment.ListFragment;
+import it.polito.ai.project.model.NavDrawerItem;
 
 import java.util.ArrayList;
 

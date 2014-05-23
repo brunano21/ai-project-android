@@ -1,4 +1,4 @@
-package it.polito.ai.project.androidside.database;
+package it.polito.ai.project.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
