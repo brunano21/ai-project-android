@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    
+    <ImageView
+        android:id="@+id/acq_bc_img01" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_barcode"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"/>
+    
+    <Button
+        android:id="@+id/acq_bc_btnScan"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Scan"
+        android:textColor="@android:color/white"
+        android:textSize="25sp"
+        android:textStyle="bold" 
+        android:layout_below="@id/acq_bc_img01"/>
+
+    <TextView
+        android:id="@+id/acq_bc_tvStatuslbl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.03"
+        android:text="Status"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@android:color/black" 
+        android:layout_below="@id/acq_bc_btnScan"/>
+
+ <TextView
+        android:id="@+id/acq_bc_tvStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textColor="@android:color/black"
+        android:textAppearance="?android:attr/textAppearanceLarge" 
+        android:layout_below="@id/acq_bc_tvStatuslbl"/>
+
+    <TextView
+        android:id="@+id/acq_bc_tvResultlbl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.03"
+        android:text="Result"
+        android:textColor="@android:color/black" 
+        android:layout_below="@id/acq_bc_tvStatus"/>
+
+  <TextView
+        android:id="@+id/acq_bc_tvResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="2.95"
+        android:textColor="@android:color/black"
+        android:layout_below="@id/acq_bc_tvResultlbl"
+      />
+
+</RelativeLayout>
