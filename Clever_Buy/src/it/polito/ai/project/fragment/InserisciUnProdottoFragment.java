@@ -1,99 +1,209 @@
 package it.polito.ai.project.fragment;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
-import it.polito.ai.project.R;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.simple.*;
+
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import it.polito.ai.project.andoidside.R;
+import it.polito.ai.project.main.MainActivity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.webkit.WebView.FindListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class InserisciUnProdottoFragment extends Fragment {
+import com.google.zxing.integration.android.*;
 
-	private Button _scan;
-	private EditText _etBarcode;
+public class InserisciUnProdottoFragment extends Fragment{
+
+	private ImageButton ib_scan;
+	private EditText et_descrizione, et_barcode;
+	private Button btn_inserisci;
+	private DatePicker dp_data_inizio, dp_data_fine;
+	private Spinner spin_categoria, spin_sottocategoria;
+	private View rootView;
+	private AsyncHttpClient client;
 	
-	private DatePicker _data_inizio, _data_fine;
-	@Override
+	@Override 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
-		View rootView = inflater.inflate(R.layout.fragment_inserisci_un_prodotto, container, false);
+		rootView = inflater.inflate(R.layout.fragment_inserisci_un_prodotto, container, false);
 
-		_scan = (Button) rootView.findViewById(R.id.iup_bc_btnScan);
-		_etBarcode  = (EditText) rootView.findViewById(R.id.iup_editText2);
+		ib_scan 		= (ImageButton) rootView.findViewById(R.id.ip_ib_scan);
+		btn_inserisci 	= (Button) rootView.findViewById(R.id.ip_btn_inserisci);
+		et_barcode  	= (EditText) rootView.findViewById(R.id.ip_et_barcode);
+		et_descrizione  = (EditText) rootView.findViewById(R.id.ip_et_descrizione);
+		dp_data_inizio 	= (DatePicker) rootView.findViewById(R.id.ip_dp_data_inizio);
+		dp_data_fine    = (DatePicker) rootView.findViewById(R.id.ip_dp_data_fine);
+
+		spin_categoria = (Spinner) rootView.findViewById(R.id.ip_spin_categoria);
+		spin_sottocategoria = (Spinner) rootView.findViewById(R.id.ip_spin_sottocategoria);
 		
-		_data_inizio  = (DatePicker) rootView.findViewById(R.id.iup_dp_data_inizio);
-		_data_fine    = (DatePicker) rootView.findViewById(R.id.iup_dp_data_fine);
 		
-		addListner();
-		
+		addListener();
+		client = new AsyncHttpClient();
+
 		return rootView;
 	}
-
-	private void addListner() {
-		_scan.setOnClickListener(new OnClickListener() {
+	
+	private void addListener() {
+		ib_scan.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-
 				try {
-					
-					Intent intent = new Intent(
-							"com.google.zxing.client.android.SCAN");
-					intent.putExtra("SCAN_MODE", "QR_CODE_MODE,PRODUCT_MODE");
-					startActivityForResult(intent, 0);
-				
+					IntentIntegrator integrator = new IntentIntegrator(InserisciUnProdottoFragment.this);
+					integrator.initiateScan();
+
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
-					
 					Toast.makeText(getActivity(), "installa questa applicazione per scansionare il codice a barre", Toast.LENGTH_LONG).show();
-					
-					Intent intent = new Intent(Intent.ACTION_VIEW, 
-						     Uri.parse("http://zxing.appspot.com/scan"));
-						startActivity(intent);
+					Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://zxing.appspot.com/scan"));
+					startActivity(intent);
 				}
 
 			}
 		});
+
+		btn_inserisci.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// devo dapprima controllare che sia tutto in ordine
+				
+				// poi fa la post verso il server
+			}
+		});
 		
 		OnClickListener data_inizio_fine = new OnClickListener() { 			
-				@Override
-				public void onClick(View v) {
-					// TODO Auto-generated method stubcal
-					Calendar cal = Calendar.getInstance();
-					cal.set(Calendar.YEAR, _data_inizio.getYear());
-					cal.set(Calendar.MONTH, _data_inizio.getMonth());
-					cal.set(Calendar.DAY_OF_MONTH, _data_inizio.getDayOfMonth());
-					_data_fine.setMinDate( cal.getTimeInMillis());
-				}
-			}; 
-		
-			_data_inizio.setOnClickListener( data_inizio_fine);
-			_data_fine.setOnClickListener( data_inizio_fine);
+			@Override
+			public void onClick(View v) {
+				Calendar cal = Calendar.getInstance();
+				cal.set(Calendar.YEAR, dp_data_inizio.getYear());
+				cal.set(Calendar.MONTH, dp_data_inizio.getMonth());
+				cal.set(Calendar.DAY_OF_MONTH, dp_data_inizio.getDayOfMonth());
+				dp_data_fine.setMinDate( cal.getTimeInMillis());
+			}
+		}; 
+
+		dp_data_inizio.setOnClickListener( data_inizio_fine);
+		dp_data_fine.setOnClickListener( data_inizio_fine);
+/*
+		AsyncHttpClient client = new AsyncHttpClient();
+		client.get("http://192.168.1.2:8080/supermarket/android/inserzione/getCategorie", new JsonHttpResponseHandler() {
 			
+			@Override
+			public void onSuccess(JSONArray response) {
+				JSONObject jsonObj = null;
+				try {
+					ArrayList<String> categorieArray = new ArrayList<String>();
+					for (int i = 0; i < response.length(); i++) 
+						categorieArray.add(response.getString(i));
+					
+					ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, categorieArray);
+					spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+					spin_categoria.setAdapter(spinnerArrayAdapter);
+				} catch (JSONException e) {
+					
+					e.printStackTrace();
+				}
+			
+			}
+			
+			@Override
+			public void onFailure(Throwable error, String content) {
+				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			}
+		});
+*/
+		//checkBarcode("8031197000025");
+	}
+
+	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+		Log.v("DEBUG", "onActivityResult");
+		IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+		if(scanResult!=null){
+			et_barcode.setText(""+scanResult.getContents());
+			checkBarcode(scanResult.getContents());
+			
+		}
+	}
+
+	private void checkBarcode(String barcode) {
+		// far partire la richiesta di check per il server.
+		System.out.println("sssssssss");
+		
+		client.get("http://192.168.1.2:8080/supermarket/android/inserzione/checkbarcode/" + barcode, new RequestParams(), new JsonHttpResponseHandler(){
+			@Override
+			public void onSuccess(JSONArray response) {
+				Log.v("DEBUG", "FAIL: " + response.toString());
+				System.out.println("ooooooooooo");
+				updateGui(response);
+				
+			}
+			
+			@Override
+			public void onSuccess(String resp) {
+				Log.v("DEBUG", "FAIL: " + resp);
+				
+				
+			}
+			
+
+			@Override
+			public void onFailure(Throwable error, String content) {
+				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			}
+			
+		});
+		
 		
 	}
 	
-	//In the same activity you’ll need the following to retrieve the results:
-	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		if (requestCode == 0) {
-
-			if (resultCode == android.app.Activity.RESULT_OK) {
-				_etBarcode.setText(intent.getStringExtra("SCAN_RESULT"));
-			} else if (resultCode == android.app.Activity.RESULT_CANCELED) {
-				_etBarcode.setText("Scan cancelled.");
+	private void updateGui(JSONArray response) {
+		JSONObject jsonObj = null;
+		try {
+			Log.v("DEBUG", "FAIL: " + response.toString());
+			jsonObj = response.getJSONObject(0);
+			if(jsonObj.getBoolean("trovato"))
+			{
+				//prodotto trovato
+				EditText tmp = (EditText) rootView.findViewById(R.id.ip_et_descrizione);
+				et_descrizione.setText(jsonObj.getString("descrizione")); 
 			}
+			else{
+				// prodotto non trovato
+				EditText tmp = (EditText) rootView.findViewById(R.id.ip_et_descrizione);
+				et_descrizione.setText("NON TROVATO");
+			}
+			
+		} catch (JSONException e) {
+			
+			e.printStackTrace();
 		}
 	}
+	
+	
 }

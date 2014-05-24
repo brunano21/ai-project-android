@@ -13,7 +13,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import it.polito.ai.project.R;
+import it.polito.ai.project.andoidside.R;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.os.StrictMode;

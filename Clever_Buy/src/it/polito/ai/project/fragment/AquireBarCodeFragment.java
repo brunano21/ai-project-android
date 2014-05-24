@@ -1,6 +1,6 @@
 package it.polito.ai.project.fragment;
 
-import it.polito.ai.project.R;
+import it.polito.ai.project.andoidside.R;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;

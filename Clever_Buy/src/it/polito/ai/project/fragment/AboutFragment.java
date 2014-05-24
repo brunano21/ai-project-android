@@ -1,7 +1,7 @@
 package it.polito.ai.project.fragment;
 
-import it.polito.ai.project.R;
-import it.polito.ai.project.R.layout;
+import it.polito.ai.project.andoidside.R;
+import it.polito.ai.project.andoidside.R.layout;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;

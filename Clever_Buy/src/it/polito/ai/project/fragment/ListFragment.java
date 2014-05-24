@@ -3,9 +3,9 @@ package it.polito.ai.project.fragment;
 
 import java.util.ArrayList;
 
+import it.polito.ai.project.andoidside.R;
+import it.polito.ai.project.andoidside.R.layout;
 import it.polito.ai.project.adapter.ItemAdapterListFragment;
-import it.polito.ai.project.R;
-import it.polito.ai.project.R.layout;
 import it.polito.ai.project.main.ItemListFragment;
 import android.app.Fragment;
 import android.content.Intent;

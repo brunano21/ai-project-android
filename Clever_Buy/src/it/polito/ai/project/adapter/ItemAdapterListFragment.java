@@ -5,7 +5,8 @@ import java.util.List;
 
 
 
-import it.polito.ai.project.R;
+
+import it.polito.ai.project.andoidside.R;
 import it.polito.ai.project.main.ItemListFragment;
 import android.content.Context;
 import android.view.LayoutInflater;
