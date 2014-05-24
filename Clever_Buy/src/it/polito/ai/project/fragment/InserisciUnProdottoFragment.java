@@ -6,6 +6,8 @@ import it.polito.ai.project.R;
 
 
 
+import it.polito.ai.project.main.MyHttpClient;
+
 import java.io.File;
 import java.util.Calendar;
 
@@ -54,7 +56,6 @@ public class InserisciUnProdottoFragment extends Fragment{
 	private DatePicker dp_data_inizio, dp_data_fine;
 	private Spinner spin_categoria, spin_sottocategoria;
 	private View rootView;
-	private AsyncHttpClient client;
 	
 	@Override 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,10 +73,7 @@ public class InserisciUnProdottoFragment extends Fragment{
 		spin_categoria = (Spinner) rootView.findViewById(R.id.ip_spin_categoria);
 		spin_sottocategoria = (Spinner) rootView.findViewById(R.id.ip_spin_sottocategoria);
 		
-		
 		addListener();
-		client = new AsyncHttpClient();
-
 		return rootView;
 	}
 	
@@ -189,7 +187,7 @@ public class InserisciUnProdottoFragment extends Fragment{
 		// far partire la richiesta di check per il server.
 		System.out.println("sssssssss");
 		
-		client.get("http://192.168.1.2:8080/supermarket/android/inserzione/checkbarcode/" + barcode, new RequestParams(), new JsonHttpResponseHandler(){
+		MyHttpClient.get("/inserzione/checkbarcode/" + barcode, null, new JsonHttpResponseHandler(){
 			@Override
 			public void onSuccess(JSONArray response) {
 				Log.v("DEBUG", "FAIL: " + response.toString());

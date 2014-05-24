@@ -34,7 +34,7 @@ public class MainActivity extends Activity {
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
 	private ActionBarDrawerToggle mDrawerToggle;
-
+	
 	// nav drawer title
 	private CharSequence mDrawerTitle;
 
