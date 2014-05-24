@@ -1,7 +1,7 @@
 package it.polito.ai.project.main;
 
+import it.polito.ai.project.R;
 import it.polito.ai.project.adapter.NavDrawerListAdapter;
-import it.polito.ai.project.andoidside.R;
 import it.polito.ai.project.database.DBHelper;
 import it.polito.ai.project.database.Libri;
 import it.polito.ai.project.fragment.AboutFragment;
@@ -12,16 +12,26 @@ import it.polito.ai.project.fragment.InserisciUnProdottoFragment;
 import it.polito.ai.project.fragment.ListFragment;
 import it.polito.ai.project.model.NavDrawerItem;
 
-import java.awt.Cursor;
-import java.awt.Menu;
-import java.awt.MenuItem;
 import java.util.ArrayList;
 
-import javax.security.auth.login.Configuration;
-import javax.swing.text.View;
-import javax.swing.text.html.ListView;
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.content.Intent;
+import android.content.res.Configuration;
+import android.content.res.TypedArray;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
-import sun.rmi.runtime.Log;
 
 public class MainActivity extends Activity {
 	private DrawerLayout mDrawerLayout;

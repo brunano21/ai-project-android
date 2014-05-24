@@ -1,20 +1,17 @@
 package it.polito.ai.project.adapter;
 
+import it.polito.ai.project.R;
+import it.polito.ai.project.main.ItemListFragment;
+
 import java.util.List;
 
-
-
-
-import it.polito.ai.project.andoidside.R;
-import it.polito.ai.project.main.ItemListFragment;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 

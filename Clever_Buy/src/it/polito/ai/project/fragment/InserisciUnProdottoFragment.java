@@ -1,33 +1,24 @@
 package it.polito.ai.project.fragment;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import it.polito.ai.project.R;
 
-import it.polito.ai.project.andoidside.R;
+import java.io.File;
+import java.util.Calendar;
+
 import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.hardware.Camera;
-import android.hardware.Camera.PictureCallback;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -41,14 +32,14 @@ public class InserisciUnProdottoFragment extends Fragment {
 
 	protected static final int MM_RESULT_CAMERA = 0;
 	protected static final int MM_RESULT_BARCODE = 1;
-	
+
 	private Button _scan, _foto;
 	private EditText _etBarcode;
 
 	private DatePicker _data_inizio, _data_fine;
-	
+
 	private ImageView _immagine_foto;
-	
+
 	public static Camera isCameraAvailiable(){
 		Camera object = null;
 		try {
@@ -101,19 +92,19 @@ public class InserisciUnProdottoFragment extends Fragment {
 		});
 
 		_foto.setOnClickListener(new OnClickListener() {
-			
+
 
 			@Override
 			public void onClick(View v) {
-/*
+				/*
 				//pic = (ImageView)findViewById(R.id.iup_iv_foto);
 				cameraObject = isCameraAvailiable();
 				showCamera = new ShowCamera(getActivity().getApplicationContext(), cameraObject);
 				_preview.addView(showCamera);
-	*/
+				 */
 				Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-			      startActivityForResult(intent, MM_RESULT_CAMERA);
-				
+				startActivityForResult(intent, MM_RESULT_CAMERA);
+
 			}
 		});
 
@@ -135,7 +126,7 @@ public class InserisciUnProdottoFragment extends Fragment {
 	}
 
 
-	
+
 	//In the same activity you’ll need the following to retrieve the results:
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 
@@ -155,8 +146,8 @@ public class InserisciUnProdottoFragment extends Fragment {
 
 		case MM_RESULT_CAMERA: 
 			super.onActivityResult(requestCode, resultCode, intent);
-		      Bitmap bp = (Bitmap) intent.getExtras().get("data");
-		      _immagine_foto.setImageBitmap(bp);
+			Bitmap bp = (Bitmap) intent.getExtras().get("data");
+			_immagine_foto.setImageBitmap(bp);
 			break;
 
 		} // switch

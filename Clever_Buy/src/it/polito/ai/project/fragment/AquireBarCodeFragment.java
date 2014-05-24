@@ -1,6 +1,6 @@
 package it.polito.ai.project.fragment;
 
-import it.polito.ai.project.andoidside.R;
+import it.polito.ai.project.R;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,7 +10,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class AquireBarCodeFragment extends Fragment {
 
