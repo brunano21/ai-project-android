@@ -183,6 +183,7 @@ public class InserisciUnProdottoFragment extends Fragment{
 	private String getAlbumName() {
 		return getString(R.string.album_name);
 	}
+	
 	private void checkBarcode(String barcode) {
 		// far partire la richiesta di check per il server.
 		System.out.println("sssssssss");
