@@ -1,14 +1,10 @@
 package it.polito.ai.project.fragment;
 
 import it.polito.ai.project.R;
-
-
-
-
-
 import it.polito.ai.project.main.MyHttpClient;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import org.json.JSONArray;
@@ -18,13 +14,14 @@ import org.json.JSONObject;
 import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -35,9 +32,8 @@ import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 
 
 abstract class AlbumStorageDirFactory {
@@ -72,12 +68,14 @@ public class InserisciUnProdottoFragment extends Fragment{
 
 		spin_categoria = (Spinner) rootView.findViewById(R.id.ip_spin_categoria);
 		spin_sottocategoria = (Spinner) rootView.findViewById(R.id.ip_spin_sottocategoria);
+		spin_sottocategoria.setPrompt("Seleziona la categoria");
 		
 		addListener();
 		return rootView;
 	}
 	
 	private void addListener() {
+		
 		ib_scan.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -116,26 +114,12 @@ public class InserisciUnProdottoFragment extends Fragment{
 
 		dp_data_inizio.setOnClickListener( data_inizio_fine);
 		dp_data_fine.setOnClickListener( data_inizio_fine);
-/*
-		AsyncHttpClient client = new AsyncHttpClient();
-		client.get("http://192.168.1.2:8080/supermarket/android/inserzione/getCategorie", new JsonHttpResponseHandler() {
+
+		MyHttpClient.get("/inserzione/getCategorie", null, new JsonHttpResponseHandler() {
 			
 			@Override
 			public void onSuccess(JSONArray response) {
-				JSONObject jsonObj = null;
-				try {
-					ArrayList<String> categorieArray = new ArrayList<String>();
-					for (int i = 0; i < response.length(); i++) 
-						categorieArray.add(response.getString(i));
-					
-					ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, categorieArray);
-					spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-					spin_categoria.setAdapter(spinnerArrayAdapter);
-				} catch (JSONException e) {
-					
-					e.printStackTrace();
-				}
-			
+				aggiornaSpinnerCategorie(response);
 			}
 			
 			@Override
@@ -143,7 +127,7 @@ public class InserisciUnProdottoFragment extends Fragment{
 				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
 			}
 		});
-*/
+
 
 		btn_foto.setOnClickListener(new OnClickListener() {
 
@@ -169,7 +153,7 @@ public class InserisciUnProdottoFragment extends Fragment{
 				IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
 				if(scanResult!=null){
 					et_barcode.setText(""+scanResult.getContents());
-					checkBarcode(scanResult.getContents());
+					controllaBarcode(scanResult.getContents());
 				}
 			break;
 			case RESULT_INTENT_CAMERA: 
@@ -184,26 +168,16 @@ public class InserisciUnProdottoFragment extends Fragment{
 		return getString(R.string.album_name);
 	}
 	
-	private void checkBarcode(String barcode) {
+	private void controllaBarcode(String barcode) {
 		// far partire la richiesta di check per il server.
 		System.out.println("sssssssss");
 		
 		MyHttpClient.get("/inserzione/checkbarcode/" + barcode, null, new JsonHttpResponseHandler(){
 			@Override
 			public void onSuccess(JSONArray response) {
-				Log.v("DEBUG", "FAIL: " + response.toString());
-				System.out.println("ooooooooooo");
-				updateGui(response);
-				
+				Log.v("DEBUG", "onSuccess: " + response.toString());
+				aggiornaUi(response);
 			}
-			
-			@Override
-			public void onSuccess(String resp) {
-				Log.v("DEBUG", "FAIL: " + resp);
-				
-				
-			}
-			
 
 			@Override
 			public void onFailure(Throwable error, String content) {
@@ -215,7 +189,7 @@ public class InserisciUnProdottoFragment extends Fragment{
 		
 	}
 	
-	private void updateGui(JSONArray response) {
+	private void aggiornaUi(JSONArray response) {
 		JSONObject jsonObj = null;
 		try {
 			Log.v("DEBUG", "FAIL: " + response.toString());
@@ -225,17 +199,71 @@ public class InserisciUnProdottoFragment extends Fragment{
 				//prodotto trovato
 				EditText tmp = (EditText) rootView.findViewById(R.id.ip_et_descrizione);
 				et_descrizione.setText(jsonObj.getString("descrizione")); 
+				// settare anche categoria e sottocategoria
 			}
-			else{
+			else
 				// prodotto non trovato
-				EditText tmp = (EditText) rootView.findViewById(R.id.ip_et_descrizione);
-				et_descrizione.setText("NON TROVATO");
-			}
+				Toast.makeText(getActivity().getApplicationContext(), "Prodotto non trovato nei nostri database!", Toast.LENGTH_SHORT).show();
+			
 			
 		} catch (JSONException e) {
 			
 			e.printStackTrace();
 		}
 	}
+	
+	private void aggiornaSpinnerCategorie(JSONArray response) {
+		JSONObject jsonObj = null;
+		try {
+			ArrayList<String> categorieArray = new ArrayList<String>();
+			for (int i = 0; i < response.length(); i++) 
+				categorieArray.add(response.getString(i));
+			
+			ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, categorieArray);
+			spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			spin_categoria.setAdapter(spinnerArrayAdapter);
+			spin_categoria.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+				@Override
+				public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+					richiediSottocategorie(parent.getItemAtPosition(position).toString());
+				}
+
+				@Override
+				public void onNothingSelected(AdapterView<?> parent) {
+				}});
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void richiediSottocategorie(String categoria) {
+		System.out.println(categoria);
+		MyHttpClient.get("/inserzione/getSottoCategorie/" + categoria , null, new JsonHttpResponseHandler(){
+			@Override
+			public void onSuccess(JSONArray response) {
+				JSONObject jsonObj = null;
+				try {
+					ArrayList<String> sottocategorieArray = new ArrayList<String>();
+					for (int i = 0; i < response.length(); i++) 
+						sottocategorieArray.add(response.getString(i));
+					
+					ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, sottocategorieArray);
+					spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+					spin_sottocategoria.setAdapter(spinnerArrayAdapter);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				
+			}
+			
+			@Override
+			public void onFailure(Throwable error, String content) {
+				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			}
+		});
+		
+	}
+
 }
 	
