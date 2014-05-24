@@ -1,9 +1,7 @@
 package it.polito.ai.project.main;
 
-import it.polito.ai.project.andoidside.R;
+import it.polito.ai.project.R;
 import it.polito.ai.project.adapter.NavDrawerListAdapter;
-import it.polito.ai.project.database.DBHelper;
-import it.polito.ai.project.database.Libri;
 import it.polito.ai.project.fragment.AboutFragment;
 import it.polito.ai.project.fragment.AquireBarCodeFragment;
 import it.polito.ai.project.fragment.HomeFragment;
@@ -13,7 +11,6 @@ import it.polito.ai.project.fragment.ListFragment;
 import it.polito.ai.project.model.NavDrawerItem;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -22,7 +19,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -32,7 +28,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 
 public class MainActivity extends Activity {

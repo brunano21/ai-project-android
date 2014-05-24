@@ -1,15 +1,13 @@
 package it.polito.ai.project.fragment;
 
 
-import java.util.ArrayList;
-
-import it.polito.ai.project.andoidside.R;
-import it.polito.ai.project.andoidside.R.layout;
+import it.polito.ai.project.R;
 import it.polito.ai.project.adapter.ItemAdapterListFragment;
 import it.polito.ai.project.main.ItemListFragment;
+
+import java.util.ArrayList;
+
 import android.app.Fragment;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -23,7 +21,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 public class ListFragment extends Fragment {
 

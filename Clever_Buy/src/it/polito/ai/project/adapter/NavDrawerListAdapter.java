@@ -1,6 +1,6 @@
 package it.polito.ai.project.adapter;
 
-import it.polito.ai.project.andoidside.R;
+import it.polito.ai.project.R;
 import it.polito.ai.project.model.NavDrawerItem;
 
 import java.util.ArrayList;

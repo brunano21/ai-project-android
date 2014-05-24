@@ -13,7 +13,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import it.polito.ai.project.andoidside.R;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -24,7 +23,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
