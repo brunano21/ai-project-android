@@ -1,12 +1,12 @@
-package it.polito.ai.project.andoidside.fragment;
+package it.polito.ai.project.fragment;
 
 
 import java.util.ArrayList;
 
+import it.polito.ai.project.adapter.ItemAdapterListFragment;
 import it.polito.ai.project.andoidside.R;
 import it.polito.ai.project.andoidside.R.layout;
-import it.polito.ai.project.andoidside.adapter.ItemAdapterListFragment;
-import it.polito.ai.project.andoidside.main.ItemListFragment;
+import it.polito.ai.project.main.ItemListFragment;
 import android.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;

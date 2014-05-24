@@ -1,4 +1,4 @@
-package it.polito.ai.project.andoidside.main;
+package it.polito.ai.project.main;
 
 public class ItemListFragment {
 	

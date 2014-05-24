@@ -1,11 +1,12 @@
-package it.polito.ai.project.andoidside.adapter;
+package it.polito.ai.project.adapter;
 
 import java.util.List;
 
 
 
+
 import it.polito.ai.project.andoidside.R;
-import it.polito.ai.project.andoidside.main.ItemListFragment;
+import it.polito.ai.project.main.ItemListFragment;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;

@@ -1,4 +1,4 @@
-package it.polito.ai.project.androidside.database;
+package it.polito.ai.project.database;
 
 import android.content.ContentValues;
 import android.database.Cursor;
