@@ -1,4 +1,4 @@
-package it.polito.ai.project.andoidside.fragment;
+package it.polito.ai.project.fragment;
 
 import java.io.File;
 import java.io.IOException;

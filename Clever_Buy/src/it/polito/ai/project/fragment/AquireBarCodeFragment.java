@@ -1,4 +1,4 @@
-package it.polito.ai.project.andoidside.fragment;
+package it.polito.ai.project.fragment;
 
 import it.polito.ai.project.andoidside.R;
 import android.app.Fragment;
