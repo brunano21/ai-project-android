@@ -55,6 +55,18 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_barcode" />
 
+        <ImageView
+            android:id="@+id/ip_iv_foto"
+            android:layout_width="fill_parent"
+            android:layout_height="199dp"
+            android:layout_marginTop="10dp" />
+        
+        <Button
+            android:id="@+id/ip_btn_foto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Scatta foto" />
+
         <TextView
             android:id="@+id/ip_tv_categoria"
             android:layout_width="wrap_content"
@@ -70,7 +82,8 @@
             android:id="@+id/ip_tv_sottocategoria"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sottocategoria" />
+            android:text="Sottocategoria" 
+            />
 
         <Spinner
             android:id="@+id/ip_spin_sottocategoria"
@@ -140,7 +153,6 @@
             android:id="@+id/ip_btn_inserisci"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignRight="@+id/linearLayout1"
             android:text="Inserisci Prodotto"
             android:textStyle="bold" />
     </LinearLayout>

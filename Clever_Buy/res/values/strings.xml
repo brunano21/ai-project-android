@@ -10,17 +10,20 @@
     <string name="selectedList">ListName01</string>
     <string name="add_item_name_hint">insert product...</string>
     <string name="add_item_quantity_hint">quantity</string>
+    
+    
     <string name="id_label">The ID is</string>
     <string name="id_value">[id]</string>
     <string name="content_label">The Content is</string>
     <string name="content_value">[content]</string>
     <string name="action_refresh">Refresh</string>
-
+    
+    
     <!-- fagment List -->
 
-    <string name="string_button_addItem">Add</string>
-    <string name="string_button_addItem_byBarCode">BarCode</string>
-
+	<string name="string_button_addItem">Add</string>
+	<string name="string_button_addItem_byBarCode">BarCode</string>
+    
     <string-array name="list_item_quantity">
         <item>Kg</item>
         <item>gr</item>
@@ -28,7 +31,7 @@
         <item>units</item>
         <item>other</item>
     </string-array>
-
+    
     <!-- Nav Drawer Menu Items -->
     <string-array name="nav_drawer_items">
         <item>Home</item>
@@ -59,13 +62,15 @@
     <!-- Content Description -->
     <string name="desc_list_item_icon">Item Icon</string>
 
-    <!-- Inserisci un prodotto -->
 
+    <!-- Inserisci un prodotto -->
+    
     <string name="tv_description">Descrizione</string>
     <string name="tv_barcode">Codice a barre</string>
+    
+    
+    <string name="album_name">CameraBuy</string>
+    
     <string name="title_activity_login">Login</string>
     <string name="hello_world">Hello world!</string>
-
-    
-    
 </resources>
