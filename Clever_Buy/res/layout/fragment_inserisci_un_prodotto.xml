@@ -140,14 +140,10 @@
             android:text="Supermercato"
             android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/ip_et_supermercato"
+        <Spinner
+            android:id="@+id/ip_spin_supermercato"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:imeOptions="actionDone"
-            android:inputType="text" >
-        </EditText>
+            android:layout_height="wrap_content" />
 
         <Button
             android:id="@+id/ip_btn_inserisci"
