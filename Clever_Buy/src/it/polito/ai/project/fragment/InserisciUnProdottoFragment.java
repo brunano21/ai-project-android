@@ -83,7 +83,7 @@ public class InserisciUnProdottoFragment extends Fragment implements LocationLis
 
 		spin_supermercato = (Spinner) rootView.findViewById(R.id.ip_spin_supermercato);
 		addListener();
-
+		/*
 		locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 		boolean statusOfGPS = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 		if(!statusOfGPS) {
@@ -91,7 +91,7 @@ public class InserisciUnProdottoFragment extends Fragment implements LocationLis
 			startActivityForResult(gpsOptionsIntent, RESULT_ENABLE_GPS);
 		} else {
 			Location loc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-			et_descrizione.setText(Double.toString(loc.getLatitude()));
+			//et_descrizione.setText(Double.toString(loc.getLatitude()));
 			Geocoder gcd = new Geocoder(getActivity().getBaseContext(), Locale.getDefault());
 			String cityName = null;
 			List<Address> addresses;
@@ -107,9 +107,7 @@ public class InserisciUnProdottoFragment extends Fragment implements LocationLis
 			
 			ottieniSupermercati(loc.getLatitude(), loc.getLongitude());
 		}
-
-
-
+*/
 		return rootView;
 	}
 

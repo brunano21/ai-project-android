@@ -34,7 +34,7 @@ public class MainActivity extends Activity {
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
 	private ActionBarDrawerToggle mDrawerToggle;
-	
+
 	// nav drawer title
 	private CharSequence mDrawerTitle;
 
@@ -54,7 +54,7 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
+
 		Intent intent = getIntent();
 		String msg = intent.getStringExtra(SplashScreen.EXTRA_MESSAGE);
 		Log.v("MSG", msg);
@@ -141,7 +141,7 @@ public class MainActivity extends Activity {
 			displayView(0);
 		}
 
-/*
+		/*
 		//creo l'helper per aprire il DB
 		DBHelper databaseHelper = new DBHelper(this);
 		//apro il DB sia in lettura che in scrittura
@@ -186,7 +186,7 @@ public class MainActivity extends Activity {
 			db.close();
 			System.err.println("Ho chiuso il cursore e il db");
 		}
-*/
+		 */
 	}
 
 	/**
@@ -264,7 +264,7 @@ public class MainActivity extends Activity {
 		if(tmpFlagLog_registrato) {
 			if(fragmentArray.get(position) != null) 
 				fragment = fragmentArray.get(position);
-			else{
+			else
 				if( "Home".equals(stringFragment) )
 					fragment = new HomeFragment();
 				else
@@ -277,16 +277,15 @@ public class MainActivity extends Activity {
 							if( "About".equals(stringFragment) )
 								fragment = new AboutFragment();
 							else
-								if( "Inserisci un prodotto".equals(stringFragment)) {
+								if( "Inserisci un prodotto".equals(stringFragment)) 
 									if(fragmentArray.get(position) != null )
 										fragment = fragmentArray.get(position);
-									else{
+									else
 										fragment = new InserisciUnProdottoFragment();
 
-									}
-								}
-				fragmentArray.append(position, fragment);
-			}
+
+			fragmentArray.append(position, fragment);
+
 		}
 		else
 		{

@@ -14,7 +14,7 @@
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/ip_tv_categoria"
+            android:id="@+id/ss_tv_login_username"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -22,14 +22,15 @@
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <EditText
-            android:id="@+id/ip_et_prezzo"
+            android:id="@+id/ss_et_login_username"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:ems="10" />
+            android:ems="10"
+            android:text="zorro@zorro.it" />
 
         <TextView
-            android:id="@+id/ip_tv_sottocategoria"
+            android:id="@+id/ss_tv_login_password"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -37,18 +38,19 @@
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <EditText
-            android:id="@+id/editText2"
+            android:id="@+id/ss_et_login_password"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:ems="10"
-            android:inputType="textPassword" >
+            android:inputType="textPassword"
+            android:text="zorro" >
 
             <requestFocus />
         </EditText>
 
         <Button
-            android:id="@+id/button1"
+            android:id="@+id/_btn_login"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -70,7 +72,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <EditText
-            android:id="@+id/_et_userName"
+            android:id="@+id/ss_et_register_username"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -85,7 +87,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <EditText
-            android:id="@+id/_et_password"
+            android:id="@+id/ss_et_register_password"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -101,7 +103,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <EditText
-            android:id="@+id/_et_confirmPassword"
+            android:id="@+id/ss_et_register_confirmPassword"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -117,7 +119,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <EditText
-            android:id="@+id/_et_email"
+            android:id="@+id/ss_et_register_email"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
