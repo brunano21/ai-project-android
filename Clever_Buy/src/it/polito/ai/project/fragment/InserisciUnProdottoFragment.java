@@ -1,42 +1,55 @@
 package it.polito.ai.project.fragment;
 
 import it.polito.ai.project.R;
+import it.polito.ai.project.adapter.SupermercatoCustomAdapter;
 import it.polito.ai.project.main.MyHttpClient;
+import it.polito.ai.project.model.Supermercato;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
+import java.io.FileInputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+
+
+
+
+
+
 import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.location.Address;
-import android.location.Geocoder;
+import android.graphics.Bitmap.CompressFormat;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -44,10 +57,12 @@ import com.google.zxing.integration.android.IntentResult;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
-
-abstract class AlbumStorageDirFactory {
-	public abstract File getAlbumStorageDir(String albumName);
-}
+import org.joda.*;
+import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 public class InserisciUnProdottoFragment extends Fragment implements LocationListener{
 
@@ -57,12 +72,20 @@ public class InserisciUnProdottoFragment extends Fragment implements LocationLis
 	private ImageButton ib_scan;
 	private Button btn_foto;
 	private ImageView iv_foto;
-	private EditText et_descrizione, et_barcode;
+	private EditText et_descrizione, et_prezzo; 
+	private TextView tv_barcode_number;
 	private Button btn_inserisci;
 	private DatePicker dp_data_inizio, dp_data_fine;
 	private Spinner spin_categoria, spin_sottocategoria, spin_supermercato;
 	private View rootView;
+	private CheckBox cb_data_fine;
 	private LocationManager locationManager;
+
+	private ArrayList<Supermercato> supermercatiArrayList;
+	private SupermercatoCustomAdapter supermercatiCustomAdapter;
+
+
+	private Bitmap bitmapFoto;
 
 	@Override 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,17 +95,26 @@ public class InserisciUnProdottoFragment extends Fragment implements LocationLis
 		btn_foto 		= (Button) rootView.findViewById(R.id.ip_btn_foto);
 		ib_scan 		= (ImageButton) rootView.findViewById(R.id.ip_ib_scan);
 		btn_inserisci 	= (Button) rootView.findViewById(R.id.ip_btn_inserisci);
-		et_barcode  	= (EditText) rootView.findViewById(R.id.ip_et_barcode);
+		tv_barcode_number  	= (TextView) rootView.findViewById(R.id.ip_tv_barcode_number);
 		et_descrizione  = (EditText) rootView.findViewById(R.id.ip_et_descrizione);
 		dp_data_inizio 	= (DatePicker) rootView.findViewById(R.id.ip_dp_data_inizio);
 		dp_data_fine    = (DatePicker) rootView.findViewById(R.id.ip_dp_data_fine);
-
+		iv_foto 		= (ImageView) rootView.findViewById(R.id.ip_iv_foto);
+		et_prezzo		= (EditText) rootView.findViewById(R.id.ip_et_prezzo);
 		spin_categoria = (Spinner) rootView.findViewById(R.id.ip_spin_categoria);
 		spin_sottocategoria = (Spinner) rootView.findViewById(R.id.ip_spin_sottocategoria);
 		spin_sottocategoria.setPrompt("Seleziona la categoria");
 
+		cb_data_fine = (CheckBox) rootView.findViewById(R.id.ip_cb_data_fine);
+
 		spin_supermercato = (Spinner) rootView.findViewById(R.id.ip_spin_supermercato);
 		addListener();
+
+		MyHttpClient.setBasicAuth("zorro@zorro.it", "zorro");
+
+		supermercatiArrayList = new ArrayList<Supermercato>();
+
+
 		/*
 		locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 		boolean statusOfGPS = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -104,10 +136,12 @@ public class InserisciUnProdottoFragment extends Fragment implements LocationLis
 			catch (IOException e) {
 				e.printStackTrace();
 			}
-			
+
 			ottieniSupermercati(loc.getLatitude(), loc.getLongitude());
 		}
-*/
+		 */
+		ottieniSupermercati(Float.valueOf("38.0658") , Float.valueOf("15.4824"));
+		dp_data_fine.setEnabled(false);
 		return rootView;
 	}
 
@@ -132,9 +166,97 @@ public class InserisciUnProdottoFragment extends Fragment implements LocationLis
 
 			@Override
 			public void onClick(View v) {
-				// devo dapprima controllare che sia tutto in ordine
+				RequestParams params = new RequestParams();
 
-				// poi fa la post verso il server
+				/* DESCRIZIONE */
+				if(et_descrizione.getText().toString() == null || et_descrizione.getText().toString().matches("")) {
+					Toast.makeText(getActivity().getBaseContext(), "Descrizione del prodotto mancante!", Toast.LENGTH_SHORT).show();
+					return;
+				}
+				params.put("descrizione", et_descrizione.getText().toString());
+
+				/* BAR CODE */
+				if(tv_barcode_number.getText().toString() == null || tv_barcode_number.getText().toString().matches("")) {
+					Toast.makeText(getActivity().getBaseContext(), "Codice a barre del prodotto mancante", Toast.LENGTH_SHORT).show();
+					return;
+				}
+				params.put("codiceBarre", tv_barcode_number.getText().toString());
+
+				/* CATEGORIA */
+				params.put("categoria", spin_categoria.getSelectedItem().toString());
+
+				/* SOTTOCATEGORIA */
+				params.put("sottocategoria", spin_sottocategoria.getSelectedItem().toString());
+
+
+				/* FOTO */
+				if(bitmapFoto == null) {
+					Toast.makeText(getActivity().getBaseContext(), "Foto del prodotto mancante", Toast.LENGTH_SHORT).show();
+					return;
+				}
+				
+				ByteArrayOutputStream bos = new ByteArrayOutputStream(); 
+				bitmapFoto.compress(CompressFormat.JPEG, 95/*ignored for PNG*/, bos); 
+				byte[] bitmapdata = bos.toByteArray();
+//				ByteArrayInputStream bs = new ByteArrayInputStream(bitmapdata);
+				String encodedPicture = Base64.encodeToString(bitmapdata, Base64.DEFAULT);
+				params.put("foto", encodedPicture);
+
+
+				/* DATA INIZIO */
+				DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy");
+				String data_inizio_str = dp_data_inizio.getDayOfMonth() + "/" + (dp_data_inizio.getMonth() + 1) + "/" + dp_data_inizio.getYear();
+				DateTime data_inizio = formatter.parseDateTime(data_inizio_str);
+
+				/* DATA FINE */
+				String data_fine_str = null;
+				DateTime data_fine = null;
+				if(cb_data_fine.isChecked()) {
+					data_fine_str = dp_data_fine.getDayOfMonth() + "/" + (dp_data_fine.getMonth() + 1) + "/" + dp_data_fine.getYear();
+					data_fine = formatter.parseDateTime(data_fine_str);
+				}
+				else{
+					data_fine = data_inizio.plusDays(14);
+				}
+
+				if(Days.daysBetween(data_inizio, data_fine).getDays() > 20) {
+					Toast.makeText(getActivity().getBaseContext(), "Inserzione troppo lunga!", Toast.LENGTH_SHORT).show();
+					return;
+				} else if(Days.daysBetween(data_inizio, data_fine).getDays() < 5){
+					Toast.makeText(getActivity().getBaseContext(), "Inserzione troppo breve!", Toast.LENGTH_SHORT).show();
+					return;
+				} else if(Days.daysBetween(new DateTime(), data_fine).getDays() < 5) {
+					Toast.makeText(getActivity().getBaseContext(), "Fine inserzione troppo vicina!", Toast.LENGTH_SHORT).show();
+					return;
+				} else {
+					params.put("data_inizio", data_inizio_str);
+					params.put("data_fine", data_fine_str);
+				}
+				
+				/* PREZZO */
+				if(et_prezzo.getText().toString() == null || et_prezzo.getText().toString().matches("")) {
+					Toast.makeText(getActivity().getBaseContext(), "Prezzo del prodotto mancante", Toast.LENGTH_SHORT).show();
+					return;
+				}
+				params.put("prezzo", et_prezzo.getText().toString());
+				
+				/* SUPERMERCATO */
+				Supermercato s = (Supermercato) spin_supermercato.getSelectedItem();
+				params.put("supermercato", Integer.toString(s.getId()));
+
+				MyHttpClient.post("/inserzione", params , new JsonHttpResponseHandler(){
+					@Override
+					public void onSuccess(JSONArray response) {
+
+						System.out.println("tuttobene " + response.toString());
+						Log.v("DEBUG", "tuttobene!" + response.toString());
+					}
+
+					@Override
+					public void onFailure(Throwable error, String content) {
+						Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+					}
+				});
 			}
 		});
 
@@ -145,12 +267,12 @@ public class InserisciUnProdottoFragment extends Fragment implements LocationLis
 				cal.set(Calendar.YEAR, dp_data_inizio.getYear());
 				cal.set(Calendar.MONTH, dp_data_inizio.getMonth());
 				cal.set(Calendar.DAY_OF_MONTH, dp_data_inizio.getDayOfMonth());
-				dp_data_fine.setMinDate( cal.getTimeInMillis());
+				dp_data_fine.setMinDate(cal.getTimeInMillis());
 			}
 		}; 
 
-		dp_data_inizio.setOnClickListener( data_inizio_fine);
-		dp_data_fine.setOnClickListener( data_inizio_fine);
+		dp_data_inizio.setOnClickListener(data_inizio_fine);
+		dp_data_fine.setOnClickListener(data_inizio_fine);
 
 		MyHttpClient.get("/inserzione/getCategorie", null, new JsonHttpResponseHandler() {
 
@@ -167,46 +289,43 @@ public class InserisciUnProdottoFragment extends Fragment implements LocationLis
 
 
 		btn_foto.setOnClickListener(new OnClickListener() {
-
-
 			@Override
 			public void onClick(View v) {
-				/*
-				//pic = (ImageView)findViewById(R.id.iup_iv_foto);
-				cameraObject = isCameraAvailiable();
-				showCamera = new ShowCamera(getActivity().getApplicationContext(), cameraObject);
-				_preview.addView(showCamera);
-				 */
 				Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
 				startActivityForResult(intent, RESULT_INTENT_CAMERA);
+			}
+		});
 
+		cb_data_fine.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if (isChecked) 
+					dp_data_fine.setEnabled(true);
+				else
+					dp_data_fine.setEnabled(false);
 			}
 		});
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		switch (requestCode) {
-		case IntentIntegrator.REQUEST_CODE:	// barcode scanner// barcode scanner
-			IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
-			if(scanResult!=null){
-				et_barcode.setText(""+scanResult.getContents());
-				controllaBarcode(scanResult.getContents());
-			}
-			break;
-		case RESULT_INTENT_CAMERA: 
-			super.onActivityResult(requestCode, resultCode, intent);
-			Bitmap bp = (Bitmap) intent.getExtras().get("data");
-			iv_foto.setImageBitmap(bp);
-			break;
-		case RESULT_ENABLE_GPS:
-			LocationListener locationListener = new MyLocationListener();
-			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
-			break;
+			case IntentIntegrator.REQUEST_CODE:	// barcode scanner
+				IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+				if(resultCode != Activity.RESULT_CANCELED && scanResult != null) {
+					tv_barcode_number.setText(scanResult.getContents());
+					controllaBarcode(scanResult.getContents());
+				}
+				break;
+			case RESULT_INTENT_CAMERA: 
+				super.onActivityResult(requestCode, resultCode, intent);
+				bitmapFoto = (Bitmap) intent.getExtras().get("data");
+				iv_foto.setImageBitmap(bitmapFoto);
+	
+				break;
+			case RESULT_ENABLE_GPS:
+				LocationListener locationListener = new MyLocationListener();
+				locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+				break;
 		} // switch
-	}
-
-	private String getAlbumName() {
-		return getString(R.string.album_name);
 	}
 
 	private void controllaBarcode(String barcode) {
@@ -221,30 +340,40 @@ public class InserisciUnProdottoFragment extends Fragment implements LocationLis
 			public void onFailure(Throwable error, String content) {
 				Log.v("DEBUG" , "onFailure : " + error.toString() + "content : " + content);
 			}
-
 		});
-
-
 	}
 
 	private void aggiornaUi(JSONArray response) {
 		JSONObject jsonObj = null;
 		try {
 			jsonObj = response.getJSONObject(0);
-			if(jsonObj.getBoolean("trovato"))
-			{
+			if(jsonObj.getBoolean("trovato")) {
 				//prodotto trovato
 				EditText tmp = (EditText) rootView.findViewById(R.id.ip_et_descrizione);
 				et_descrizione.setText(jsonObj.getString("descrizione")); 
-				// settare anche categoria e sottocategoria
-			}
-			else
+
+				ArrayList<String> categorieArray = new ArrayList<String>();
+				categorieArray.add(jsonObj.getString("categoria"));
+				ArrayAdapter<String> categoriaSpinnerArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, categorieArray);
+				categoriaSpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+				spin_categoria.setEnabled(false);
+				spin_categoria.setClickable(false);
+				spin_categoria.setAdapter(categoriaSpinnerArrayAdapter);
+
+				ArrayList<String> sottocategorieArray = new ArrayList<String>();
+				sottocategorieArray.add(jsonObj.getString("sottocategoria"));
+				ArrayAdapter<String> sottocategoriaSpinnerArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, sottocategorieArray);
+				sottocategoriaSpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+				spin_sottocategoria.setEnabled(false);
+				spin_sottocategoria.setClickable(false);
+				spin_sottocategoria.setAdapter(sottocategoriaSpinnerArrayAdapter);
+
+
+			} else {
 				// prodotto non trovato
-				Toast.makeText(getActivity().getApplicationContext(), "Prodotto non trovato nei nostri database!", Toast.LENGTH_SHORT).show();
-
-
+				Toast.makeText(getActivity().getBaseContext(), "Prodotto non trovato nei nostri database!", Toast.LENGTH_SHORT).show();
+			}
 		} catch (JSONException e) {
-
 			e.printStackTrace();
 		}
 	}
@@ -359,15 +488,25 @@ public class InserisciUnProdottoFragment extends Fragment implements LocationLis
 			@Override
 			public void onSuccess(JSONArray response) {
 				JSONObject jsonObj = null;
-				
-				try {
-					ArrayList<String> supermercatiArray = new ArrayList<String>();
-					for (int i = 0; i < response.length(); i++) 
-						supermercatiArray.add(response.getJSONObject(i).getString("nome"));
 
-					ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, supermercatiArray);
-					spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+				try {
+					for (int i = 0; i < response.length(); i++) 
+						supermercatiArrayList.add(new Supermercato(
+								Integer.valueOf(response.getJSONObject(i).getInt("id")), 
+								response.getJSONObject(i).getString("nome"), 
+								response.getJSONObject(i).getString("indirizzo"),
+								Float.valueOf(response.getJSONObject(i).getLong("distanza"))
+								));
+
+					supermercatiCustomAdapter = new SupermercatoCustomAdapter(getActivity(), R.layout.supermercato_custom_spinner, supermercatiArrayList);
+
+					spin_supermercato.setAdapter(supermercatiCustomAdapter);
+
+					/*
+					supermercatoArrayList = new ArrayAdapter<Supermercato> (getActivity(), android.R.layout.simple_spinner_item, supermercatiArray);
+					supermercatoCustomAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 					spin_supermercato.setAdapter(spinnerArrayAdapter);
+					 */
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
@@ -380,7 +519,7 @@ public class InserisciUnProdottoFragment extends Fragment implements LocationLis
 			}
 		});
 	}
-	
-	
+
+
 }
 

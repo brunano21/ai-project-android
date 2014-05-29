@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
@@ -90,19 +91,19 @@ public class MainActivity extends Activity {
 		// cerca_un_prodotto
 		navDrawerItems.add(new NavDrawerItem(navMenuTitles[5], navMenuIcons.getResourceId(5, -1)));
 		// statistiche
-		navDrawerItems.add(new NavDrawerItem(navMenuTitles[6], navMenuIcons.getResourceId(6, -1)));
+		navDrawerItems.add(new NavDrawerItem(navMenuTitles[6], 0));
 		// i_migliori_affari
-		navDrawerItems.add(new NavDrawerItem(navMenuTitles[7], navMenuIcons.getResourceId(7, -1)));
+		navDrawerItems.add(new NavDrawerItem(navMenuTitles[7], 0));
 		// premium
-		navDrawerItems.add(new NavDrawerItem(navMenuTitles[8], navMenuIcons.getResourceId(8, -1)));
+		navDrawerItems.add(new NavDrawerItem(navMenuTitles[8], 0));
 		// about
-		navDrawerItems.add(new NavDrawerItem(navMenuTitles[9], navMenuIcons.getResourceId(9, -1)));
+		navDrawerItems.add(new NavDrawerItem(navMenuTitles[9], 0));
 
 
 		// List
-		navDrawerItems.add(new NavDrawerItem(navMenuTitles[10], navMenuIcons.getResourceId(10, -1)));
+		navDrawerItems.add(new NavDrawerItem(navMenuTitles[10], 0));
 		// AquireBarCode
-		navDrawerItems.add(new NavDrawerItem(navMenuTitles[11], navMenuIcons.getResourceId(11, -1)));
+		navDrawerItems.add(new NavDrawerItem(navMenuTitles[11], 0));
 		// Recycle the typed array
 		navMenuIcons.recycle();
 
@@ -256,15 +257,15 @@ public class MainActivity extends Activity {
 
 
 		String stringFragment = navMenuTitles[position];
-		FragmentManager fragmentManager = getFragmentManager();
+		
 
 		Fragment fragment = null;
 		Log.v("DEBUG", "sono passato");
-		Log.i("DEBUG", "sono passato-->>>>> " + position);
+		Log.i("DEBUG", "sono passato--> " + position);
 		if(tmpFlagLog_registrato) {
 			if(fragmentArray.get(position) != null) 
 				fragment = fragmentArray.get(position);
-			else
+			else {
 				if( "Home".equals(stringFragment) )
 					fragment = new HomeFragment();
 				else
@@ -283,7 +284,7 @@ public class MainActivity extends Activity {
 									else
 										fragment = new InserisciUnProdottoFragment();
 
-
+			}
 			fragmentArray.append(position, fragment);
 
 		}
@@ -294,7 +295,11 @@ public class MainActivity extends Activity {
 
 
 		if (fragment != null) {
-			fragmentManager.beginTransaction().replace(R.id.frame_container, fragment).commit();
+			FragmentManager fragmentManager = getFragmentManager();
+			FragmentTransaction ft = fragmentManager.beginTransaction();
+			ft.replace(R.id.frame_container, fragment, stringFragment);
+			ft.addToBackStack(null);;
+			ft.commit();
 
 			// update selected item and title, then close the drawer
 			mDrawerList.setItemChecked(position, true);

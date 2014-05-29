@@ -5,10 +5,11 @@
     android:tag="inserisciProdotto" >
 
     <LinearLayout
+        android:id="@+id/ip_cb_"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="6dip" 
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="6dip" >
 
         <CheckBox
             android:id="@+id/iup_checkBox1"
@@ -30,24 +31,21 @@
             android:ems="10"
             android:imeOptions="actionNext"
             android:inputType="text" >
-
         </EditText>
 
         <TextView
             android:id="@+id/ip_tv_barcode"
-            android:layout_width="wrap_content"
+            android:layout_width="202dp"
             android:layout_height="wrap_content"
+            android:layout_weight="0.68"
             android:text="@string/tv_barcode"
             android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/ip_et_barcode"
-            android:layout_width="168dp"
+        <TextView
+            android:id="@+id/ip_tv_barcode_number"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:imeOptions="actionNext"
-            android:inputType="text" >
-        </EditText>
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <ImageButton
             android:id="@+id/ip_ib_scan"
@@ -57,10 +55,10 @@
 
         <ImageView
             android:id="@+id/ip_iv_foto"
-            android:layout_width="fill_parent"
-            android:layout_height="199dp"
+            android:layout_width="149dp"
+            android:layout_height="76dp"
             android:layout_marginTop="10dp" />
-        
+
         <Button
             android:id="@+id/ip_btn_foto"
             android:layout_width="match_parent"
@@ -82,8 +80,7 @@
             android:id="@+id/ss_tv_login_password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sottocategoria" 
-            />
+            android:text="Sottocategoria" />
 
         <Spinner
             android:id="@+id/ip_spin_sottocategoria"
@@ -104,6 +101,12 @@
             android:layout_height="wrap_content"
             android:calendarViewShown="false"
             android:spinnersShown="true" />
+
+        <CheckBox
+            android:id="@+id/ip_cb_data_fine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Definisci data fine offerta" />
 
         <TextView
             android:id="@+id/ip_tv_data_fine"
@@ -127,7 +130,7 @@
             android:textStyle="bold" />
 
         <EditText
-            android:id="@+id/ss_et_login_username"
+            android:id="@+id/ip_et_prezzo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
