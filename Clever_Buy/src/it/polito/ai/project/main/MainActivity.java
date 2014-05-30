@@ -8,6 +8,7 @@ import it.polito.ai.project.fragment.HomeFragment;
 import it.polito.ai.project.fragment.HomeRegistrationLoginFragment;
 import it.polito.ai.project.fragment.InserisciUnProdottoFragment;
 import it.polito.ai.project.fragment.ListFragment;
+import it.polito.ai.project.fragment.ValutaInserzioneFragment;
 import it.polito.ai.project.model.NavDrawerItem;
 
 import java.util.ArrayList;
@@ -56,6 +57,8 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		MyHttpClient.setBasicAuth("zorro@zorro.it", "zorro");
+		
 		Intent intent = getIntent();
 		String msg = intent.getStringExtra(SplashScreen.EXTRA_MESSAGE);
 		Log.v("MSG", msg);
@@ -257,7 +260,7 @@ public class MainActivity extends Activity {
 
 
 		String stringFragment = navMenuTitles[position];
-		
+
 
 		Fragment fragment = null;
 		Log.v("DEBUG", "sono passato");
@@ -283,6 +286,13 @@ public class MainActivity extends Activity {
 										fragment = fragmentArray.get(position);
 									else
 										fragment = new InserisciUnProdottoFragment();
+								else
+									if("Valuta un prodotto".equals(stringFragment))
+										if(fragmentArray.get(position) != null )
+											fragment = fragmentArray.get(position);
+										else
+											fragment = new ValutaInserzioneFragment();
+
 
 			}
 			fragmentArray.append(position, fragment);
@@ -297,6 +307,7 @@ public class MainActivity extends Activity {
 		if (fragment != null) {
 			FragmentManager fragmentManager = getFragmentManager();
 			FragmentTransaction ft = fragmentManager.beginTransaction();
+			ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, 0, 0);
 			ft.replace(R.id.frame_container, fragment, stringFragment);
 			ft.addToBackStack(null);;
 			ft.commit();

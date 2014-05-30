@@ -408,7 +408,6 @@ public class InserisciUnProdottoFragment extends Fragment implements LocationLis
 		MyHttpClient.get("/inserzione/getSottoCategorie/" + categoria , null, new JsonHttpResponseHandler(){
 			@Override
 			public void onSuccess(JSONArray response) {
-				JSONObject jsonObj = null;
 				try {
 					ArrayList<String> sottocategorieArray = new ArrayList<String>();
 					for (int i = 0; i < response.length(); i++) 
