@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="url_server">http://192.168.1.2:8080/supermarket</string>
-    
-    <string name="app_name">Clever List</string>
+    <string name="app_name">CleverBuy</string>
     <string name="action_settings">Settings</string>
     <string name="drawer_open">Slider Menu Opened</string>
     <string name="drawer_close">Slider Menu Closed</string>
@@ -35,28 +33,27 @@
     <!-- Nav Drawer Menu Items -->
     <string-array name="nav_drawer_items">
         <item>Home</item>
-        <item><string name="le_tue_liste">Le tue liste</string></item>
-        <item><string name="in_scadenza">In scadenza</string></item>
-        <item><string name="valuta_un_prodotto">Valuta un prodotto</string></item>
-        <item><string name="inserisci_un_prodotto">Inserisci un prodotto</string></item>
-        <item><string name="cerca_un_prodotto">Cerca un prodotto</string></item>
-        <item><string name="statistiche">Statistiche</string></item>
-        <item><string name="i_migliori_affari">I migliori affari</string></item>
-        <item><string name="premium">Premium</string></item>
+        <item>Inserisci un prodotto</item>
+        <item>Valuta un prodotto</item>
+        <item>Cerca un prodotto</item>
+        <item>Le tue liste</item>
+        <item>I migliori affari</item>
+        <item>In scadenza</item>
         <item>About</item>
-        <item>List</item>
-        <item>AquireBarCode</item>
+        <item>Premium</item>
     </string-array>
 
     <!-- Nav Drawer List Item Icons -->
     <!-- Keep them in order as the titles are in -->
     <array name="nav_drawer_icons">
         <item>@drawable/ic_home</item>
-        <item>@drawable/ic_people</item>
-        <item>@drawable/ic_photos</item>
-        <item>@drawable/ic_communities</item>
-        <item>@drawable/ic_pages</item>
-        <item>@drawable/ic_whats_hot</item>
+        <item>@drawable/shopping_basket</item>
+        <item>@drawable/evaluate_product</item>
+        <item>@drawable/search_icon</item>
+        <item>@drawable/todo_list</item>
+        <item>@drawable/best_deals</item>
+        <item>@drawable/in_scadenza</item>
+        <item>@drawable/about</item>
     </array>
 
     <!-- Content Description -->
@@ -67,10 +64,7 @@
     
     <string name="tv_description">Descrizione</string>
     <string name="tv_barcode">Codice a barre</string>
-    
-    
-    <string name="album_name">CameraBuy</string>
-    
+
     <string name="title_activity_login">Login</string>
     <string name="hello_world">Hello world!</string>
 </resources>

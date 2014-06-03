@@ -2,6 +2,7 @@ package it.polito.ai.project.fragment;
 
 import it.polito.ai.project.R;
 import it.polito.ai.project.adapter.SupermercatoCustomAdapter;
+import it.polito.ai.project.main.MainActivity;
 import it.polito.ai.project.main.MyHttpClient;
 import it.polito.ai.project.model.Supermercato;
 
@@ -64,7 +65,7 @@ import org.joda.time.Days;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-public class InserisciUnProdottoFragment extends Fragment implements LocationListener{
+public class InserisciUnProdottoFragment extends Fragment {
 
 	protected static final int RESULT_INTENT_CAMERA = 0;
 	protected static final int RESULT_ENABLE_GPS = 1;
@@ -115,32 +116,7 @@ public class InserisciUnProdottoFragment extends Fragment implements LocationLis
 		supermercatiArrayList = new ArrayList<Supermercato>();
 
 
-		/*
-		locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-		boolean statusOfGPS = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-		if(!statusOfGPS) {
-			Intent gpsOptionsIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);  
-			startActivityForResult(gpsOptionsIntent, RESULT_ENABLE_GPS);
-		} else {
-			Location loc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-			//et_descrizione.setText(Double.toString(loc.getLatitude()));
-			Geocoder gcd = new Geocoder(getActivity().getBaseContext(), Locale.getDefault());
-			String cityName = null;
-			List<Address> addresses;
-			try {
-				addresses = gcd.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
-				if (addresses.size() > 0)
-					et_descrizione.setText(addresses.get(0).getLocality());
-				cityName = addresses.get(0).getLocality();
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}
-
-			ottieniSupermercati(loc.getLatitude(), loc.getLongitude());
-		}
-		 */
-		ottieniSupermercati(Float.valueOf("38.0658") , Float.valueOf("15.4824"));
+		ottieniSupermercati(MainActivity.getLocation().getLatitude(), MainActivity.getLocation().getLongitude());
 		dp_data_fine.setEnabled(false);
 		return rootView;
 	}
@@ -194,11 +170,11 @@ public class InserisciUnProdottoFragment extends Fragment implements LocationLis
 					Toast.makeText(getActivity().getBaseContext(), "Foto del prodotto mancante", Toast.LENGTH_SHORT).show();
 					return;
 				}
-				
+
 				ByteArrayOutputStream bos = new ByteArrayOutputStream(); 
 				bitmapFoto.compress(CompressFormat.JPEG, 95/*ignored for PNG*/, bos); 
 				byte[] bitmapdata = bos.toByteArray();
-//				ByteArrayInputStream bs = new ByteArrayInputStream(bitmapdata);
+				//				ByteArrayInputStream bs = new ByteArrayInputStream(bitmapdata);
 				String encodedPicture = Base64.encodeToString(bitmapdata, Base64.DEFAULT);
 				params.put("foto", encodedPicture);
 
@@ -232,14 +208,14 @@ public class InserisciUnProdottoFragment extends Fragment implements LocationLis
 					params.put("data_inizio", data_inizio_str);
 					params.put("data_fine", data_fine_str);
 				}
-				
+
 				/* PREZZO */
 				if(et_prezzo.getText().toString() == null || et_prezzo.getText().toString().matches("")) {
 					Toast.makeText(getActivity().getBaseContext(), "Prezzo del prodotto mancante", Toast.LENGTH_SHORT).show();
 					return;
 				}
 				params.put("prezzo", et_prezzo.getText().toString());
-				
+
 				/* SUPERMERCATO */
 				Supermercato s = (Supermercato) spin_supermercato.getSelectedItem();
 				params.put("supermercato", Integer.toString(s.getId()));
@@ -308,23 +284,18 @@ public class InserisciUnProdottoFragment extends Fragment implements LocationLis
 
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		switch (requestCode) {
-			case IntentIntegrator.REQUEST_CODE:	// barcode scanner
-				IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
-				if(resultCode != Activity.RESULT_CANCELED && scanResult != null) {
-					tv_barcode_number.setText(scanResult.getContents());
-					controllaBarcode(scanResult.getContents());
-				}
-				break;
-			case RESULT_INTENT_CAMERA: 
-				super.onActivityResult(requestCode, resultCode, intent);
-				bitmapFoto = (Bitmap) intent.getExtras().get("data");
-				iv_foto.setImageBitmap(bitmapFoto);
-	
-				break;
-			case RESULT_ENABLE_GPS:
-				LocationListener locationListener = new MyLocationListener();
-				locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
-				break;
+		case IntentIntegrator.REQUEST_CODE:	// barcode scanner
+			IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+			if(resultCode != Activity.RESULT_CANCELED && scanResult != null) {
+				tv_barcode_number.setText(scanResult.getContents());
+				controllaBarcode(scanResult.getContents());
+			}
+			break;
+		case RESULT_INTENT_CAMERA: 
+			super.onActivityResult(requestCode, resultCode, intent);
+			bitmapFoto = (Bitmap) intent.getExtras().get("data");
+			iv_foto.setImageBitmap(bitmapFoto);
+			break;
 		} // switch
 	}
 
@@ -429,55 +400,6 @@ public class InserisciUnProdottoFragment extends Fragment implements LocationLis
 		});
 
 	}
-
-	private class MyLocationListener implements LocationListener{
-
-		@Override
-		public void onLocationChanged(Location location) {
-			Log.v("DEBUG", "LON:" + location.getLongitude());
-			Log.v("DEBUG", "LAT:" + location.getLatitude());
-			et_descrizione.setText("Latitude: " + location.getLongitude() + ", Longitude: " + location.getLatitude());
-		}
-
-		@Override
-		public void onStatusChanged(String provider, int status, Bundle extras) {
-		}
-
-		@Override
-		public void onProviderEnabled(String provider) {
-		}
-
-		@Override
-		public void onProviderDisabled(String provider) {
-		}
-
-	}
-
-	@Override
-	public void onLocationChanged(Location location) {
-		Log.v("DEBUG", "LON:" + location.getLongitude());
-		Log.v("DEBUG", "LAT:" + location.getLatitude());
-		et_descrizione.setText("Latitude: " + location.getLongitude() + ", Longitude: " + location.getLatitude());
-
-	}
-
-	@Override
-	public void onStatusChanged(String provider, int status, Bundle extras) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onProviderEnabled(String provider) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onProviderDisabled(String provider) {
-		// TODO Auto-generated method stub
-
-	} 
 
 	private void ottieniSupermercati(double lat, double lng) {
 		RequestParams params = new RequestParams();

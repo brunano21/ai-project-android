@@ -2,7 +2,7 @@ package it.polito.ai.project.fragment;
 
 import it.polito.ai.project.R;
 import it.polito.ai.project.fragment.ValutazioneDettagliDialog.MyDialogInterface;
-import it.polito.ai.project.main.MyHttpClient;
+import it.polito.ai.project.main.*;
 import it.polito.ai.project.model.Valutazione;
 
 import java.util.ArrayList;
@@ -13,6 +13,10 @@ import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+
+import java.lang.Throwable;
+
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
@@ -33,28 +37,26 @@ import android.widget.Toast;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
-public class ValutaInserzioneFragment extends Fragment implements MyDialogInterface{ 
+	
 
+public class ValutaInserzioneFragment extends Fragment implements MyDialogInterface{ 
+	
 	private View rootView;
 	private ListView listView;
 	private List<Valutazione> valutazioneList;
 	private ArrayAdapter<Valutazione> valutazioneAdapter;
 
-
 	private final int AUTOLOAD_THRESHOLD = 8;
-	private final int MAXIMUM_ITEMS = 52; //size() array dalla richiesta al server.
 	private boolean IsLoading = false;
 	private boolean MoreDataAvailable = true;
 
 	private View footerView; 
 	private ArrayList<Integer> idInserzioneList;
 
-
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 		rootView = inflater.inflate(R.layout.fragment_valuta_inserzione, container, false);
-
 		listView = (ListView) rootView.findViewById(R.id.valutazioniListView);
 		footerView = inflater.inflate(R.layout.valutazione_list_footer_view, null, false);
 
@@ -69,7 +71,6 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 		listView.addFooterView(footerView);
 		listView.setAdapter(valutazioneAdapter);
 
-
 		listView.setOnScrollListener(new OnScrollListener() {
 
 			@Override
@@ -78,29 +79,30 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 
 			@Override
 			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-				if (!IsLoading && MoreDataAvailable) {
-					if (totalItemCount >= idInserzioneList.size()) {
-						MoreDataAvailable = false;
-						listView.removeFooterView(footerView);
-					} else if (totalItemCount - AUTOLOAD_THRESHOLD <= firstVisibleItem + visibleItemCount) {
-						if(idInserzioneList.size() != 0){
+				System.out.println(firstVisibleItem + " " + visibleItemCount + " " + totalItemCount);
+				System.out.println(IsLoading + " " + MoreDataAvailable);
+				if(idInserzioneList.size() != 0)
+					if (!IsLoading && MoreDataAvailable) {
+						if (totalItemCount >= idInserzioneList.size()) {
+							MoreDataAvailable = false;
+							listView.removeFooterView(footerView);
+						} else if (totalItemCount - AUTOLOAD_THRESHOLD <= firstVisibleItem + visibleItemCount) {
 							IsLoading = true;
 							chiediAltreValutazioni(totalItemCount);
 						}
+
 					}
-				}
 			}
 		});
 
 		return rootView;
-
 	}
 
 	private void chiediIdInserzioni() {
 		RequestParams params = new RequestParams();
-		// TODO aggiungere latitudine e logitudine
-		params.put("lat", "38.0658");
-		params.put("lng", "15.4824");
+		
+		params.put("lat", Double.toString(MainActivity.getLocation().getLatitude()));
+		params.put("lng", Double.toString(MainActivity.getLocation().getLongitude()));
 		MyHttpClient.get("/valutazione/getIdInserzioni", params, new JsonHttpResponseHandler(){
 			@Override
 			public void onSuccess(JSONArray response) {
@@ -120,6 +122,7 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 			@Override
 			public void onFailure(Throwable error, String content) {
 				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+				Toast.makeText(getActivity(), "Ops, c'è stato un problema con il server.", Toast.LENGTH_SHORT).show();
 			}
 		});
 	}
@@ -147,6 +150,11 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 				popolaValutazioneList(response);
 			}
 
+			@Override
+			public void onFailure(Throwable error, String content) {
+				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+				Toast.makeText(getActivity(), "Ops, c'è stato un problema con il server.", Toast.LENGTH_SHORT).show();
+			}
 
 		});
 	}
@@ -163,7 +171,7 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 						formatter.parseDateTime(response.getJSONObject(i).getString("data_inizio")),
 						formatter.parseDateTime(response.getJSONObject(i).getString("data_fine")),
 						response.getJSONObject(i).getString("descrizione"),
-						null,
+						null, // aggiungere foto!
 						response.getJSONObject(i).getString("codiceBarre"),
 						response.getJSONObject(i).getString("supermercato"),
 						response.getJSONObject(i).getString("supermercato_indirizzo")));
@@ -223,7 +231,7 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 		params.put("idInserzione", String.valueOf(idInserzioneValutata));
 		params.put("risultato", String.valueOf(risultato));
 		params.put("posizione", String.valueOf(posizione));
-		
+
 		MyHttpClient.post("/valutazione/aggiungiValutazione", params, new JsonHttpResponseHandler() {
 			@Override
 			public void onSuccess(JSONArray response) {
@@ -233,6 +241,12 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
+			}
+
+			@Override
+			public void onFailure(Throwable error, String content) {
+				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+				Toast.makeText(getActivity(), "Ops, c'è stato un problema con il server.", Toast.LENGTH_SHORT).show();
 			}
 		});
 	}
@@ -245,7 +259,7 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 		contentElement.setAlpha(0.2f);
 		transparentOverlay.setVisibility(1);
 	}
-	
+
 	private class ValutazioneAdapeter extends ArrayAdapter<Valutazione> {
 
 		public ValutazioneAdapeter() {
