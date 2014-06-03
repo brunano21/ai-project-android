@@ -1,24 +1,18 @@
 package it.polito.ai.project.fragment;
 
 import it.polito.ai.project.R;
+import it.polito.ai.project.fragment.ValutazioneDettagliDialog.MyDialogInterface;
 import it.polito.ai.project.main.MyHttpClient;
 import it.polito.ai.project.model.Valutazione;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
-
-import android.app.DownloadManager.Request;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
@@ -32,9 +26,14 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class ValutaInserzioneFragment extends Fragment { 
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+public class ValutaInserzioneFragment extends Fragment implements MyDialogInterface{ 
 
 	private View rootView;
 	private ListView listView;
@@ -65,7 +64,7 @@ public class ValutaInserzioneFragment extends Fragment {
 		valutazioneAdapter = new ValutazioneAdapeter();
 
 		chiediIdInserzioni();
-		
+
 		registraClick();
 		listView.addFooterView(footerView);
 		listView.setAdapter(valutazioneAdapter);
@@ -156,14 +155,18 @@ public class ValutaInserzioneFragment extends Fragment {
 		DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
 		for(int i = 0; i < response.length(); i++) {
 			try {
-				valutazioneList.add(new Valutazione(Integer.valueOf(response.getJSONObject(i).getInt("id")), 
+				valutazioneList.add(new Valutazione(
+						Integer.valueOf(response.getJSONObject(i).getInt("id")), 
 						response.getJSONObject(i).getString("categoria"),
 						response.getJSONObject(i).getString("sottocategoria"),
 						Float.valueOf(response.getJSONObject(i).getString("prezzo")), 
 						formatter.parseDateTime(response.getJSONObject(i).getString("data_inizio")),
 						formatter.parseDateTime(response.getJSONObject(i).getString("data_fine")),
 						response.getJSONObject(i).getString("descrizione"),
-						null));
+						null,
+						response.getJSONObject(i).getString("codiceBarre"),
+						response.getJSONObject(i).getString("supermercato"),
+						response.getJSONObject(i).getString("supermercato_indirizzo")));
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			} catch (JSONException e) {
@@ -184,25 +187,66 @@ public class ValutaInserzioneFragment extends Fragment {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				Valutazione val = valutazioneList.get(position);
-				FragmentManager manager = getFragmentManager();
-				ValutazioneDettagliDialog dialog = new ValutazioneDettagliDialog();
-				dialog.show(manager, "mydialog");
+				RelativeLayout transparentOverlay = (RelativeLayout) view.findViewById(R.id.valutazione_item_relative_layout_transparentOverlay);
+				if(transparentOverlay.getVisibility() != View.VISIBLE) {
+					Valutazione val = valutazioneList.get(position);
+					FragmentManager manager = getFragmentManager();
+					ValutazioneDettagliDialog dialog = ValutazioneDettagliDialog.getInstance(ValutaInserzioneFragment.this);
 
+					Bundle args = new Bundle();
+					args.putSerializable("dialogInterface", dialog.getArguments().getSerializable("dialogInterface"));
+					args.putParcelable("valutazione", val);
+					args.putInt("posizione", position);
+
+					dialog.setArguments(args);
+					dialog.show(manager, "myDialog");
+				}
 			}
-
 		});
 	}
 
+	@Override
+	public void onDialogPositiveClick(ValutazioneDettagliDialog dialog) {
+		inviaValutazione(dialog.getValutazione().getIdInserzione(), dialog.getPosizione(), +1);
+	}
 
 
+	@Override
+	public void onDialogNegativeClick(ValutazioneDettagliDialog dialog) {
+		inviaValutazione(dialog.getValutazione().getIdInserzione(), dialog.getPosizione(), -1);
+	}
 
 
+	private void inviaValutazione(int idInserzioneValutata, int posizione, int risultato) {
+		System.out.println("ID_INSERZIONE " + idInserzioneValutata);
+		RequestParams params = new RequestParams();
+		params.put("idInserzione", String.valueOf(idInserzioneValutata));
+		params.put("risultato", String.valueOf(risultato));
+		params.put("posizione", String.valueOf(posizione));
+		
+		MyHttpClient.post("/valutazione/aggiungiValutazione", params, new JsonHttpResponseHandler() {
+			@Override
+			public void onSuccess(JSONArray response) {
+				Toast.makeText(getActivity().getApplicationContext(),"Valutazione ricevuta. Grazie!", Toast.LENGTH_LONG).show();
+				try {
+					settaInserzioneValutata(response.getInt(0), response.getInt(1));
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 
+	private void settaInserzioneValutata(int idInserzione, int posizione){
+		System.out.println(posizione);
+		View itemView = (View) listView.getChildAt(posizione);
+		RelativeLayout transparentOverlay = (RelativeLayout) itemView.findViewById(R.id.valutazione_item_relative_layout_transparentOverlay);
+		RelativeLayout contentElement = (RelativeLayout) itemView.findViewById(R.id.valutazione_item_relative_layout_contentElement);
+		contentElement.setAlpha(0.2f);
+		transparentOverlay.setVisibility(1);
+	}
+	
 	private class ValutazioneAdapeter extends ArrayAdapter<Valutazione> {
-
-
-
 
 		public ValutazioneAdapeter() {
 			super(getActivity().getApplicationContext(), R.layout.valutazione_item_view, valutazioneList);
@@ -228,11 +272,5 @@ public class ValutaInserzioneFragment extends Fragment {
 			prezzo.setText(Float.toString(valutazione.getPrezzo()));
 			return itemView;
 		}
-
-
-
 	}
-
-
-
 }

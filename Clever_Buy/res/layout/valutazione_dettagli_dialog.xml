@@ -1,53 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="17dp"
-        android:layout_marginTop="32dp"
-        android:text="TextView" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView1"
-        android:layout_below="@+id/textView1"
-        android:layout_marginTop="48dp"
-        android:text="TextView" />
-
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/textView2"
-        android:layout_marginTop="78dp"
-        android:layout_toLeftOf="@+id/imageView1"
-        android:text="Button" />
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/button1"
-        android:layout_alignParentRight="true"
-        android:text="Button" />
+    android:layout_height="match_parent"
+    android:padding="15dp" >
 
     <ImageView
-        android:id="@+id/imageView1"
+        android:id="@+id/vd_iv_foto"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/no" />
+
+    <TextView
+        android:id="@+id/vd_tv_barcode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView2"
-        android:layout_marginRight="44dp"
-        android:layout_marginTop="14dp"
-        android:layout_toLeftOf="@+id/button2"
-        android:src="@drawable/no" />
+        android:layout_alignLeft="@+id/vd_iv_foto"
+        android:layout_alignRight="@+id/vd_iv_foto"
+        android:layout_below="@+id/vd_iv_foto"
+        android:gravity="center"
+        android:text="Small Text"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/vd_tv_inserito_il"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/vd_tv_barcode"
+        android:layout_below="@+id/vd_tv_prezzo"
+        android:text="Inserito il"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/vd_tv_data_inizio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/vd_tv_inserito_il"
+        android:layout_alignBottom="@+id/vd_tv_inserito_il"
+        android:layout_marginLeft="5dp"
+        android:layout_toRightOf="@+id/vd_tv_inserito_il"
+        android:text="Small Text"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/vd_tv_scade_il"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/vd_tv_prezzo"
+        android:layout_marginRight="15dp"
+        android:layout_toLeftOf="@+id/vd_tv_data_fine"
+        android:text="Scade il"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/vd_tv_prezzo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/vd_tv_barcode"
+        android:text="Medium Text"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/vd_iv_foto"
+        android:layout_alignRight="@+id/vd_tv_prezzo"
+        android:layout_alignTop="@+id/vd_iv_foto"
+        android:layout_toRightOf="@+id/vd_iv_foto"
+        android:padding="10dp" >
+
+        <TextView
+            android:id="@+id/vd_tv_categoria"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/vd_tv_descrizione"
+            android:layout_alignParentBottom="true"
+            android:text="Small Text"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <TextView
+            android:id="@+id/vd_tv_sottocategoria"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/vd_tv_categoria"
+            android:layout_alignBottom="@+id/vd_tv_categoria"
+            android:layout_marginLeft="17dp"
+            android:layout_toRightOf="@+id/vd_tv_categoria"
+            android:text="Small Text"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <TextView
+            android:id="@+id/vd_tv_descrizione"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:text="Large Text"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/vd_tv_inserito_il"
+        android:layout_alignRight="@+id/vd_tv_prezzo"
+        android:layout_below="@+id/vd_tv_inserito_il" >
+
+        <TextView
+            android:id="@+id/vd_tv_supermercato_nome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text="Large Text"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/vd_tv_supermercato_indirizzo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/vd_tv_supermercato_nome"
+            android:paddingTop="5dp"
+            android:text="Medium Text"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/vd_tv_data_fine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/vd_tv_prezzo"
+        android:layout_below="@+id/vd_tv_prezzo"
+        android:text="Small Text"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
 </RelativeLayout>

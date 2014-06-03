@@ -95,7 +95,7 @@
             android:inputType="textPassword" />
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/vd_tv_scade_il"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1.00"
@@ -111,7 +111,7 @@
             android:inputType="textPassword" />
 
         <TextView
-            android:id="@+id/textView6"
+            android:id="@+id/vd_tv_data_fine"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1.00"
