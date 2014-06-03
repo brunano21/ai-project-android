@@ -4,7 +4,7 @@
     android:layout_height="match_parent" >
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/ip_tv_barcode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -14,19 +14,19 @@
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/ip_tv_categoria"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView3"
+        android:layout_below="@+id/ip_tv_barcode"
         android:layout_centerHorizontal="true"
         android:text="Applicazioni Internet "
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <ImageView
-        android:id="@+id/imageView1"
+        android:id="@+id/ip_iv_foto"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:layout_below="@+id/textView4"
+        android:layout_below="@+id/ip_tv_categoria"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="33dp"
         android:maxHeight="200dp"
@@ -37,16 +37,16 @@
         android:id="@+id/textView5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView4"
+        android:layout_below="@+id/ip_tv_categoria"
         android:layout_centerHorizontal="true"
         android:text="2012/2013"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/ip_tv_prezzo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView1"
+        android:layout_below="@+id/ip_tv_descrizione"
         android:layout_centerHorizontal="true"
         android:text="Bruno Bruzzano"
         android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -55,7 +55,7 @@
         android:id="@+id/TextView01"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView2"
+        android:layout_below="@+id/ip_tv_prezzo"
         android:layout_centerHorizontal="true"
         android:text="Giorgio Ciacchella"
         android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -79,10 +79,10 @@
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/ip_tv_descrizione"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/imageView1"
+        android:layout_below="@+id/ip_iv_foto"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="26dp"
         android:text="Autori:"

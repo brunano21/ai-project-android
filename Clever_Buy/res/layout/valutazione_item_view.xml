@@ -13,7 +13,7 @@
         android:visibility="gone" >
 
         <TextView
-            android:id="@+id/textView1"
+            android:id="@+id/ip_tv_descrizione"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_vertical|center_horizontal"

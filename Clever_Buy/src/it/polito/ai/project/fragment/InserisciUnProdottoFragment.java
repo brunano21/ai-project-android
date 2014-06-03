@@ -7,18 +7,14 @@ import it.polito.ai.project.main.MyHttpClient;
 import it.polito.ai.project.model.Supermercato;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.text.SimpleDateFormat;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
-
-
-
-
-
-
 import java.util.Calendar;
 
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,8 +24,6 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
-import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Base64;
@@ -39,10 +33,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.DatePicker;
@@ -50,7 +42,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.TextView;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -58,28 +50,21 @@ import com.google.zxing.integration.android.IntentResult;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
-import org.joda.*;
-import org.joda.time.DateMidnight;
-import org.joda.time.DateTime;
-import org.joda.time.Days;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
 public class InserisciUnProdottoFragment extends Fragment {
 
 	protected static final int RESULT_INTENT_CAMERA = 0;
 	protected static final int RESULT_ENABLE_GPS = 1;
 
 	private ImageButton ib_scan;
-	private Button btn_foto;
+	private ImageButton ib_foto;
 	private ImageView iv_foto;
 	private EditText et_descrizione, et_prezzo; 
-	private TextView tv_barcode_number;
+	private EditText et_barcode_number;
 	private Button btn_inserisci;
 	private DatePicker dp_data_inizio, dp_data_fine;
 	private Spinner spin_categoria, spin_sottocategoria, spin_supermercato;
 	private View rootView;
-	private CheckBox cb_data_fine;
+	private Switch switch_data_fine;
 	private LocationManager locationManager;
 
 	private ArrayList<Supermercato> supermercatiArrayList;
@@ -93,32 +78,57 @@ public class InserisciUnProdottoFragment extends Fragment {
 			Bundle savedInstanceState) {
 
 		rootView 		= inflater.inflate(R.layout.fragment_inserisci_un_prodotto, container, false);
-		btn_foto 		= (Button) rootView.findViewById(R.id.ip_btn_foto);
+		ib_foto 		= (ImageButton) rootView.findViewById(R.id.ip_ib_foto);
+		iv_foto 		= (ImageView) rootView.findViewById(R.id.ip_iv_foto);
 		ib_scan 		= (ImageButton) rootView.findViewById(R.id.ip_ib_scan);
 		btn_inserisci 	= (Button) rootView.findViewById(R.id.ip_btn_inserisci);
-		tv_barcode_number  	= (TextView) rootView.findViewById(R.id.ip_tv_barcode_number);
+		et_barcode_number  	= (EditText) rootView.findViewById(R.id.ip_et_barcode_number);
 		et_descrizione  = (EditText) rootView.findViewById(R.id.ip_et_descrizione);
 		dp_data_inizio 	= (DatePicker) rootView.findViewById(R.id.ip_dp_data_inizio);
 		dp_data_fine    = (DatePicker) rootView.findViewById(R.id.ip_dp_data_fine);
-		iv_foto 		= (ImageView) rootView.findViewById(R.id.ip_iv_foto);
 		et_prezzo		= (EditText) rootView.findViewById(R.id.ip_et_prezzo);
 		spin_categoria = (Spinner) rootView.findViewById(R.id.ip_spin_categoria);
 		spin_sottocategoria = (Spinner) rootView.findViewById(R.id.ip_spin_sottocategoria);
 		spin_sottocategoria.setPrompt("Seleziona la categoria");
 
-		cb_data_fine = (CheckBox) rootView.findViewById(R.id.ip_cb_data_fine);
+		switch_data_fine = (Switch) rootView.findViewById(R.id.ip_switch_data_fine);
 
 		spin_supermercato = (Spinner) rootView.findViewById(R.id.ip_spin_supermercato);
 		addListener();
-
-		MyHttpClient.setBasicAuth("zorro@zorro.it", "zorro");
-
+		nascondiAnnoDatePicker();
 		supermercatiArrayList = new ArrayList<Supermercato>();
 
 
 		ottieniSupermercati(MainActivity.getLocation().getLatitude(), MainActivity.getLocation().getLongitude());
 		dp_data_fine.setEnabled(false);
 		return rootView;
+	}
+
+	
+
+	private void nascondiAnnoDatePicker() {
+		try {
+			Field f[] = dp_data_inizio.getClass().getDeclaredFields();
+			for (Field field : f) {
+				if (field.getName().equals("mYearSpinner")) {
+					field.setAccessible(true);
+					Object yearPickerInizio = new Object();
+					Object yearPickerFine = new Object();
+					
+					yearPickerInizio = field.get(dp_data_inizio);
+					yearPickerFine = field.get(dp_data_fine);
+					((View) yearPickerInizio).setVisibility(View.GONE);
+					((View) yearPickerFine).setVisibility(View.GONE);
+				}
+			}
+		} catch (SecurityException e) {
+			Log.d("ERROR", e.getMessage());
+		} 
+		catch (IllegalArgumentException e) {
+			Log.d("ERROR", e.getMessage());
+		} catch (IllegalAccessException e) {
+			Log.d("ERROR", e.getMessage());
+		}		
 	}
 
 	private void addListener() {
@@ -152,11 +162,11 @@ public class InserisciUnProdottoFragment extends Fragment {
 				params.put("descrizione", et_descrizione.getText().toString());
 
 				/* BAR CODE */
-				if(tv_barcode_number.getText().toString() == null || tv_barcode_number.getText().toString().matches("")) {
+				if(et_barcode_number.getText().toString() == null || et_barcode_number.getText().toString().matches("")) {
 					Toast.makeText(getActivity().getBaseContext(), "Codice a barre del prodotto mancante", Toast.LENGTH_SHORT).show();
 					return;
 				}
-				params.put("codiceBarre", tv_barcode_number.getText().toString());
+				params.put("codiceBarre", et_barcode_number.getText().toString());
 
 				/* CATEGORIA */
 				params.put("categoria", spin_categoria.getSelectedItem().toString());
@@ -187,7 +197,7 @@ public class InserisciUnProdottoFragment extends Fragment {
 				/* DATA FINE */
 				String data_fine_str = null;
 				DateTime data_fine = null;
-				if(cb_data_fine.isChecked()) {
+				if(switch_data_fine.isChecked()) {
 					data_fine_str = dp_data_fine.getDayOfMonth() + "/" + (dp_data_fine.getMonth() + 1) + "/" + dp_data_fine.getYear();
 					data_fine = formatter.parseDateTime(data_fine_str);
 				}
@@ -264,7 +274,7 @@ public class InserisciUnProdottoFragment extends Fragment {
 		});
 
 
-		btn_foto.setOnClickListener(new OnClickListener() {
+		ib_foto.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
@@ -272,7 +282,7 @@ public class InserisciUnProdottoFragment extends Fragment {
 			}
 		});
 
-		cb_data_fine.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+		switch_data_fine.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				if (isChecked) 
 					dp_data_fine.setEnabled(true);
@@ -287,7 +297,7 @@ public class InserisciUnProdottoFragment extends Fragment {
 		case IntentIntegrator.REQUEST_CODE:	// barcode scanner
 			IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
 			if(resultCode != Activity.RESULT_CANCELED && scanResult != null) {
-				tv_barcode_number.setText(scanResult.getContents());
+				et_barcode_number.setText(scanResult.getContents());
 				controllaBarcode(scanResult.getContents());
 			}
 			break;

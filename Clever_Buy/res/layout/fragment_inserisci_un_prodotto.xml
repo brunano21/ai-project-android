@@ -1,159 +1,209 @@
-<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="10dip"
     android:tag="inserisciProdotto" >
 
-    <LinearLayout
-        android:id="@+id/ip_cb_"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="6dip" >
-
-        <CheckBox
-            android:id="@+id/ip_checkBox1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="inserisci il prodotto nella lista della spesa" />
+        android:layout_height="700dp"
+        android:orientation="vertical" >
 
         <TextView
             android:id="@+id/ip_tv_descrizione"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/tv_description"
-            android:textStyle="bold" />
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:text="Descrizione Prodotto"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <EditText
             android:id="@+id/ip_et_descrizione"
-            android:layout_width="170dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:imeOptions="actionNext"
-            android:inputType="text" >
+            android:layout_alignLeft="@+id/ip_tv_descrizione"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/ip_tv_descrizione"
+            android:ems="10" >
+
+            <requestFocus />
+        </EditText>
+
+        <EditText
+            android:id="@+id/ip_et_barcode_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/ip_tv_barcode"
+            android:editable="false"
+            android:ems="10" >
         </EditText>
 
         <TextView
             android:id="@+id/ip_tv_barcode"
-            android:layout_width="202dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.68"
-            android:text="@string/tv_barcode"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/ip_tv_barcode_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/ip_et_descrizione"
+            android:layout_marginTop="23dp"
+            android:text="Codice a barre"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <ImageButton
             android:id="@+id/ip_ib_scan"
-            android:layout_width="144dp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_barcode" />
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="64dp"
+            android:layout_height="60dp"
+            android:layout_alignTop="@+id/ip_tv_barcode"
+            android:layout_marginLeft="25dp"
+            android:layout_toRightOf="@+id/ip_et_barcode_number"
+            android:background="@drawable/barcode_scanner_icon"
+            android:scaleType="centerCrop" />
 
         <ImageView
             android:id="@+id/ip_iv_foto"
-            android:layout_width="149dp"
-            android:layout_height="76dp"
-            android:layout_marginTop="10dp" />
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/ip_ib_scan"
+            android:layout_marginTop="18dp"
+            android:src="@drawable/no" />
 
-        <Button
-            android:id="@+id/ip_btn_foto"
-            android:layout_width="match_parent"
+        <EditText
+            android:id="@+id/ip_et_prezzo"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Scatta foto" />
+            android:layout_alignBottom="@+id/ip_iv_foto"
+            android:layout_toRightOf="@+id/ip_et_barcode_number"
+            android:ems="10"
+            android:inputType="numberDecimal" />
 
         <TextView
             android:id="@+id/ip_tv_categoria"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Categoria" />
-
-        <Spinner
-            android:id="@+id/ip_spin_categoria"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/ip_tv_sottocategoria"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sottocategoria" />
-
-        <Spinner
-            android:id="@+id/ip_spin_sottocategoria"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/ip_tv_data_inizio"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="Inizio promozione"
-            android:textStyle="bold" />
-
-        <DatePicker
-            android:id="@+id/ip_dp_data_inizio"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:calendarViewShown="false"
-            android:spinnersShown="true" />
-
-        <CheckBox
-            android:id="@+id/ip_cb_data_fine"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Definisci data fine offerta" />
-
-        <TextView
-            android:id="@+id/ip_tv_data_fine"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Fine promozione"
-            android:textStyle="bold" />
-
-        <DatePicker
-            android:id="@+id/ip_dp_data_fine"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:calendarViewShown="false"
-            android:spinnersShown="true" />
-
-        <TextView
-            android:id="@+id/ip_tv_prezzo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Prezzo"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/ip_et_prezzo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="numberDecimal" />
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/ip_iv_foto"
+            android:layout_marginTop="19dp"
+            android:text="Categoria"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
             android:id="@+id/ip_tv_supermercato"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/ip_dp_data_inizio"
+            android:layout_marginTop="28dp"
             android:text="Supermercato"
-            android:textStyle="bold" />
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <Spinner
             android:id="@+id/ip_spin_supermercato"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/ip_tv_supermercato" />
 
         <Button
             android:id="@+id/ip_btn_inserisci"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Inserisci Prodotto"
-            android:textStyle="bold" />
-    </LinearLayout>
+            android:layout_below="@+id/ip_spin_supermercato"
+            android:layout_centerHorizontal="true"
+            android:text="Aggiungi!" />
+
+        <TextView
+            android:id="@+id/ip_tv_sottocategoria"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/ip_tv_categoria"
+            android:layout_alignBottom="@+id/ip_tv_categoria"
+            android:layout_toRightOf="@+id/ip_et_barcode_number"
+            android:text="Sottocategoria"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <Spinner
+            android:id="@+id/ip_spin_categoria"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/ip_tv_descrizione"
+            android:layout_below="@+id/ip_tv_categoria" />
+
+        <Spinner
+            android:id="@+id/ip_spin_sottocategoria"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/ip_tv_sottocategoria"
+            android:layout_below="@+id/ip_tv_sottocategoria"
+            android:layout_toRightOf="@+id/ip_et_barcode_number" />
+
+        <TextView
+            android:id="@+id/ip_tv_prezzo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/ip_et_prezzo"
+            android:layout_alignLeft="@+id/ip_et_prezzo"
+            android:layout_marginBottom="23dp"
+            android:text="Prezzo"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <DatePicker
+            android:id="@+id/ip_dp_data_inizio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/ip_tv_data_inizio"
+            android:layout_marginTop="15dp"
+            android:calendarViewShown="false"
+            android:spinnersShown="true" />
+
+        <DatePicker
+            android:id="@+id/ip_dp_data_fine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/ip_tv_supermercato"
+            android:layout_alignParentRight="true"
+            android:calendarViewShown="false"
+            android:spinnersShown="true" />
+
+        <Switch
+            android:id="@+id/ip_switch_data_fine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/ip_tv_data_fine"
+            android:layout_alignParentRight="true"
+            android:scaleX="0.7" />
+
+        <ImageButton
+            android:id="@+id/ip_ib_foto"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignRight="@+id/ip_ib_scan"
+            android:layout_alignTop="@+id/ip_iv_foto"
+            android:background="@drawable/camera"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/ip_tv_data_inizio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/ip_spin_categoria"
+            android:layout_marginTop="12dp"
+            android:text="Inizia il"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/ip_tv_data_fine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/ip_dp_data_inizio"
+            android:layout_toRightOf="@+id/ip_spin_categoria"
+            android:text="Termina il"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    </RelativeLayout>
 
 </ScrollView>
