@@ -55,16 +55,14 @@ public class InserisciUnProdottoFragment extends Fragment {
 	protected static final int RESULT_INTENT_CAMERA = 0;
 	protected static final int RESULT_ENABLE_GPS = 1;
 
-	private ImageButton ib_scan;
-	private ImageButton ib_foto;
+	private ImageButton ib_scan, ib_foto;
 	private ImageView iv_foto;
-	private EditText et_descrizione, et_prezzo; 
-	private EditText et_barcode_number;
+	private EditText et_descrizione, et_prezzo, et_barcode_number, et_valore_argomento;
 	private Button btn_inserisci;
 	private DatePicker dp_data_inizio, dp_data_fine;
-	private Spinner spin_categoria, spin_sottocategoria, spin_supermercato;
+	private Spinner spin_categoria, spin_sottocategoria, spin_supermercato, spin_argomento;
 	private View rootView;
-	private Switch switch_data_fine;
+	private Switch switch_data_fine, switch_ulteriori_dettagli;
 	private LocationManager locationManager;
 
 	private ArrayList<Supermercato> supermercatiArrayList;
@@ -77,25 +75,34 @@ public class InserisciUnProdottoFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
-		rootView 		= inflater.inflate(R.layout.fragment_inserisci_un_prodotto, container, false);
-		ib_foto 		= (ImageButton) rootView.findViewById(R.id.ip_ib_foto);
-		iv_foto 		= (ImageView) rootView.findViewById(R.id.ip_iv_foto);
-		ib_scan 		= (ImageButton) rootView.findViewById(R.id.ip_ib_scan);
-		btn_inserisci 	= (Button) rootView.findViewById(R.id.ip_btn_inserisci);
+		rootView 			= inflater.inflate(R.layout.fragment_inserisci_un_prodotto, container, false);
+
+		ib_foto 			= (ImageButton) rootView.findViewById(R.id.ip_ib_foto);
+		iv_foto 			= (ImageView) rootView.findViewById(R.id.ip_iv_foto);
+		ib_scan 			= (ImageButton) rootView.findViewById(R.id.ip_ib_scan);
+
+		btn_inserisci 		= (Button) rootView.findViewById(R.id.ip_btn_inserisci);
+
+		et_descrizione  	= (EditText) rootView.findViewById(R.id.ip_et_descrizione);
 		et_barcode_number  	= (EditText) rootView.findViewById(R.id.ip_et_barcode_number);
-		et_descrizione  = (EditText) rootView.findViewById(R.id.ip_et_descrizione);
-		dp_data_inizio 	= (DatePicker) rootView.findViewById(R.id.ip_dp_data_inizio);
-		dp_data_fine    = (DatePicker) rootView.findViewById(R.id.ip_dp_data_fine);
-		et_prezzo		= (EditText) rootView.findViewById(R.id.ip_et_prezzo);
-		spin_categoria = (Spinner) rootView.findViewById(R.id.ip_spin_categoria);
+		et_prezzo			= (EditText) rootView.findViewById(R.id.ip_et_prezzo);
+		et_valore_argomento = (EditText) rootView.findViewById(R.id.ip_et_valore_argomento);
+
+		dp_data_inizio 		= (DatePicker) rootView.findViewById(R.id.ip_dp_data_inizio);
+		dp_data_fine    	= (DatePicker) rootView.findViewById(R.id.ip_dp_data_fine);
+
+		spin_categoria 		= (Spinner) rootView.findViewById(R.id.ip_spin_categoria);
 		spin_sottocategoria = (Spinner) rootView.findViewById(R.id.ip_spin_sottocategoria);
-		spin_sottocategoria.setPrompt("Seleziona la categoria");
+		spin_supermercato 	= (Spinner) rootView.findViewById(R.id.ip_spin_supermercato);
+		spin_argomento 		= (Spinner) rootView.findViewById(R.id.ip_spin_argomento);
 
 		switch_data_fine = (Switch) rootView.findViewById(R.id.ip_switch_data_fine);
+		switch_ulteriori_dettagli = (Switch) rootView.findViewById(R.id.ip_switch_ulteriori_dettagli);
 
-		spin_supermercato = (Spinner) rootView.findViewById(R.id.ip_spin_supermercato);
-		addListener();
+		addListeners();
 		nascondiAnnoDatePicker();
+		ottieniCategorie();
+
 		supermercatiArrayList = new ArrayList<Supermercato>();
 
 
@@ -104,7 +111,7 @@ public class InserisciUnProdottoFragment extends Fragment {
 		return rootView;
 	}
 
-	
+
 
 	private void nascondiAnnoDatePicker() {
 		try {
@@ -114,7 +121,7 @@ public class InserisciUnProdottoFragment extends Fragment {
 					field.setAccessible(true);
 					Object yearPickerInizio = new Object();
 					Object yearPickerFine = new Object();
-					
+
 					yearPickerInizio = field.get(dp_data_inizio);
 					yearPickerFine = field.get(dp_data_fine);
 					((View) yearPickerInizio).setVisibility(View.GONE);
@@ -131,7 +138,22 @@ public class InserisciUnProdottoFragment extends Fragment {
 		}		
 	}
 
-	private void addListener() {
+	private void ottieniCategorie() {
+		MyHttpClient.get("/inserzione/getCategorie", null, new JsonHttpResponseHandler() {
+
+			@Override
+			public void onSuccess(JSONArray response) {
+				aggiornaSpinnerCategorie(response);
+			}
+
+			@Override
+			public void onFailure(Throwable error, String content) {
+				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			}
+		});
+	}
+
+	private void addListeners() {
 
 		ib_scan.setOnClickListener(new OnClickListener() {
 			@Override
@@ -230,10 +252,20 @@ public class InserisciUnProdottoFragment extends Fragment {
 				Supermercato s = (Supermercato) spin_supermercato.getSelectedItem();
 				params.put("supermercato", Integer.toString(s.getId()));
 
+				/* ULTERIORI DETTAGLI*/
+				if(switch_ulteriori_dettagli.isChecked())
+					if(et_valore_argomento.getText().toString() == null || et_valore_argomento.getText().toString().matches("")) {
+						Toast.makeText(getActivity().getBaseContext(), "Valore del dettaglio mancante", Toast.LENGTH_SHORT).show();
+						return;
+					} else {
+						params.put("argomento", spin_argomento.getSelectedItem().toString());
+						params.put("valore_argomento", et_valore_argomento.getText().toString());
+					}
+				
+				/* INVIO DATI! */
 				MyHttpClient.post("/inserzione", params , new JsonHttpResponseHandler(){
 					@Override
 					public void onSuccess(JSONArray response) {
-
 						System.out.println("tuttobene " + response.toString());
 						Log.v("DEBUG", "tuttobene!" + response.toString());
 					}
@@ -260,20 +292,6 @@ public class InserisciUnProdottoFragment extends Fragment {
 		dp_data_inizio.setOnClickListener(data_inizio_fine);
 		dp_data_fine.setOnClickListener(data_inizio_fine);
 
-		MyHttpClient.get("/inserzione/getCategorie", null, new JsonHttpResponseHandler() {
-
-			@Override
-			public void onSuccess(JSONArray response) {
-				aggiornaSpinnerCategorie(response);
-			}
-
-			@Override
-			public void onFailure(Throwable error, String content) {
-				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
-			}
-		});
-
-
 		ib_foto.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -288,6 +306,48 @@ public class InserisciUnProdottoFragment extends Fragment {
 					dp_data_fine.setEnabled(true);
 				else
 					dp_data_fine.setEnabled(false);
+			}
+		});
+
+		switch_ulteriori_dettagli.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				System.out.println("changed!");
+				if (isChecked) {
+					// faccio partire una richiesta verso il server per avere tutti gli argomenti disponibili.
+					if(spin_argomento.getChildCount() == 0)
+						MyHttpClient.get("/inserzione/getArgomenti", null, new JsonHttpResponseHandler() {
+							public void onSuccess(JSONArray response) {
+								Log.v("DEBUG", "onSuccess : " + response.toString());
+								ArrayList<String> argomentiArrayList = new ArrayList<String>();
+								for (int i = 0; i < response.length(); i++)
+									try {
+										argomentiArrayList.add(response.getString(i));
+										ArrayAdapter<String> argomentiArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, argomentiArrayList);
+										argomentiArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+										spin_argomento.setAdapter(argomentiArrayAdapter);
+
+										spin_argomento.setEnabled(true);
+										spin_argomento.setClickable(true);
+										et_valore_argomento.setEnabled(true);
+										et_valore_argomento.setFocusable(true);
+									} catch (JSONException e) {
+										e.printStackTrace();
+									}
+							}
+
+							@Override
+							public void onFailure(Throwable error, String content) {
+								Log.v("DEBUG" , "onFailure : " + error.toString() + "content : " + content);
+							}
+						});
+
+				}
+				else {
+					spin_argomento.setEnabled(false);
+					spin_argomento.setClickable(false);
+					et_valore_argomento.setEnabled(false);
+					et_valore_argomento.setFocusable(false);
+				}
 			}
 		});
 	}
@@ -450,7 +510,6 @@ public class InserisciUnProdottoFragment extends Fragment {
 			}
 		});
 	}
-
 
 }
 

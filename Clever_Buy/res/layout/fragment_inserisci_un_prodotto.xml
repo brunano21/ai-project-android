@@ -6,7 +6,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="700dp"
+        android:layout_height="800dp"
         android:orientation="vertical" >
 
         <TextView
@@ -15,6 +15,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
+            android:ellipsize="end"
+            android:lines="1"
+            android:maxLines="1"
+            android:scrollHorizontally="true"
             android:text="Descrizione Prodotto"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -26,7 +30,6 @@
             android:layout_alignParentRight="true"
             android:layout_below="@+id/ip_tv_descrizione"
             android:ems="10" >
-
             <requestFocus />
         </EditText>
 
@@ -105,14 +108,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/ip_tv_supermercato" />
-
-        <Button
-            android:id="@+id/ip_btn_inserisci"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/ip_spin_supermercato"
-            android:layout_centerHorizontal="true"
-            android:text="Aggiungi!" />
 
         <TextView
             android:id="@+id/ip_tv_sottocategoria"
@@ -203,6 +198,57 @@
             android:layout_toRightOf="@+id/ip_spin_categoria"
             android:text="Termina il"
             android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <EditText
+            android:id="@+id/ip_et_valore_argomento"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignRight="@+id/ip_spin_categoria"
+            android:layout_below="@+id/ip_et_ulteriori_dettagli"
+            android:layout_marginTop="23dp"
+            android:editable="false"
+            android:ems="10"
+            android:enabled="false"
+            android:focusable="false" />
+
+        <Spinner
+            android:id="@+id/ip_spin_argomento"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/ip_tv_data_fine"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/ip_et_ulteriori_dettagli"
+            android:layout_marginTop="7dp" />
+
+        <TextView
+            android:id="@+id/ip_et_ulteriori_dettagli"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/ip_spin_supermercato"
+            android:layout_marginTop="11dp"
+            android:text="Ulteriori Dettagli"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <Button
+            android:id="@+id/ip_btn_inserisci"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignRight="@+id/ip_spin_sottocategoria"
+            android:layout_below="@+id/ip_spin_argomento"
+            android:layout_marginTop="26dp"
+            android:text="Aggiungi!" />
+
+        <Switch
+            android:id="@+id/ip_switch_ulteriori_dettagli"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/ip_et_ulteriori_dettagli"
+            android:layout_alignBottom="@+id/ip_et_ulteriori_dettagli"
+            android:layout_alignParentRight="true"
+            android:scaleX="0.7" />
 
     </RelativeLayout>
 
