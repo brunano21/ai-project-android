@@ -150,8 +150,8 @@ public class SplashScreen extends Activity {
 		_tv_login.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				// se tocchi qui vai alla pagina login
-				_linearLayout_home_registration_login.addView(_cb_auto_login);
 				_linearLayout_home_registration_login.removeAllViews();
+				_linearLayout_home_registration_login.addView(_cb_auto_login);
 				_linearLayout_home_registration_login.addView(_tv_username);
 				_linearLayout_home_registration_login.addView(_et_username);
 				_linearLayout_home_registration_login.addView(_tv_password);
@@ -168,8 +168,8 @@ public class SplashScreen extends Activity {
 
 		_tv_registration.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				_linearLayout_home_registration_login.addView(_cb_auto_login);
 				_linearLayout_home_registration_login.removeAllViews();
+				_linearLayout_home_registration_login.addView(_cb_auto_login);
 				_linearLayout_home_registration_login.addView(_tv_username);
 				_linearLayout_home_registration_login.addView(_et_username);
 				_linearLayout_home_registration_login.addView(_tv_password);
