@@ -20,11 +20,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -58,22 +59,22 @@ public class InserisciUnProdottoFragment extends Fragment {
 	private ImageButton ib_scan, ib_foto;
 	private ImageView iv_foto;
 	private EditText et_descrizione, et_prezzo, et_barcode_number, et_valore_argomento;
-	private Button btn_inserisci;
+	private Button btn_inserisci, btn_reset;
 	private DatePicker dp_data_inizio, dp_data_fine;
 	private Spinner spin_categoria, spin_sottocategoria, spin_supermercato, spin_argomento;
 	private View rootView;
 	private Switch switch_data_fine, switch_ulteriori_dettagli;
-	private LocationManager locationManager;
-
+	
 	private ArrayList<Supermercato> supermercatiArrayList;
 	private SupermercatoCustomAdapter supermercatiCustomAdapter;
-
+	private ArrayAdapter<String> categoriaSpinnerArrayAdapter;
+	private ArrayAdapter<String> sottocategoriaSpinnerArrayAdapter;
+	
 
 	private Bitmap bitmapFoto;
 
 	@Override 
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,	Bundle savedInstanceState) {
 
 		rootView 			= inflater.inflate(R.layout.fragment_inserisci_un_prodotto, container, false);
 
@@ -82,7 +83,8 @@ public class InserisciUnProdottoFragment extends Fragment {
 		ib_scan 			= (ImageButton) rootView.findViewById(R.id.ip_ib_scan);
 
 		btn_inserisci 		= (Button) rootView.findViewById(R.id.ip_btn_inserisci);
-
+		btn_reset			= (Button) rootView.findViewById(R.id.ip_btn_reset);
+		
 		et_descrizione  	= (EditText) rootView.findViewById(R.id.ip_et_descrizione);
 		et_barcode_number  	= (EditText) rootView.findViewById(R.id.ip_et_barcode_number);
 		et_prezzo			= (EditText) rootView.findViewById(R.id.ip_et_prezzo);
@@ -108,6 +110,8 @@ public class InserisciUnProdottoFragment extends Fragment {
 
 		ottieniSupermercati(MainActivity.getLocation().getLatitude(), MainActivity.getLocation().getLongitude());
 		dp_data_fine.setEnabled(false);
+		
+		
 		return rootView;
 	}
 
@@ -204,9 +208,9 @@ public class InserisciUnProdottoFragment extends Fragment {
 				}
 
 				ByteArrayOutputStream bos = new ByteArrayOutputStream(); 
-				bitmapFoto.compress(CompressFormat.JPEG, 95/*ignored for PNG*/, bos); 
+				bitmapFoto.compress(CompressFormat.JPEG, 50/*ignored for PNG*/, bos); 
 				byte[] bitmapdata = bos.toByteArray();
-				//				ByteArrayInputStream bs = new ByteArrayInputStream(bitmapdata);
+//				ByteArrayInputStream bs = new ByteArrayInputStream(bitmapdata);
 				String encodedPicture = Base64.encodeToString(bitmapdata, Base64.DEFAULT);
 				params.put("foto", encodedPicture);
 
@@ -263,16 +267,19 @@ public class InserisciUnProdottoFragment extends Fragment {
 					}
 				
 				/* INVIO DATI! */
-				MyHttpClient.post("/inserzione", params , new JsonHttpResponseHandler(){
+				MyHttpClient.post("/inserzione/aggiungi", params , new JsonHttpResponseHandler(){
 					@Override
 					public void onSuccess(JSONArray response) {
 						System.out.println("tuttobene " + response.toString());
 						Log.v("DEBUG", "tuttobene!" + response.toString());
+						Toast.makeText(getActivity().getBaseContext(), "Perfetto! Inserzione inserita con successo. GRAZIE!", Toast.LENGTH_SHORT).show();
+						resetVista();
 					}
 
 					@Override
 					public void onFailure(Throwable error, String content) {
 						Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+						Toast.makeText(getActivity().getBaseContext(), "Ops! Si è verificato un errore.", Toast.LENGTH_SHORT).show();
 					}
 				});
 			}
@@ -340,7 +347,6 @@ public class InserisciUnProdottoFragment extends Fragment {
 								Log.v("DEBUG" , "onFailure : " + error.toString() + "content : " + content);
 							}
 						});
-
 				}
 				else {
 					spin_argomento.setEnabled(false);
@@ -350,6 +356,32 @@ public class InserisciUnProdottoFragment extends Fragment {
 				}
 			}
 		});
+		
+		btn_reset.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				new AlertDialog.Builder(getActivity())
+			    .setTitle("Reset?")
+			    .setMessage("Vuoi resettare tutti i campi?")
+			    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+			        public void onClick(DialogInterface dialog, int which) { 
+			        	resetVista();
+			        	
+			        }
+			     })
+			    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+			        public void onClick(DialogInterface dialog, int which) { 
+			            
+			        }
+			     })
+			    .setIcon(android.R.drawable.ic_dialog_alert)
+			    .setCancelable(false)
+			    .show();
+				
+			}
+		});
+		
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -389,25 +421,20 @@ public class InserisciUnProdottoFragment extends Fragment {
 		try {
 			jsonObj = response.getJSONObject(0);
 			if(jsonObj.getBoolean("trovato")) {
-				//prodotto trovato
-				EditText tmp = (EditText) rootView.findViewById(R.id.ip_et_descrizione);
+				
+				// prodotto trovato
 				et_descrizione.setText(jsonObj.getString("descrizione")); 
-
-				ArrayList<String> categorieArray = new ArrayList<String>();
-				categorieArray.add(jsonObj.getString("categoria"));
-				ArrayAdapter<String> categoriaSpinnerArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, categorieArray);
-				categoriaSpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+				
+				int position = 0;
+				position = categoriaSpinnerArrayAdapter.getPosition(jsonObj.getString("categoria"));
+				spin_categoria.setSelection(position);
 				spin_categoria.setEnabled(false);
 				spin_categoria.setClickable(false);
-				spin_categoria.setAdapter(categoriaSpinnerArrayAdapter);
-
-				ArrayList<String> sottocategorieArray = new ArrayList<String>();
-				sottocategorieArray.add(jsonObj.getString("sottocategoria"));
-				ArrayAdapter<String> sottocategoriaSpinnerArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, sottocategorieArray);
-				sottocategoriaSpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+				
+				position = sottocategoriaSpinnerArrayAdapter.getPosition(jsonObj.getString("sottocategoria"));
+				spin_sottocategoria.setSelection(position);
 				spin_sottocategoria.setEnabled(false);
 				spin_sottocategoria.setClickable(false);
-				spin_sottocategoria.setAdapter(sottocategoriaSpinnerArrayAdapter);
 
 
 			} else {
@@ -420,15 +447,14 @@ public class InserisciUnProdottoFragment extends Fragment {
 	}
 
 	private void aggiornaSpinnerCategorie(JSONArray response) {
-		JSONObject jsonObj = null;
 		try {
 			ArrayList<String> categorieArray = new ArrayList<String>();
 			for (int i = 0; i < response.length(); i++) 
 				categorieArray.add(response.getString(i));
 
-			ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, categorieArray);
-			spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-			spin_categoria.setAdapter(spinnerArrayAdapter);
+			categoriaSpinnerArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, categorieArray);
+			categoriaSpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			spin_categoria.setAdapter(categoriaSpinnerArrayAdapter);
 			spin_categoria.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
 				@Override
 				public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -454,13 +480,12 @@ public class InserisciUnProdottoFragment extends Fragment {
 					for (int i = 0; i < response.length(); i++) 
 						sottocategorieArray.add(response.getString(i));
 
-					ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, sottocategorieArray);
-					spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-					spin_sottocategoria.setAdapter(spinnerArrayAdapter);
+					sottocategoriaSpinnerArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, sottocategorieArray);
+					sottocategoriaSpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+					spin_sottocategoria.setAdapter(sottocategoriaSpinnerArrayAdapter);
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-
 			}
 
 			@Override
@@ -478,8 +503,6 @@ public class InserisciUnProdottoFragment extends Fragment {
 		MyHttpClient.get("/inserzione/getSupermercati", params, new JsonHttpResponseHandler(){
 			@Override
 			public void onSuccess(JSONArray response) {
-				JSONObject jsonObj = null;
-
 				try {
 					for (int i = 0; i < response.length(); i++) 
 						supermercatiArrayList.add(new Supermercato(
@@ -490,14 +513,8 @@ public class InserisciUnProdottoFragment extends Fragment {
 								));
 
 					supermercatiCustomAdapter = new SupermercatoCustomAdapter(getActivity(), R.layout.supermercato_custom_spinner, supermercatiArrayList);
-
 					spin_supermercato.setAdapter(supermercatiCustomAdapter);
 
-					/*
-					supermercatoArrayList = new ArrayAdapter<Supermercato> (getActivity(), android.R.layout.simple_spinner_item, supermercatiArray);
-					supermercatoCustomAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-					spin_supermercato.setAdapter(spinnerArrayAdapter);
-					 */
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
@@ -509,6 +526,32 @@ public class InserisciUnProdottoFragment extends Fragment {
 				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
 			}
 		});
+	}
+	
+	private void resetVista() {
+		et_descrizione.setText("");
+		et_barcode_number.setText("");
+		et_prezzo.setText("");
+
+		spin_categoria.setSelection(0);
+		spin_categoria.setEnabled(true);
+		spin_categoria.setClickable(true);
+		spin_sottocategoria.setEnabled(true);
+		spin_sottocategoria.setClickable(true);
+
+		spin_supermercato.setSelection(0);
+		
+		iv_foto.setImageResource(R.drawable.no);
+		dp_data_inizio.updateDate(DateTime.now().getYear(), DateTime.now().getMonthOfYear(), DateTime.now().getDayOfMonth());
+		
+		
+		if(switch_data_fine.isChecked()) {
+			dp_data_fine.updateDate(DateTime.now().getYear(), DateTime.now().getMonthOfYear(), DateTime.now().getDayOfMonth());
+			switch_data_fine.setChecked(false);
+		}
+		if(switch_ulteriori_dettagli.isChecked()) {
+			switch_ulteriori_dettagli.setChecked(false);
+		}
 	}
 
 }

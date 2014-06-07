@@ -14,12 +14,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 
+
+
+
 import java.lang.Throwable;
 
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,10 +43,10 @@ import android.widget.Toast;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
-	
+
 
 public class ValutaInserzioneFragment extends Fragment implements MyDialogInterface{ 
-	
+
 	private View rootView;
 	private ListView listView;
 	private List<Valutazione> valutazioneList;
@@ -100,23 +106,27 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 
 	private void chiediIdInserzioni() {
 		RequestParams params = new RequestParams();
-		
+
 		params.put("lat", Double.toString(MainActivity.getLocation().getLatitude()));
 		params.put("lng", Double.toString(MainActivity.getLocation().getLongitude()));
 		MyHttpClient.get("/valutazione/getIdInserzioni", params, new JsonHttpResponseHandler(){
 			@Override
 			public void onSuccess(JSONArray response) {
-				System.out.println(response.toString());
-				for(int i = 0; i<response.length(); i++)
-					try {
-						System.out.println("VAL = " + response.getInt(i));
-						idInserzioneList.add(Integer.valueOf(response.getInt(i)));
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
-				System.out.println("onSuccess " + idInserzioneList.size());
-				Log.v("DEBUG", "onSuccess " + idInserzioneList.size());
-				chiediAltreValutazioni(-1);
+				if(response.length() != 0) {
+					for(int i = 0; i<response.length(); i++)
+						try {
+							System.out.println("VAL = " + response.getInt(i));
+							idInserzioneList.add(Integer.valueOf(response.getInt(i)));
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+					System.out.println("onSuccess " + idInserzioneList.size());
+					Log.v("DEBUG", "onSuccess " + idInserzioneList.size());
+					chiediAltreValutazioni(-1);
+				}
+				else 
+					// TODO: dire all'utente che non ci sono inserzioni disponibili da valutare nell'area in cui si trova
+					System.out.println("NON CI SONO INSERZIONI DA VALUTARE");
 			}
 
 			@Override
@@ -148,6 +158,7 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 			@Override
 			public void onSuccess(JSONArray response) {
 				popolaValutazioneList(response);
+
 			}
 
 			@Override
@@ -171,7 +182,7 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 						formatter.parseDateTime(response.getJSONObject(i).getString("data_inizio")),
 						formatter.parseDateTime(response.getJSONObject(i).getString("data_fine")),
 						response.getJSONObject(i).getString("descrizione"),
-						null, // aggiungere foto!
+						response.getJSONObject(i).getString("foto"), 
 						response.getJSONObject(i).getString("codiceBarre"),
 						response.getJSONObject(i).getString("supermercato"),
 						response.getJSONObject(i).getString("supermercato_indirizzo")));
@@ -237,7 +248,7 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 			public void onSuccess(JSONArray response) {
 				Toast.makeText(getActivity().getApplicationContext(),"Valutazione ricevuta. Grazie!", Toast.LENGTH_LONG).show();
 				try {
-					settaInserzioneValutata(response.getInt(0), response.getInt(1));
+					impostaInserzioneComeValutata(response.getInt(0), response.getInt(1));
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
@@ -251,7 +262,7 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 		});
 	}
 
-	private void settaInserzioneValutata(int idInserzione, int posizione){
+	private void impostaInserzioneComeValutata(int idInserzione, int posizione){
 		System.out.println(posizione);
 		View itemView = (View) listView.getChildAt(posizione);
 		RelativeLayout transparentOverlay = (RelativeLayout) itemView.findViewById(R.id.valutazione_item_relative_layout_transparentOverlay);
@@ -284,6 +295,11 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 			descrizione.setText(valutazione.getDescrizione());
 			data_fine.setText(valutazione.getDataFine().toString());
 			prezzo.setText(Float.toString(valutazione.getPrezzo()));
+
+			byte[] decodedString = Base64.decode(valutazione.getFoto(), Base64.DEFAULT);
+			Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length); 
+			foto.setImageBitmap(decodedByte);
+
 			return itemView;
 		}
 	}

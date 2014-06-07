@@ -231,16 +231,6 @@
             android:text="Ulteriori Dettagli"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <Button
-            android:id="@+id/ip_btn_inserisci"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignRight="@+id/ip_spin_sottocategoria"
-            android:layout_below="@+id/ip_spin_argomento"
-            android:layout_marginTop="26dp"
-            android:text="Aggiungi!" />
-
         <Switch
             android:id="@+id/ip_switch_ulteriori_dettagli"
             android:layout_width="wrap_content"
@@ -249,6 +239,25 @@
             android:layout_alignBottom="@+id/ip_et_ulteriori_dettagli"
             android:layout_alignParentRight="true"
             android:scaleX="0.7" />
+
+        <Button
+            android:id="@+id/ip_btn_reset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/ip_btn_inserisci"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@+id/ip_btn_inserisci"
+            android:text="Reset" />
+
+        <Button
+            android:id="@+id/ip_btn_inserisci"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/ip_spin_argomento"
+            android:layout_marginTop="26dp"
+            android:layout_toRightOf="@+id/ip_tv_categoria"
+            android:text="Aggiungi!" />
 
     </RelativeLayout>
 

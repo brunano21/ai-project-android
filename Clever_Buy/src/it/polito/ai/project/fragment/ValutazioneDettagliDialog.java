@@ -12,10 +12,14 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class ValutazioneDettagliDialog extends DialogFragment {
@@ -97,10 +101,14 @@ public class ValutazioneDettagliDialog extends DialogFragment {
 		TextView supermercato_nome =  (TextView) view.findViewById(R.id.vd_tv_supermercato_nome);
 		supermercato_nome.setText(val.getSupermercato());
 
-		TextView supermercato_indirzzo =  (TextView) view.findViewById(R.id.vd_tv_supermercato_indirizzo);
-		supermercato_indirzzo.setText(val.getSupermercato_indirizzo());
+		TextView supermercato_indirizzo =  (TextView) view.findViewById(R.id.vd_tv_supermercato_indirizzo);
+		supermercato_indirizzo.setText(val.getSupermercato_indirizzo());
 
-
+		ImageView foto = (ImageView) view.findViewById(R.id.vd_iv_foto);
+		byte[] decodedString = Base64.decode(val.getFoto(), Base64.DEFAULT);
+		Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length); 
+		foto.setImageBitmap(decodedByte);
+		
 		return builder.create();
 	}
 

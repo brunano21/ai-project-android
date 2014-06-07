@@ -14,14 +14,14 @@ public class Valutazione implements Parcelable{
 	DateTime dataInizio;
 	DateTime dataFine;
 	String descrizione;
-	byte[] foto;
+	String foto;
 	String codiceBarre;
 	String supermercato;
 	String supermercato_indirizzo;
 
 	public Valutazione(int idInserzione, String categoria,
 			String sottocategoria, float prezzo, DateTime dataInizio,
-			DateTime dataFine, String descrizione, byte[] foto, String codiceBarre, String supermercato, String supermercato_indirizzo) {
+			DateTime dataFine, String descrizione, String foto, String codiceBarre, String supermercato, String supermercato_indirizzo) {
 		super();
 		this.idInserzione = idInserzione;
 		this.categoria = categoria;
@@ -80,10 +80,10 @@ public class Valutazione implements Parcelable{
 	public void setDescrizione(String descrizione) {
 		this.descrizione = descrizione;
 	}
-	public byte[] getFoto() {
+	public String getFoto() {
 		return foto;
 	}
-	public void setFoto(byte[] foto) {
+	public void setFoto(String foto) {
 		this.foto = foto;
 	}
 	public String getCodiceBarre() {
@@ -120,7 +120,7 @@ public class Valutazione implements Parcelable{
 		dest.writeFloat(prezzo);
 		dest.writeSerializable(dataInizio);
 		dest.writeSerializable(dataFine);
-		dest.writeByteArray(foto);
+		dest.writeString(foto);
 		dest.writeString(codiceBarre);
 		dest.writeString(supermercato);
 		dest.writeString(supermercato_indirizzo);
@@ -136,7 +136,7 @@ public class Valutazione implements Parcelable{
 			val.prezzo = source.readFloat();
 			val.dataInizio = (DateTime) source.readSerializable();
 			val.dataFine = (DateTime) source.readSerializable();
-			source.readByteArray(val.foto);
+			val.foto = source.readString();
 			val.codiceBarre = source.readString();
 			val.supermercato = source.readString();
 			val.supermercato_indirizzo = source.readString();

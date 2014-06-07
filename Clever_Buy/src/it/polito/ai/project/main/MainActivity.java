@@ -240,8 +240,16 @@ public class MainActivity extends Activity {
 		}
 		// Handle action bar actions click
 		switch (item.getItemId()) {
-		case R.id.action_settings:
+		case R.id.action_esci:
+			finish();
 			return true;
+		case R.id.action_logout:
+			// effettuare il logout, eliminando i dati dalla shared preferences and avviare la splashscreen
+			Intent intent = new Intent(this, SplashScreen.class);
+			finish();
+			startActivity(intent);
+			return true;
+			
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -254,7 +262,8 @@ public class MainActivity extends Activity {
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		// if nav drawer is opened, hide the action items
 		boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-		menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
+		for(int i = 0; i < menu.size(); i++)
+	        menu.getItem(i).setVisible(!drawerOpen);
 		return super.onPrepareOptionsMenu(menu);
 	}
 
