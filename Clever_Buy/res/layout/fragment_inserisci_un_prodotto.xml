@@ -74,7 +74,7 @@
             android:src="@drawable/no" />
 
         <EditText
-            android:id="@+id/ip_et_prezzo"
+            android:id="@+id/ss_et_login_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/ip_iv_foto"

@@ -45,12 +45,12 @@ public class SplashScreen extends Activity {
 		
 			@Override
 			public void onClick(View v) {
-				EditText _et_login_username = (EditText) findViewById(R.id.ip_et_prezzo);
+				EditText _et_login_username = (EditText) findViewById(R.id.ss_et_login_username);
 				EditText _et_login_password = (EditText) findViewById(R.id.ss_et_login_password);
 				
 				MyHttpClient.setBasicAuth(_et_login_username.getText().toString(), _et_login_password.getText().toString());
 				
-				MyHttpClient.post("/android/login", null, new AsyncHttpResponseHandler(){
+				MyHttpClient.post("/login", null, new AsyncHttpResponseHandler(){
 					@Override
 					public void onSuccess(String response) {
 						EditText _et_tmp = (EditText) findViewById(R.id.ss_et_register_username);
