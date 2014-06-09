@@ -4,7 +4,7 @@
     android:layout_height="wrap_content" >
 
     <RelativeLayout
-        android:id="@+id/valutazione_item_relative_layout_transparentOverlay"
+        android:id="@+id/listview_item_inserzione_da_valutare_rl_transparentOverlay"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="@color/red_transparent"
@@ -13,7 +13,7 @@
         android:visibility="gone" >
 
         <TextView
-            android:id="@+id/ip_tv_descrizione"
+            android:id="@+id/listview_item_inserzione_da_valutare_tv_testo_valutato"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_vertical|center_horizontal"
@@ -22,56 +22,58 @@
     </RelativeLayout>
 
     <RelativeLayout
-         android:id="@+id/valutazione_item_relative_layout_contentElement"
+         android:id="@+id/listview_item_inserzione_da_valutare_rl_contentElement"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:alpha="1"
         android:padding="15dp" >
 
         <TextView
-            android:id="@+id/valutazione_item_descrizione"
+            android:id="@+id/listview_item_inserzione_da_valutare_tv_descrizione"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_above="@+id/listview_item_inserzione_da_valutare_tv_prezzo"
             android:layout_alignParentRight="true"
-            android:layout_alignTop="@+id/valutazione_item_foto"
-            android:layout_toRightOf="@+id/valutazione_item_foto"
+            android:layout_alignTop="@+id/listview_item_inserzione_da_valutare_iv_foto"
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@+id/listview_item_inserzione_da_valutare_iv_foto"
             android:text="Large Text"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView
-            android:id="@+id/valutazione_item_data_fine"
+            android:id="@+id/listview_item_inserzione_da_valutare_tv_data_fine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/vd_tv_barcode"
-            android:layout_alignBottom="@+id/vd_tv_barcode"
-            android:layout_toRightOf="@+id/vd_tv_barcode"
+            android:layout_alignBaseline="@+id/listview_item_inserzione_da_valutare_tv_scade_il"
+            android:layout_alignBottom="@+id/listview_item_inserzione_da_valutare_tv_scade_il"
+            android:layout_toRightOf="@+id/listview_item_inserzione_da_valutare_tv_scade_il"
             android:text="Small Text"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <ImageView
-            android:id="@+id/valutazione_item_foto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/listview_item_inserzione_da_valutare_iv_foto"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:src="@drawable/no" />
 
         <TextView
-            android:id="@+id/vd_tv_barcode"
+            android:id="@+id/listview_item_inserzione_da_valutare_tv_scade_il"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/valutazione_item_foto"
-            android:layout_alignLeft="@+id/valutazione_item_descrizione"
+            android:layout_alignBottom="@+id/listview_item_inserzione_da_valutare_iv_foto"
+            android:layout_alignLeft="@+id/listview_item_inserzione_da_valutare_tv_descrizione"
             android:text="Scade il"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <TextView
-            android:id="@+id/valutazione_item_prezzo"
+            android:id="@+id/listview_item_inserzione_da_valutare_tv_prezzo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/valutazione_item_data_fine"
-            android:layout_alignBottom="@+id/valutazione_item_data_fine"
-            android:layout_alignRight="@+id/valutazione_item_descrizione"
+            android:layout_alignBaseline="@+id/listview_item_inserzione_da_valutare_tv_data_fine"
+            android:layout_alignBottom="@+id/listview_item_inserzione_da_valutare_tv_data_fine"
+            android:layout_alignRight="@+id/listview_item_inserzione_da_valutare_tv_descrizione"
             android:text="Medium Text"
             android:textAppearance="?android:attr/textAppearanceMedium" />
     </RelativeLayout>

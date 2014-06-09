@@ -73,15 +73,6 @@
             android:layout_marginTop="18dp"
             android:src="@drawable/no" />
 
-        <EditText
-            android:id="@+id/ip_et_prezzo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/ip_iv_foto"
-            android:layout_toRightOf="@+id/ip_et_barcode_number"
-            android:ems="10"
-            android:inputType="numberDecimal" />
-
         <TextView
             android:id="@+id/ip_tv_categoria"
             android:layout_width="wrap_content"
@@ -99,7 +90,7 @@
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/ip_dp_data_inizio"
             android:layout_marginTop="28dp"
-            android:text="Supermercato"
+            android:text="Dove"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <Spinner
@@ -115,34 +106,17 @@
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/ip_tv_categoria"
             android:layout_alignBottom="@+id/ip_tv_categoria"
-            android:layout_toRightOf="@+id/ip_et_barcode_number"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@+id/ip_iv_foto"
             android:text="Sottocategoria"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <Spinner
-            android:id="@+id/ip_spin_categoria"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignRight="@+id/ip_tv_descrizione"
-            android:layout_below="@+id/ip_tv_categoria" />
-
-        <Spinner
             android:id="@+id/ip_spin_sottocategoria"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignRight="@+id/ip_tv_sottocategoria"
-            android:layout_below="@+id/ip_tv_sottocategoria"
-            android:layout_toRightOf="@+id/ip_et_barcode_number" />
-
-        <TextView
-            android:id="@+id/ip_tv_prezzo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/ip_et_prezzo"
-            android:layout_alignLeft="@+id/ip_et_prezzo"
-            android:layout_marginBottom="23dp"
-            android:text="Prezzo"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:layout_width="140dp"
+            android:layout_height="40dp"
+            android:layout_alignLeft="@+id/ip_tv_sottocategoria"
+            android:layout_below="@+id/ip_tv_sottocategoria" />
 
         <DatePicker
             android:id="@+id/ip_dp_data_inizio"
@@ -169,16 +143,8 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/ip_tv_data_fine"
             android:layout_alignParentRight="true"
+            android:layout_toRightOf="@+id/ip_tv_data_fine"
             android:scaleX="0.7" />
-
-        <ImageButton
-            android:id="@+id/ip_ib_foto"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_alignRight="@+id/ip_ib_scan"
-            android:layout_alignTop="@+id/ip_iv_foto"
-            android:background="@drawable/camera"
-            android:scaleType="centerCrop" />
 
         <TextView
             android:id="@+id/ip_tv_data_inizio"
@@ -188,15 +154,6 @@
             android:layout_below="@+id/ip_spin_categoria"
             android:layout_marginTop="12dp"
             android:text="Inizia il"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <TextView
-            android:id="@+id/ip_tv_data_fine"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/ip_dp_data_inizio"
-            android:layout_toRightOf="@+id/ip_spin_categoria"
-            android:text="Termina il"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <EditText
@@ -216,10 +173,11 @@
             android:id="@+id/ip_spin_argomento"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/ip_tv_data_fine"
+            android:layout_alignBottom="@+id/ip_et_valore_argomento"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/ip_et_ulteriori_dettagli"
-            android:layout_marginTop="7dp" />
+            android:layout_marginTop="7dp"
+            android:layout_toRightOf="@+id/ip_et_valore_argomento" />
 
         <TextView
             android:id="@+id/ip_et_ulteriori_dettagli"
@@ -231,16 +189,6 @@
             android:text="Ulteriori Dettagli"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <Button
-            android:id="@+id/ip_btn_inserisci"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignRight="@+id/ip_spin_sottocategoria"
-            android:layout_below="@+id/ip_spin_argomento"
-            android:layout_marginTop="26dp"
-            android:text="Aggiungi!" />
-
         <Switch
             android:id="@+id/ip_switch_ulteriori_dettagli"
             android:layout_width="wrap_content"
@@ -249,6 +197,82 @@
             android:layout_alignBottom="@+id/ip_et_ulteriori_dettagli"
             android:layout_alignParentRight="true"
             android:scaleX="0.7" />
+
+        <Button
+            android:id="@+id/ip_btn_reset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/ip_dp_data_inizio"
+            android:layout_below="@+id/ip_spin_argomento"
+            android:layout_marginTop="21dp"
+            android:text="Reset" />
+
+        <Button
+            android:id="@+id/ip_btn_inserisci"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/ip_btn_reset"
+            android:layout_alignBottom="@+id/ip_btn_reset"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@+id/ip_btn_reset"
+            android:text="Aggiungi!" />
+
+        <Spinner
+            android:id="@+id/ip_spin_categoria"
+            android:layout_width="140dp"
+            android:layout_height="40dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignTop="@+id/ip_spin_sottocategoria" />
+
+        <TextView
+            android:id="@+id/ip_tv_prezzo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/ip_et_prezzo"
+            android:layout_alignLeft="@+id/ip_et_prezzo"
+            android:text="Prezzo"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/ip_tv_data_fine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/ip_tv_data_inizio"
+            android:layout_alignBottom="@+id/ip_tv_data_inizio"
+            android:layout_toLeftOf="@+id/ip_switch_ulteriori_dettagli"
+            android:text="Termina il"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/ip_tv_categoria"
+            android:layout_alignParentRight="true"
+            android:text=" €"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="30sp" />
+
+        <EditText
+            android:id="@+id/ip_et_prezzo"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/textView1"
+            android:layout_alignBottom="@+id/textView1"
+            android:layout_toLeftOf="@+id/textView1"
+            android:ems="10"
+            android:inputType="numberDecimal"
+            android:maxLines="1" />
+
+        <ImageButton
+            android:id="@+id/ip_ib_foto"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/ip_iv_foto"
+            android:layout_marginRight="60dp"
+            android:background="@drawable/camera"
+            android:scaleType="centerCrop" />
 
     </RelativeLayout>
 

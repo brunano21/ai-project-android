@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" 
+    android:longClickable="true" >
+
+    <RelativeLayout
+        android:id="@+id/listview_item_inserzione_in_scadenza_rl_transparentOverlay"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/red_transparent"
+        android:clickable="false"
+        android:gravity="center_vertical|center_horizontal"
+        android:visibility="gone" >
+
+        <TextView
+            android:id="@+id/listview_item_inserzione_in_scadenza_tv_aggiunto"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|center_horizontal"
+            android:text="Aggiunto alla tua todo list!"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/listview_item_inserzione_in_scadenza_rl_contentElement"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:alpha="1"
+        android:padding="15dp" >
+
+        <ImageView
+            android:id="@+id/listview_item_inserzione_in_scadenza_im_foto"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:src="@drawable/no" />
+
+        <TextView
+            android:id="@+id/listview_item_inserzione_in_scadenza_tv_descrizione"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/listview_item_inserzione_in_scadenza_im_foto"
+            android:layout_marginLeft="15dp"
+            android:layout_toRightOf="@+id/listview_item_inserzione_in_scadenza_im_foto"
+            android:text="Large Text"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/listview_item_inserzione_in_scadenza_tv_prezzo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/listview_item_inserzione_in_scadenza_tv_data_fine"
+            android:layout_alignRight="@+id/listview_item_inserzione_in_scadenza_tv_descrizione"
+            android:text="Prezzo"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/listview_item_inserzione_in_scadenza_tv_data_fine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/listview_item_inserzione_in_scadenza_im_foto"
+            android:layout_alignLeft="@+id/listview_item_inserzione_in_scadenza_tv_descrizione"
+            android:text="Small Text"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@android:color/holo_red_light" />
+
+    </RelativeLayout>
+
+</FrameLayout>
