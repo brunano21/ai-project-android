@@ -22,6 +22,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -43,6 +44,9 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -65,8 +69,10 @@ public class InserisciUnProdottoFragment extends Fragment {
 	private Spinner spin_categoria, spin_sottocategoria, spin_supermercato, spin_argomento;
 	private View rootView;
 	private Switch switch_data_fine, switch_ulteriori_dettagli;
+	
 	private LocationManager locationManager;
 
+	private ProgressDialog progressDialog;
 
 	private ArrayList<Supermercato> supermercatiArrayList;
 	private SupermercatoCustomAdapter supermercatiCustomAdapter;
@@ -110,9 +116,10 @@ public class InserisciUnProdottoFragment extends Fragment {
 
 		supermercatiArrayList = new ArrayList<Supermercato>();
 
-
+		
 		ottieniSupermercati(MainActivity.getLocation().getLatitude(), MainActivity.getLocation().getLongitude());
 		dp_data_fine.setEnabled(false);
+		
 		return rootView;
 	}
 
@@ -266,18 +273,23 @@ public class InserisciUnProdottoFragment extends Fragment {
 						params.put("valore_argomento", et_valore_argomento.getText().toString());
 					}
 
+				
+				/* SHOW OVERLAY PANEL*/
+				showOverlayPanel();
+				
 				/* INVIO DATI! */
-				MyHttpClient.setBasicAuth("zorro@zorro.it", "zorro");
 				MyHttpClient.post("/inserzione/aggiungi", params , new JsonHttpResponseHandler(){
 					@Override
 					public void onSuccess(JSONArray response) {
-						Toast.makeText(getActivity(), "Inserzione aggiunta con successo!", Toast.LENGTH_LONG).show();
 						resetVista();
-						Log.v("DEBUG", "tuttobene!" + response.toString());
+						hideOverlayPanel();
+						Toast.makeText(getActivity(), "Inserzione aggiunta con successo!", Toast.LENGTH_LONG).show();
 					}
 
 					@Override
 					public void onFailure(Throwable error, String content) {
+						hideOverlayPanel();
+						Toast.makeText(getActivity(), "Uffa, si è verificato un errore con il server. Riprova più tardi!", Toast.LENGTH_LONG).show();
 						Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
 					}
 				});
@@ -420,8 +432,10 @@ public class InserisciUnProdottoFragment extends Fragment {
 		try {
 			jsonObj = response.getJSONObject(0);
 			if(jsonObj.getBoolean("trovato")) {
-
+				
 				// prodotto trovato
+				Toast.makeText(getActivity().getBaseContext(), "Prodotto trovato nei nostri database!", Toast.LENGTH_SHORT).show();
+				
 				et_descrizione.setText(jsonObj.getString("descrizione")); 
 
 				int position = 0;
@@ -542,6 +556,15 @@ public class InserisciUnProdottoFragment extends Fragment {
 		});
 	}
 
+	
+	private void showOverlayPanel() {
+		progressDialog = ProgressDialog.show(getActivity(), "Caricamento", "Caricamento dati...", false);
+	}
+	
+	private void hideOverlayPanel() {
+		progressDialog.dismiss();
+	}
+	
 	private void resetVista() {
 		et_descrizione.setText("");
 		et_barcode_number.setText("");
@@ -566,6 +589,9 @@ public class InserisciUnProdottoFragment extends Fragment {
 		if(switch_ulteriori_dettagli.isChecked()) {
 			switch_ulteriori_dettagli.setChecked(false);
 		}
+		ScrollView sv = (ScrollView) rootView.findViewById(R.id.fragment_inserisci_un_prodotto_scrollview);
+		sv.fullScroll(View.FOCUS_UP);
+		et_descrizione.requestFocus();
 	}
 }
 

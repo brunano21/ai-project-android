@@ -16,6 +16,7 @@ import org.json.JSONException;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -40,7 +41,7 @@ import com.loopj.android.http.RequestParams;
 public class ValutaInserzioneFragment extends Fragment implements MyDialogInterface{ 
 
 
-	private final int AUTOLOAD_THRESHOLD = 8;
+	private final int AUTOLOAD_THRESHOLD = 7;
 	private boolean IsLoading = false;
 	private boolean MoreDataAvailable = true;
 
@@ -51,6 +52,8 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 
 	private ArrayList<Integer> idInserzioneList;
 	private ArrayAdapter<InserzioneDaValutare> valutazioneAdapter;
+	
+	private ProgressDialog progressDialog;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -67,9 +70,10 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 		getIdInserzioni();
 
 		registerListenersOnListView();
-		listView.addFooterView(footerView);
+		//listView.addFooterView(footerView);
 		listView.setAdapter(valutazioneAdapter);
-
+		
+		progressDialog = ProgressDialog.show(getActivity(), "Download", "Sto ricercando nel sistema le valutazioni che potresti valutare. Attendi", false);
 
 		return rootView;
 	}
@@ -83,20 +87,18 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 			@Override
 			public void onSuccess(JSONArray response) {
 				if(response.length() != 0) {
-					System.out.println(response.toString());
 					for(int i = 0; i<response.length(); i++)
 						try {
-							System.out.println("VAL = " + response.getInt(i));
 							idInserzioneList.add(Integer.valueOf(response.getInt(i)));
 						} catch (JSONException e) {
 							e.printStackTrace();
 						}
-					System.out.println("onSuccess " + idInserzioneList.size());
-					Log.v("DEBUG", "onSuccess " + idInserzioneList.size());
-					getInserzioniById(-1);
+					System.out.println("getIdInserzioni(): idInserzioneList.size() = " + idInserzioneList.size());
+					getInserzioniById(0);
 				}
 				else {
-					// mostrare qualcosa a video, differente da toast
+					// TODO: mostrare qualcosa a video, differente da toast
+					// TODO: nascondere anche il processDialog
 					Toast.makeText(getActivity(), "Nessuna inserzione da valutare", Toast.LENGTH_SHORT).show();
 				}
 			}
@@ -110,21 +112,24 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 	}
 
 	private void getInserzioniById(int totalItemCount) {
-		int count = totalItemCount + 1;
+		int count = totalItemCount;
 		List<Integer> idProssimaInserzioneList = new ArrayList<Integer>();
 
-		System.out.println("totalItemCount " + totalItemCount);
-		System.out.println("idInserzioneList.size() " + idInserzioneList.size());
+		System.out.println("getInserzioniById(): totalItemCount =  " + count);
+		System.out.println("getInserzioniById(): idInserzioneList.size() = " + idInserzioneList.size());
 
 		idProssimaInserzioneList = idInserzioneList.subList(count, (count + AUTOLOAD_THRESHOLD) < idInserzioneList.size() ? (count + AUTOLOAD_THRESHOLD) : idInserzioneList.size());
+		System.out.println("getInserzioniById(): idProssimaInserzioneList.size() = " + idProssimaInserzioneList.size());
 
-		System.out.println("idProssimaInserzioneList " + idProssimaInserzioneList.size());
+		if(idProssimaInserzioneList.size() == 0)
+			return;
+		
 		RequestParams params = new RequestParams();
 		StringBuilder sb = new StringBuilder();
 		for(Integer s : idProssimaInserzioneList) {
 			sb.append(s).append(",");
 		}
-		params.put("idInserzioneList", sb.toString());
+		params.put("idInserzioneList", sb.toString().substring(0, sb.toString().length()-1));
 		MyHttpClient.get("/valutazione/getInserzioneById", params, new JsonHttpResponseHandler() {
 
 			@Override
@@ -145,6 +150,7 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 		DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
 		for(int i = 0; i < response.length(); i++) {
 			try {
+				System.out.println("ID_INSERZIONE: " + response.getJSONObject(i).getInt("id"));
 				valutazioneList.add(new InserzioneDaValutare(
 						Integer.valueOf(response.getJSONObject(i).getInt("id")), 
 						response.getJSONObject(i).getString("categoria"),
@@ -163,9 +169,11 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 				e.printStackTrace();
 			}
 		}
-
-		valutazioneAdapter.notifyDataSetChanged();
+		
 		IsLoading = false;
+		listView.removeFooterView(footerView);
+		valutazioneAdapter.notifyDataSetChanged();
+		progressDialog.dismiss();
 	}
 
 
@@ -202,15 +210,19 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 
 			@Override
 			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-				System.out.println(firstVisibleItem + " " + visibleItemCount + " " + totalItemCount);
-				System.out.println(IsLoading + " " + MoreDataAvailable);
+				System.out.println("onScroll(): firstVisibleItem = " + firstVisibleItem + ", visibleItemCount = " + visibleItemCount + ", totalItemCount = " + totalItemCount);
+				System.out.println("onScroll(): IsLoading = " + IsLoading + ", MoreDataAvailable = " + MoreDataAvailable);
 				if(idInserzioneList.size() != 0)
 					if (!IsLoading && MoreDataAvailable) {
+						System.out.println("onScroll(): totalItemCount >= idInserzioneList.size() ?? " + totalItemCount + "vs" + idInserzioneList.size());
 						if (totalItemCount >= idInserzioneList.size()) {
 							MoreDataAvailable = false;
 							listView.removeFooterView(footerView);
-						} else if (totalItemCount - AUTOLOAD_THRESHOLD <= firstVisibleItem + visibleItemCount) {
+							valutazioneAdapter.notifyDataSetChanged();
+						} else if (totalItemCount <= firstVisibleItem + visibleItemCount) {
 							IsLoading = true;
+							listView.addFooterView(footerView);
+							valutazioneAdapter.notifyDataSetChanged();
 							getInserzioniById(totalItemCount);
 						}
 					}

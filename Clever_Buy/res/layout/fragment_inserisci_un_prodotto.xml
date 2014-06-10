@@ -1,8 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:padding="10dip"
-    android:tag="inserisciProdotto" >
+    android:padding="10dp"
+    android:tag="inserisciProdotto" 
+    android:id="@+id/fragment_inserisci_un_prodotto_scrollview" >
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -29,8 +31,11 @@
             android:layout_alignLeft="@+id/ip_tv_descrizione"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/ip_tv_descrizione"
-            android:ems="10" >
-            <requestFocus />
+            android:ems="10"
+            android:lines="1"
+            android:maxLines="1"
+            android:singleLine="true" >
+
         </EditText>
 
         <EditText
@@ -261,6 +266,7 @@
             android:layout_alignBottom="@+id/textView1"
             android:layout_toLeftOf="@+id/textView1"
             android:ems="10"
+            android:gravity="right"
             android:inputType="numberDecimal"
             android:maxLines="1" />
 
@@ -273,7 +279,6 @@
             android:layout_marginRight="60dp"
             android:background="@drawable/camera"
             android:scaleType="centerCrop" />
-
     </RelativeLayout>
 
 </ScrollView>
