@@ -64,30 +64,32 @@
         android:text="Small Text"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
-    <View
-        android:id="@+id/view1"
-        android:layout_width="fill_parent"
-        android:layout_height="2dip"
-        android:layout_alignLeft="@+id/dialog_inserzione_in_scadenza_tv_supermercato_indirizzo"
-        android:layout_centerVertical="true"
-        android:background="#6B707000" />
+    <Spinner
+        android:id="@+id/dialog_inserzione_in_scadenza_spin_todolist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/dialog_inserzione_in_scadenza_tv_scegli"
+        android:layout_alignRight="@+id/dialog_inserzione_in_scadenza_tv_scegli"
+        android:layout_below="@+id/dialog_inserzione_in_scadenza_tv_scegli"
+        android:layout_marginTop="16dp" />
 
     <TextView
         android:id="@+id/dialog_inserzione_in_scadenza_tv_scegli"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/dialog_inserzione_in_scadenza_tv_descrizione"
         android:layout_below="@+id/view1"
-        android:layout_marginTop="14dp"
-        android:layout_toLeftOf="@+id/dialog_inserzione_in_scadenza_tv_data_fine"
+        android:layout_marginTop="22dp"
         android:text="Aggiungi a:"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <Spinner
-        android:id="@+id/dialog_inserzione_in_scadenza_spin_todolist"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/view1"
-        android:layout_below="@+id/dialog_inserzione_in_scadenza_tv_scegli"
-        android:layout_marginTop="16dp" />
+    <View
+        android:id="@+id/view1"
+        android:layout_width="fill_parent"
+        android:layout_height="2dip"
+        android:layout_alignLeft="@+id/dialog_inserzione_in_scadenza_tv_supermercato_indirizzo"
+        android:layout_below="@+id/dialog_inserzione_in_scadenza_tv_supermercato_indirizzo"
+        android:layout_marginTop="29dp"
+        android:background="#6B707000" />
 
 </RelativeLayout>

@@ -7,7 +7,7 @@
         android:id="@+id/listview_item_inserzione_da_valutare_rl_transparentOverlay"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="@color/red_transparent"
+        android:background="@color/green"
         android:clickable="false"
         android:gravity="center_vertical|center_horizontal"
         android:visibility="gone" >

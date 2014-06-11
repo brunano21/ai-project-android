@@ -2,13 +2,13 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content" 
-    android:longClickable="true" >
+    >
 
     <RelativeLayout
         android:id="@+id/listview_item_inserzione_in_scadenza_rl_transparentOverlay"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="@color/red_transparent"
+        android:background="@color/green"
         android:clickable="false"
         android:gravity="center_vertical|center_horizontal"
         android:visibility="gone" >
@@ -30,7 +30,7 @@
         android:padding="15dp" >
 
         <ImageView
-            android:id="@+id/listview_item_inserzione_in_scadenza_im_foto"
+            android:id="@+id/listview_item_inserzione_in_scadenza_iv_foto"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_alignParentLeft="true"
@@ -42,9 +42,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_alignTop="@+id/listview_item_inserzione_in_scadenza_im_foto"
+            android:layout_alignTop="@+id/listview_item_inserzione_in_scadenza_iv_foto"
             android:layout_marginLeft="15dp"
-            android:layout_toRightOf="@+id/listview_item_inserzione_in_scadenza_im_foto"
+            android:layout_toRightOf="@+id/listview_item_inserzione_in_scadenza_iv_foto"
             android:text="Large Text"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -61,11 +61,12 @@
             android:id="@+id/listview_item_inserzione_in_scadenza_tv_data_fine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/listview_item_inserzione_in_scadenza_im_foto"
+            android:layout_alignBottom="@+id/listview_item_inserzione_in_scadenza_iv_foto"
             android:layout_alignLeft="@+id/listview_item_inserzione_in_scadenza_tv_descrizione"
             android:text="Small Text"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@android:color/holo_red_light" />
+            android:textColor="@color/red"
+            android:textStyle="italic" />
 
     </RelativeLayout>
 

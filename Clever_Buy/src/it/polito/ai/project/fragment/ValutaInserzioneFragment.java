@@ -40,7 +40,6 @@ import com.loopj.android.http.RequestParams;
 
 public class ValutaInserzioneFragment extends Fragment implements MyDialogInterface{ 
 
-
 	private final int AUTOLOAD_THRESHOLD = 7;
 	private boolean IsLoading = false;
 	private boolean MoreDataAvailable = true;
@@ -48,10 +47,10 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 	private View rootView;
 	private View footerView; 
 	private ListView listView;
+	
 	private List<InserzioneDaValutare> valutazioneList;
-
 	private ArrayList<Integer> idInserzioneList;
-	private ArrayAdapter<InserzioneDaValutare> valutazioneAdapter;
+	private ArrayAdapter<InserzioneDaValutare> valutazioneArrayAdapter;
 	
 	private ProgressDialog progressDialog;
 
@@ -65,24 +64,23 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 		idInserzioneList = new ArrayList<Integer>();
 
 		valutazioneList = new ArrayList<InserzioneDaValutare>();
-		valutazioneAdapter = new ValutazioneAdapter();
+		valutazioneArrayAdapter = new ValutazioneAdapter();
 
 		getIdInserzioni();
 
 		registerListenersOnListView();
-		//listView.addFooterView(footerView);
-		listView.setAdapter(valutazioneAdapter);
+		listView.setAdapter(valutazioneArrayAdapter);
 		
-		progressDialog = ProgressDialog.show(getActivity(), "Download", "Sto ricercando nel sistema le valutazioni che potresti valutare. Attendi", false);
+		progressDialog = ProgressDialog.show(getActivity(), "Download", "Sto ricercando nel sistema le inserzioni che potresti valutare. Attendi...", false);
 
 		return rootView;
 	}
 
 	private void getIdInserzioni() {
 		RequestParams params = new RequestParams();
-
 		params.put("lat", Double.toString(MainActivity.getLocation().getLatitude()));
 		params.put("lng", Double.toString(MainActivity.getLocation().getLongitude()));
+
 		MyHttpClient.get("/valutazione/getIdInserzioni", params, new JsonHttpResponseHandler(){
 			@Override
 			public void onSuccess(JSONArray response) {
@@ -124,11 +122,11 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 		if(idProssimaInserzioneList.size() == 0)
 			return;
 		
-		RequestParams params = new RequestParams();
 		StringBuilder sb = new StringBuilder();
 		for(Integer s : idProssimaInserzioneList) {
 			sb.append(s).append(",");
 		}
+		RequestParams params = new RequestParams();
 		params.put("idInserzioneList", sb.toString().substring(0, sb.toString().length()-1));
 		MyHttpClient.get("/valutazione/getInserzioneById", params, new JsonHttpResponseHandler() {
 
@@ -172,7 +170,7 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 		
 		IsLoading = false;
 		listView.removeFooterView(footerView);
-		valutazioneAdapter.notifyDataSetChanged();
+		valutazioneArrayAdapter.notifyDataSetChanged();
 		progressDialog.dismiss();
 	}
 
@@ -183,8 +181,7 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				RelativeLayout transparentOverlay = (RelativeLayout) view.findViewById(R.id.listview_item_inserzione_da_valutare_rl_transparentOverlay);
 				if(transparentOverlay.getVisibility() != View.VISIBLE) {
 					InserzioneDaValutare val = valutazioneList.get(position);
@@ -218,11 +215,11 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 						if (totalItemCount >= idInserzioneList.size()) {
 							MoreDataAvailable = false;
 							listView.removeFooterView(footerView);
-							valutazioneAdapter.notifyDataSetChanged();
+							valutazioneArrayAdapter.notifyDataSetChanged();
 						} else if (totalItemCount <= firstVisibleItem + visibleItemCount) {
 							IsLoading = true;
 							listView.addFooterView(footerView);
-							valutazioneAdapter.notifyDataSetChanged();
+							valutazioneArrayAdapter.notifyDataSetChanged();
 							getInserzioniById(totalItemCount);
 						}
 					}

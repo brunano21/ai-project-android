@@ -31,7 +31,7 @@
         android:layout_marginTop="33dp"
         android:maxHeight="200dp"
         android:maxWidth="200dp"
-        android:src="@drawable/logopolito" />
+        android:src="@drawable/logopolitowhite" />
 
     <TextView
         android:id="@+id/textView5"

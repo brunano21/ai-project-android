@@ -21,7 +21,12 @@ import it.polito.ai.project.main.MyHttpClient;
 import it.polito.ai.project.model.InserzioneInScadenza;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.ProgressDialog;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,34 +44,38 @@ import android.widget.AbsListView.OnScrollListener;
 
 public class InScadenzaFragment extends Fragment implements MyDialogInterface{
 
-	private final int AUTOLOAD_THRESHOLD = 8;
+	private final int AUTOLOAD_THRESHOLD = 7;
 	private boolean IsLoading = false;
 	private boolean MoreDataAvailable = true;
 
 	private View rootView;
 	private ListView listView;
-	private ListView footerView;
+	private View footerView;
 
 	private List<InserzioneInScadenza> inserzioniInScadenzaList;
 	private ArrayList<Integer> idInserzioniInScandenzaList;
 	private ArrayAdapter<InserzioneInScadenza> inserzioniInScadenzaArrayAdapter;
+
+	private ProgressDialog progressDialog;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 		rootView = inflater.inflate(R.layout.fragment_in_scadenza, container, false);
 		listView = (ListView) rootView.findViewById(R.id.inScadenzaListView);
-		footerView = (ListView) rootView.findViewById(R.layout.listview_footer);
+		footerView = inflater.inflate(R.layout.listview_footer, null, false);
 
 		idInserzioniInScandenzaList = new ArrayList<Integer>();
+
+		inserzioniInScadenzaList = new ArrayList<InserzioneInScadenza>();
 		inserzioniInScadenzaArrayAdapter = new InserzioniInScadenzaAdapter();
 
 		getIdInserzioniInScadenza();
 
-		listView.addFooterView(footerView);
+		registerListenersOnListView();
 		listView.setAdapter(inserzioniInScadenzaArrayAdapter);
 
-		registerListenersOnListView();
+		progressDialog = ProgressDialog.show(getActivity(), "Download", "Sto ricercando nel sistema inserzioni che scadranno a breve. Attendi...", false);
 
 		return rootView;
 	}
@@ -74,46 +83,54 @@ public class InScadenzaFragment extends Fragment implements MyDialogInterface{
 
 	private void getIdInserzioniInScadenza() {
 		RequestParams params = new RequestParams();
-		params.put("lat", MainActivity.getLocation().getLatitude());
-		params.put("lng", MainActivity.getLocation().getLatitude());
+		params.put("lat", Double.toString(MainActivity.getLocation().getLatitude()));
+		params.put("lng", Double.toString(MainActivity.getLocation().getLatitude()));
 
 		MyHttpClient.get("/inscadenza/getIdInserzioni", params, new JsonHttpResponseHandler(){
 			@Override
 			public void onSuccess(JSONArray response) {
-				System.out.println(response.toString());
-				for(int i = 0; i<response.length(); i++)
-					try {
-						idInserzioniInScandenzaList.add(Integer.valueOf(response.getInt(i)));
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
-
-				getInserzioniById(-1);
+				if(response.length() != 0) {
+					for(int i = 0; i<response.length(); i++)
+						try {
+							idInserzioniInScandenzaList.add(Integer.valueOf(response.getInt(i)));
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+					getInserzioniById(0);
+				}
+				else {
+					// TODO: mostrare qualcosa a video, differente da toast
+					// TODO: nascondere anche il processDialog
+					Toast.makeText(getActivity(), "Nessuna inserzione da valutare", Toast.LENGTH_SHORT).show();
+				}
 			}
-
-
 
 			@Override
 			public void onFailure(Throwable error, String content) {
 				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
 				Toast.makeText(getActivity(), "Ops, c'è stato un problema con il server.", Toast.LENGTH_SHORT).show();
 			}
-
 		});
 	}
 
 	private void getInserzioniById(int totalItemCount) {
-		int count = totalItemCount + 1;
-		List<Integer> idProssimeInserzioniList = new ArrayList<Integer>();
+		int count = totalItemCount;
+		List<Integer> idProssimaInserzioneList = new ArrayList<Integer>();
+		
+		System.out.println("getInserzioniById(): totalItemCount =  " + count);
+		System.out.println("getInserzioniById(): idInserzioneList.size() = " + idInserzioniInScandenzaList.size());
 
-		idProssimeInserzioniList = idInserzioniInScandenzaList.subList(count, (count + AUTOLOAD_THRESHOLD) < idInserzioniInScandenzaList.size() ? (count + AUTOLOAD_THRESHOLD) : idInserzioniInScandenzaList.size());
+		idProssimaInserzioneList = idInserzioniInScandenzaList.subList(count, (count + AUTOLOAD_THRESHOLD) < idInserzioniInScandenzaList.size() ? (count + AUTOLOAD_THRESHOLD) : idInserzioniInScandenzaList.size());
 
-		RequestParams params = new RequestParams();
+		if(idProssimaInserzioneList.size() == 0)
+			return;
+
 		StringBuilder sb = new StringBuilder();
-		for(Integer s : idProssimeInserzioniList) 
+		for(Integer s : idProssimaInserzioneList) {
 			sb.append(s).append(",");
-
-		params.put("idInserzioneList", sb.toString());
+		}
+		RequestParams params = new RequestParams();
+		params.put("idInserzioneList",  sb.toString().substring(0, sb.toString().length()-1));
 		MyHttpClient.get("/inscadenza/getInserzioneById", params, new JsonHttpResponseHandler() {
 			@Override
 			public void onSuccess(JSONArray response) {
@@ -148,8 +165,11 @@ public class InScadenzaFragment extends Fragment implements MyDialogInterface{
 			}
 		}
 
-		inserzioniInScadenzaArrayAdapter.notifyDataSetChanged();
 		IsLoading = false;
+		listView.removeFooterView(footerView);
+		inserzioniInScadenzaArrayAdapter.notifyDataSetChanged();
+		progressDialog.dismiss();
+
 	}
 
 	private void registerListenersOnListView() {
@@ -174,7 +194,7 @@ public class InScadenzaFragment extends Fragment implements MyDialogInterface{
 				return true;
 			}
 		}); 
-
+		
 		listView.setOnScrollListener(new OnScrollListener() {
 			@Override
 			public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -182,15 +202,18 @@ public class InScadenzaFragment extends Fragment implements MyDialogInterface{
 
 			@Override
 			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-				System.out.println(firstVisibleItem + " " + visibleItemCount + " " + totalItemCount);
-				System.out.println(IsLoading + " " + MoreDataAvailable);
+				System.out.println("onScroll(): firstVisibleItem = " + firstVisibleItem + ", visibleItemCount = " + visibleItemCount + ", totalItemCount = " + totalItemCount);
+				System.out.println("onScroll(): IsLoading = " + IsLoading + ", MoreDataAvailable = " + MoreDataAvailable);
 				if(idInserzioniInScandenzaList.size() != 0)
 					if (!IsLoading && MoreDataAvailable) {
 						if (totalItemCount >= idInserzioniInScandenzaList.size()) {
 							MoreDataAvailable = false;
 							listView.removeFooterView(footerView);
-						} else if (totalItemCount - AUTOLOAD_THRESHOLD <= firstVisibleItem + visibleItemCount) {
+							inserzioniInScadenzaArrayAdapter.notifyDataSetChanged();
+						} else if (totalItemCount <= firstVisibleItem + visibleItemCount) {
 							IsLoading = true;
+							listView.addFooterView(footerView);
+							inserzioniInScadenzaArrayAdapter.notifyDataSetChanged();
 							getInserzioniById(totalItemCount);
 						}
 					}
@@ -212,8 +235,8 @@ public class InScadenzaFragment extends Fragment implements MyDialogInterface{
 			@Override
 			public void onSuccess(JSONArray response) {
 				try {
-					Toast.makeText(getActivity().getApplicationContext(), "Elemento aggiunto!", Toast.LENGTH_LONG).show();
-					settaInserzioneComeAggiunta(response.getInt(0));
+					Toast.makeText(getActivity().getApplicationContext(), "Elemento aggiunto con successo!", Toast.LENGTH_LONG).show();
+					settaInserzioneComeAggiunta(response.getJSONObject(0).getInt("posizione"));
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
@@ -244,16 +267,19 @@ public class InScadenzaFragment extends Fragment implements MyDialogInterface{
 
 	private class InserzioniInScadenzaAdapter extends ArrayAdapter<InserzioneInScadenza> {
 
+		
 		public InserzioniInScadenzaAdapter() {
 			super(getActivity().getApplicationContext(), R.layout.listview_item_inserzione_in_scandenza, inserzioniInScadenzaList);
 		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
+			
 			View itemView = convertView;
+			
 			if(itemView == null) 
 				itemView = getActivity().getLayoutInflater().inflate(R.layout.listview_item_inserzione_in_scandenza, parent, false);
-
+			
 			// cerco l'inserzione  con la quale devo lavorare
 			InserzioneInScadenza inserzione = inserzioniInScadenzaList.get(position);
 
@@ -261,16 +287,28 @@ public class InScadenzaFragment extends Fragment implements MyDialogInterface{
 			TextView descrizione = (TextView) itemView.findViewById(R.id.listview_item_inserzione_in_scadenza_tv_descrizione);
 			TextView data_fine = (TextView) itemView.findViewById(R.id.listview_item_inserzione_in_scadenza_tv_data_fine);
 			TextView prezzo = (TextView) itemView.findViewById(R.id.listview_item_inserzione_in_scadenza_tv_prezzo);
-			ImageView foto = (ImageView) itemView.findViewById(R.id.listview_item_inserzione_in_scadenza_im_foto);
+			ImageView foto = (ImageView) itemView.findViewById(R.id.listview_item_inserzione_in_scadenza_iv_foto);
 
 			descrizione.setText(inserzione.getDescrizione());
-			data_fine.setText((inserzione.getDataFine() == DateTime.now()) ? "Oggi!" : "Domani!");
+			
+			if(DateTimeFormat.forPattern("yyyy-MM-dd").print(DateTime.now()).equals(DateTimeFormat.forPattern("yyyy-MM-dd").print(inserzione.getDataFine()))) {
+				data_fine.setTextColor(getResources().getColor(R.color.red));
+				data_fine.setText("Oggi!");
+			}
+			else {
+				data_fine.setTextColor(getResources().getColor(R.color.yellow));
+				data_fine.setText("Domani!");
+			}
+			
 			prezzo.setText(Float.toString(inserzione.getPrezzo()));
-
-			//TODO settare la foto! L'avevo fatto, mannaggia a cristo redentore!
-
+			
+			byte[] decodedString = Base64.decode(inserzione.getFoto(), Base64.DEFAULT);
+			Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length); 
+			foto.setImageBitmap(decodedByte);
+			
 			return itemView;
-		}
+		}		
+		
 	}
 
 

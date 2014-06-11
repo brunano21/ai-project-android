@@ -1,9 +1,7 @@
 package it.polito.ai.project.fragment;
 
 import it.polito.ai.project.R;
-
 import it.polito.ai.project.main.MyHttpClient;
-
 import it.polito.ai.project.model.InserzioneInScadenza;
 
 import java.io.Serializable;
@@ -11,9 +9,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.joda.time.DateTime;
-
 import org.json.JSONArray;
 import org.json.JSONException;
+
+
 
 
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -22,11 +21,15 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -99,6 +102,11 @@ public class DialogDettagliInserzioneInScadenza extends DialogFragment {
 		this.ins = mArgs.getParcelable("inserzioneInScadenza");
 		this.posizione = mArgs.getInt("posizione");
 
+		ImageView foto = (ImageView) view.findViewById(R.id.dialog_inserzione_in_scadenza_iv_foto);
+		byte[] decodedString = Base64.decode(ins.getFoto(), Base64.DEFAULT);
+		Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length); 
+		foto.setImageBitmap(decodedByte);
+		
 		descrizione = (TextView) view.findViewById(R.id.dialog_inserzione_in_scadenza_tv_descrizione);
 		descrizione.setText(ins.getDescrizione());
 
@@ -116,11 +124,12 @@ public class DialogDettagliInserzioneInScadenza extends DialogFragment {
 
 		spinner_todolist = (Spinner) view.findViewById(R.id.dialog_inserzione_in_scadenza_spin_todolist);
 
-		MyHttpClient.get("/inscadenza/getTodoList", null, new JsonHttpResponseHandler(){
+		MyHttpClient.get("/inscadenza/getTodoLists", null, new JsonHttpResponseHandler(){
 			@Override
 			public void onSuccess(JSONArray response) {
 				todoListHashMap = new HashMap<String, Integer>();
 				ArrayList<String> todoListArrayList = new ArrayList<String>();
+				
 				for(int i = 0; i < response.length(); i++) {
 					try {
 						todoListHashMap.put(response.getJSONObject(i).getString("nomeLista"), Integer.valueOf(response.getJSONObject(i).getString("idLista")));
