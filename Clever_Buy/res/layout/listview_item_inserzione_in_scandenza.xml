@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" 
-    >
+    android:layout_height="wrap_content" >
 
     <RelativeLayout
         android:id="@+id/listview_item_inserzione_in_scadenza_rl_transparentOverlay"
@@ -29,22 +28,47 @@
         android:alpha="1"
         android:padding="15dp" >
 
-        <ImageView
-            android:id="@+id/listview_item_inserzione_in_scadenza_iv_foto"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:src="@drawable/no" />
+        <FrameLayout
+            android:id="@+id/frameLayout1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <ImageView
+                android:id="@+id/listview_item_inserzione_in_scadenza_iv_foto"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/no" />
+
+            <ImageView
+                android:id="@+id/listview_item_inserzione_in_scadenza_iv_star"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="right|bottom"
+                android:src="@drawable/favorite_star"
+                android:visibility="gone" />
+
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/listview_item_inserzione_in_scadenza_tv_data_fine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/frameLayout1"
+            android:layout_alignLeft="@+id/listview_item_inserzione_in_scadenza_tv_descrizione"
+            android:text="Small Text"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/red"
+            android:textStyle="italic" />
 
         <TextView
             android:id="@+id/listview_item_inserzione_in_scadenza_tv_descrizione"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignTop="@+id/listview_item_inserzione_in_scadenza_iv_foto"
-            android:layout_marginLeft="15dp"
-            android:layout_toRightOf="@+id/listview_item_inserzione_in_scadenza_iv_foto"
+            android:layout_above="@+id/listview_item_inserzione_in_scadenza_tv_data_fine"
+            android:layout_alignRight="@+id/listview_item_inserzione_in_scadenza_tv_prezzo"
+            android:layout_alignTop="@+id/frameLayout1"
+            android:layout_marginLeft="14dp"
+            android:layout_toRightOf="@+id/frameLayout1"
             android:text="Large Text"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -53,21 +77,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/listview_item_inserzione_in_scadenza_tv_data_fine"
-            android:layout_alignRight="@+id/listview_item_inserzione_in_scadenza_tv_descrizione"
+            android:layout_alignParentRight="true"
             android:text="Prezzo"
             android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <TextView
-            android:id="@+id/listview_item_inserzione_in_scadenza_tv_data_fine"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/listview_item_inserzione_in_scadenza_iv_foto"
-            android:layout_alignLeft="@+id/listview_item_inserzione_in_scadenza_tv_descrizione"
-            android:text="Small Text"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/red"
-            android:textStyle="italic" />
-
     </RelativeLayout>
 
 </FrameLayout>

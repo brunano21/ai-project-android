@@ -13,10 +13,12 @@ public class InserzioneInScadenza implements Parcelable {
 	String foto; 	// codificata in base64
 	String supermercato;
 	String supermercato_indirizzo;
-
+	String nome_todolist;
+	
 	public InserzioneInScadenza(int idInserzione, float prezzo,	DateTime dataFine, 
 			String descrizione, String foto, 
-			String supermercato, String supermercato_indirizzo) {
+			String supermercato, String supermercato_indirizzo,
+			String nome_todolist) {
 		super();
 		this.idInserzione = idInserzione;
 		this.prezzo = prezzo;
@@ -25,6 +27,7 @@ public class InserzioneInScadenza implements Parcelable {
 		this.foto = foto;
 		this.supermercato = supermercato;
 		this.supermercato_indirizzo = supermercato_indirizzo;
+		this.nome_todolist = nome_todolist;
 	}
 
 	public InserzioneInScadenza() {
@@ -72,12 +75,16 @@ public class InserzioneInScadenza implements Parcelable {
 	public void setSupermercato_indirizzo(String supermercato_indirizzo) {
 		this.supermercato_indirizzo = supermercato_indirizzo;
 	}
-
+	public String getNome_todolist() {
+		return nome_todolist;
+	}
+	public void setNome_todolist(String nome_todolist) {
+		this.nome_todolist = nome_todolist;
+	}
 
 
 	@Override
 	public int describeContents() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 	@Override
@@ -88,22 +95,24 @@ public class InserzioneInScadenza implements Parcelable {
 		dest.writeString(foto);
 		dest.writeString(supermercato);
 		dest.writeString(supermercato_indirizzo);
+		dest.writeString(nome_todolist);
 	}
 
-	public static final Parcelable.Creator<InserzioneDaValutare> CREATOR = new Creator<InserzioneDaValutare>() {  
-		public InserzioneDaValutare createFromParcel(Parcel source) {  
-			InserzioneDaValutare val = new InserzioneDaValutare();  
+	public static final Parcelable.Creator<InserzioneInScadenza> CREATOR = new Creator<InserzioneInScadenza>() {  
+		public InserzioneInScadenza createFromParcel(Parcel source) {  
+			InserzioneInScadenza val = new InserzioneInScadenza();  
 			val.idInserzione = source.readInt(); 
 			val.prezzo = source.readFloat();
 			val.dataFine = (DateTime) source.readSerializable();
 			val.foto = source.readString();
 			val.supermercato = source.readString();
 			val.supermercato_indirizzo = source.readString();
+			val.nome_todolist = source.readString();
 			return val;  
 		}
 
 		@Override
-		public InserzioneDaValutare[] newArray(int size) {
+		public InserzioneInScadenza[] newArray(int size) {
 			return null;
 		}
 	};

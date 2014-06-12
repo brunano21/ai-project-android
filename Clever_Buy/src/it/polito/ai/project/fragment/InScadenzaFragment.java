@@ -19,6 +19,7 @@ import it.polito.ai.project.fragment.DialogDettagliInserzioneInScadenza.MyDialog
 import it.polito.ai.project.main.MainActivity;
 import it.polito.ai.project.main.MyHttpClient;
 import it.polito.ai.project.model.InserzioneInScadenza;
+import android.R.integer;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.ProgressDialog;
@@ -69,9 +70,9 @@ public class InScadenzaFragment extends Fragment implements MyDialogInterface{
 
 		inserzioniInScadenzaList = new ArrayList<InserzioneInScadenza>();
 		inserzioniInScadenzaArrayAdapter = new InserzioniInScadenzaAdapter();
-
+		
 		getIdInserzioniInScadenza();
-
+		
 		registerListenersOnListView();
 		listView.setAdapter(inserzioniInScadenzaArrayAdapter);
 
@@ -150,14 +151,20 @@ public class InScadenzaFragment extends Fragment implements MyDialogInterface{
 		DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
 		for(int i = 0; i < response.length(); i++) {
 			try {
-				inserzioniInScadenzaList.add(new InserzioneInScadenza(
+				InserzioneInScadenza inserzione = new InserzioneInScadenza(
 						Integer.valueOf(response.getJSONObject(i).getInt("id")), 
 						Float.valueOf(response.getJSONObject(i).getString("prezzo")), 
 						formatter.parseDateTime(response.getJSONObject(i).getString("data_fine")),
 						response.getJSONObject(i).getString("descrizione"),
 						response.getJSONObject(i).getString("foto"),
 						response.getJSONObject(i).getString("supermercato"),
-						response.getJSONObject(i).getString("supermercato_indirizzo")));
+						response.getJSONObject(i).getString("supermercato_indirizzo"),
+						(response.getJSONObject(i).has("nome_todolist")) ? response.getJSONObject(i).getString("nome_todolist") : null); 
+				
+				inserzioniInScadenzaList.add(inserzione);
+				//inserzioniInScadenzaArrayAdapter.
+				
+				
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			} catch (JSONException e) {
@@ -177,11 +184,15 @@ public class InScadenzaFragment extends Fragment implements MyDialogInterface{
 		listView.setOnItemLongClickListener(new OnItemLongClickListener() {
 
 			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+				InserzioneInScadenza ins = inserzioniInScadenzaList.get(position);
+				if(ins.getNome_todolist() != null) {
+					Toast.makeText(getActivity(), "Hai già aggiunto questo elemento alle tue todolist [in "+ ins.getNome_todolist() + "]", Toast.LENGTH_SHORT).show();
+					return false;
+				}
 				RelativeLayout transparentOverlay = (RelativeLayout) view.findViewById(R.id.listview_item_inserzione_in_scadenza_rl_transparentOverlay);
 				if(transparentOverlay.getVisibility() == View.VISIBLE)
 					return false; // TODO: check!
 
-				InserzioneInScadenza ins = inserzioniInScadenzaList.get(position);
 				FragmentManager manager = getFragmentManager();
 				DialogDettagliInserzioneInScadenza dialog = DialogDettagliInserzioneInScadenza.getInstance(InScadenzaFragment.this);
 				Bundle args = new Bundle();
@@ -265,13 +276,24 @@ public class InScadenzaFragment extends Fragment implements MyDialogInterface{
 
 	/*-----------------------------------  INNER CLASS  -----------------------------------------------*/
 
-	private class InserzioniInScadenzaAdapter extends ArrayAdapter<InserzioneInScadenza> {
+	public class InserzioniInScadenzaAdapter extends ArrayAdapter<InserzioneInScadenza> {
 
+		public HashMap<InserzioneInScadenza, Integer> idsMap; 
 		
 		public InserzioniInScadenzaAdapter() {
 			super(getActivity().getApplicationContext(), R.layout.listview_item_inserzione_in_scandenza, inserzioniInScadenzaList);
+			idsMap= new HashMap<InserzioneInScadenza, Integer>();
+			//for(int i = 0; i < inserzioniInScadenzaList.size(); ++i)
+				//idsMap.put(inserzioniInScadenzaList.get(i), i);
+				
 		}
-
+		
+		/*
+		public HashMap<InserzioneInScadenza, Integer> getIdsMap() {
+			return idsMap;
+		}
+		*/
+		
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			
@@ -300,14 +322,32 @@ public class InScadenzaFragment extends Fragment implements MyDialogInterface{
 				data_fine.setText("Domani!");
 			}
 			
-			prezzo.setText(Float.toString(inserzione.getPrezzo()));
+			prezzo.setText(Float.toString(inserzione.getPrezzo()) + " €");
 			
 			byte[] decodedString = Base64.decode(inserzione.getFoto(), Base64.DEFAULT);
 			Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length); 
 			foto.setImageBitmap(decodedByte);
 			
+			ImageView star = (ImageView) itemView.findViewById(R.id.listview_item_inserzione_in_scadenza_iv_star);
+			if(inserzione.getNome_todolist() != null) 
+				star.setVisibility(View.VISIBLE);
+			else
+				star.setVisibility(View.GONE);
+			
 			return itemView;
-		}		
+		}
+		/*
+		@Override
+		public long getItemId(int position) {
+			InserzioneInScadenza item = getItem(position);
+			return idsMap.get(item);
+		}
+
+		@Override
+		public boolean hasStableIds() {
+			return true;
+		}
+		*/		
 		
 	}
 

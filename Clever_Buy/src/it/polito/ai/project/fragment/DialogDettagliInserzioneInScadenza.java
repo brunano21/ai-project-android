@@ -9,8 +9,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 import org.json.JSONArray;
 import org.json.JSONException;
+
 
 
 
@@ -62,7 +64,7 @@ public class DialogDettagliInserzioneInScadenza extends DialogFragment {
 	
 	private TextView descrizione;
 	private TextView prezzo; 
-	private TextView dataFine;
+	private TextView data_fine;
 	private TextView supermercato_nome;
 	private TextView supermercato_indirizzo;
 	private Spinner spinner_todolist;
@@ -113,8 +115,15 @@ public class DialogDettagliInserzioneInScadenza extends DialogFragment {
 		prezzo = (TextView) view.findViewById(R.id.dialog_inserzione_in_scadenza_tv_prezzo);
 		prezzo.setText(String.valueOf(ins.getPrezzo()) + " €");
 
-		dataFine = (TextView) view.findViewById(R.id.dialog_inserzione_in_scadenza_tv_data_fine);
-		dataFine.setText((ins.getDataFine() == DateTime.now()) ?  "Oggi" : "Domani");
+		data_fine = (TextView) view.findViewById(R.id.dialog_inserzione_in_scadenza_tv_data_fine);
+		if(DateTimeFormat.forPattern("yyyy-MM-dd").print(DateTime.now()).equals(DateTimeFormat.forPattern("yyyy-MM-dd").print(ins.getDataFine()))) {
+			data_fine.setTextColor(getResources().getColor(R.color.red));
+			data_fine.setText("Oggi!");
+		}
+		else {
+			data_fine.setTextColor(getResources().getColor(R.color.yellow));
+			data_fine.setText("Domani!");
+		}
 
 		supermercato_nome = (TextView) view.findViewById(R.id.dialog_inserzione_in_scadenza_tv_supermercato);
 		supermercato_nome.setText(ins.getSupermercato());
