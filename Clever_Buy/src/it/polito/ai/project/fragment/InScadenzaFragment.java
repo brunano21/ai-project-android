@@ -12,6 +12,8 @@ import org.json.JSONException;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.nhaarman.listviewanimations.itemmanipulation.AnimateDismissAdapter;
+import com.nhaarman.listviewanimations.itemmanipulation.OnDismissCallback;
 
 import it.polito.ai.project.R;
 import it.polito.ai.project.fragment.DialogDettagliInserzioneInScadenza;
@@ -56,7 +58,7 @@ public class InScadenzaFragment extends Fragment implements MyDialogInterface{
 	private List<InserzioneInScadenza> inserzioniInScadenzaList;
 	private ArrayList<Integer> idInserzioniInScandenzaList;
 	private ArrayAdapter<InserzioneInScadenza> inserzioniInScadenzaArrayAdapter;
-
+	private AnimateDismissAdapter animateDismissAdapter;
 	private ProgressDialog progressDialog;
 
 	@Override
@@ -69,18 +71,22 @@ public class InScadenzaFragment extends Fragment implements MyDialogInterface{
 		idInserzioniInScandenzaList = new ArrayList<Integer>();
 
 		inserzioniInScadenzaList = new ArrayList<InserzioneInScadenza>();
+		
 		inserzioniInScadenzaArrayAdapter = new InserzioniInScadenzaAdapter();
 		
 		getIdInserzioniInScadenza();
 		
+		animateDismissAdapter = new AnimateDismissAdapter(inserzioniInScadenzaArrayAdapter, new MyOnDismissCallback());
+		animateDismissAdapter.setAbsListView(listView);
+		
+		listView.setAdapter(animateDismissAdapter);
 		registerListenersOnListView();
-		listView.setAdapter(inserzioniInScadenzaArrayAdapter);
-
+		
+		
 		progressDialog = ProgressDialog.show(getActivity(), "Download", "Sto ricercando nel sistema inserzioni che scadranno a breve. Attendi...", false);
 
 		return rootView;
 	}
-
 
 	private void getIdInserzioniInScadenza() {
 		RequestParams params = new RequestParams();
@@ -162,8 +168,8 @@ public class InScadenzaFragment extends Fragment implements MyDialogInterface{
 						(response.getJSONObject(i).has("nome_todolist")) ? response.getJSONObject(i).getString("nome_todolist") : null); 
 				
 				inserzioniInScadenzaList.add(inserzione);
-				//inserzioniInScadenzaArrayAdapter.
-				
+
+
 				
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
@@ -189,10 +195,7 @@ public class InScadenzaFragment extends Fragment implements MyDialogInterface{
 					Toast.makeText(getActivity(), "Hai già aggiunto questo elemento alle tue todolist [in "+ ins.getNome_todolist() + "]", Toast.LENGTH_SHORT).show();
 					return false;
 				}
-				RelativeLayout transparentOverlay = (RelativeLayout) view.findViewById(R.id.listview_item_inserzione_in_scadenza_rl_transparentOverlay);
-				if(transparentOverlay.getVisibility() == View.VISIBLE)
-					return false; // TODO: check!
-
+				
 				FragmentManager manager = getFragmentManager();
 				DialogDettagliInserzioneInScadenza dialog = DialogDettagliInserzioneInScadenza.getInstance(InScadenzaFragment.this);
 				Bundle args = new Bundle();
@@ -230,8 +233,6 @@ public class InScadenzaFragment extends Fragment implements MyDialogInterface{
 					}
 			}
 		});
-
-
 	}
 
 
@@ -267,32 +268,27 @@ public class InScadenzaFragment extends Fragment implements MyDialogInterface{
 	}
 
 	private void settaInserzioneComeAggiunta(int posizione) {
-		View itemView = (View) listView.getChildAt(posizione);
-		RelativeLayout transparentOverlay = (RelativeLayout) itemView.findViewById(R.id.listview_item_inserzione_in_scadenza_rl_transparentOverlay);
-		RelativeLayout contentElement = (RelativeLayout) itemView.findViewById(R.id.listview_item_inserzione_in_scadenza_rl_contentElement);
-		contentElement.setAlpha(0.2f);
-		transparentOverlay.setVisibility(1);
+		animateDismissAdapter.animateDismiss(posizione);
 	}
 
-	/*-----------------------------------  INNER CLASS  -----------------------------------------------*/
+	/*-----------------------------------  INNER CLASSES  -----------------------------------------------*/
 
-	public class InserzioniInScadenzaAdapter extends ArrayAdapter<InserzioneInScadenza> {
+	private class MyOnDismissCallback implements OnDismissCallback {
 
-		public HashMap<InserzioneInScadenza, Integer> idsMap; 
+		@Override
+		public void onDismiss(final AbsListView listView, final int[] reverseSortedPositions) {
+			for (int position : reverseSortedPositions) {
+				 inserzioniInScadenzaArrayAdapter.remove(inserzioniInScadenzaArrayAdapter.getItem(position));
+            }
+		}
 		
+	}
+	
+	private class InserzioniInScadenzaAdapter extends ArrayAdapter<InserzioneInScadenza> {
+
 		public InserzioniInScadenzaAdapter() {
 			super(getActivity().getApplicationContext(), R.layout.listview_item_inserzione_in_scandenza, inserzioniInScadenzaList);
-			idsMap= new HashMap<InserzioneInScadenza, Integer>();
-			//for(int i = 0; i < inserzioniInScadenzaList.size(); ++i)
-				//idsMap.put(inserzioniInScadenzaList.get(i), i);
-				
 		}
-		
-		/*
-		public HashMap<InserzioneInScadenza, Integer> getIdsMap() {
-			return idsMap;
-		}
-		*/
 		
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
@@ -335,19 +331,7 @@ public class InScadenzaFragment extends Fragment implements MyDialogInterface{
 				star.setVisibility(View.GONE);
 			
 			return itemView;
-		}
-		/*
-		@Override
-		public long getItemId(int position) {
-			InserzioneInScadenza item = getItem(position);
-			return idsMap.get(item);
-		}
-
-		@Override
-		public boolean hasStableIds() {
-			return true;
-		}
-		*/		
+		}		
 		
 	}
 

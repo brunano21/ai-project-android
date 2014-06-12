@@ -6,8 +6,7 @@
     <ListView
         android:id="@+id/inScadenzaListView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true" >
+        android:layout_height="wrap_content" >
     </ListView>
 
 </RelativeLayout>

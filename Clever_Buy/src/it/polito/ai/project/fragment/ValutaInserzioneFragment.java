@@ -37,6 +37,8 @@ import android.widget.Toast;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.nhaarman.listviewanimations.itemmanipulation.AnimateDismissAdapter;
+import com.nhaarman.listviewanimations.itemmanipulation.OnDismissCallback;
 
 public class ValutaInserzioneFragment extends Fragment implements MyDialogInterface{ 
 
@@ -47,11 +49,12 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 	private View rootView;
 	private View footerView; 
 	private ListView listView;
-	
+
 	private List<InserzioneDaValutare> valutazioneList;
 	private ArrayList<Integer> idInserzioneList;
 	private ArrayAdapter<InserzioneDaValutare> valutazioneArrayAdapter;
-	
+	private AnimateDismissAdapter animateDismissAdapter;
+
 	private ProgressDialog progressDialog;
 
 	@Override
@@ -68,9 +71,11 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 
 		getIdInserzioni();
 
+		animateDismissAdapter = new AnimateDismissAdapter(valutazioneArrayAdapter, new MyOnDismissCallback());
+		animateDismissAdapter.setAbsListView(listView);
+		listView.setAdapter(animateDismissAdapter);
 		registerListenersOnListView();
-		listView.setAdapter(valutazioneArrayAdapter);
-		
+
 		progressDialog = ProgressDialog.show(getActivity(), "Download", "Sto ricercando nel sistema le inserzioni che potresti valutare. Attendi...", false);
 
 		return rootView;
@@ -121,11 +126,11 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 
 		if(idProssimaInserzioneList.size() == 0)
 			return;
-		
+
 		StringBuilder sb = new StringBuilder();
-		for(Integer s : idProssimaInserzioneList) {
+		for(Integer s : idProssimaInserzioneList)
 			sb.append(s).append(",");
-		}
+
 		RequestParams params = new RequestParams();
 		params.put("idInserzioneList", sb.toString().substring(0, sb.toString().length()-1));
 		MyHttpClient.get("/valutazione/getInserzioneById", params, new JsonHttpResponseHandler() {
@@ -167,7 +172,7 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 				e.printStackTrace();
 			}
 		}
-		
+
 		IsLoading = false;
 		listView.removeFooterView(footerView);
 		valutazioneArrayAdapter.notifyDataSetChanged();
@@ -182,20 +187,18 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				RelativeLayout transparentOverlay = (RelativeLayout) view.findViewById(R.id.listview_item_inserzione_da_valutare_rl_transparentOverlay);
-				if(transparentOverlay.getVisibility() != View.VISIBLE) {
-					InserzioneDaValutare val = valutazioneList.get(position);
-					FragmentManager manager = getFragmentManager();
-					DialogDettagliValutazioneInserzione dialog = DialogDettagliValutazioneInserzione.getInstance(ValutaInserzioneFragment.this);
+				InserzioneDaValutare val = valutazioneList.get(position);
+				FragmentManager manager = getFragmentManager();
+				DialogDettagliValutazioneInserzione dialog = DialogDettagliValutazioneInserzione.getInstance(ValutaInserzioneFragment.this);
 
-					Bundle args = new Bundle();
-					args.putSerializable("dialogInterface", dialog.getArguments().getSerializable("dialogInterface"));
-					args.putParcelable("valutazione", val);
-					args.putInt("posizione", position);
+				Bundle args = new Bundle();
+				args.putSerializable("dialogInterface", dialog.getArguments().getSerializable("dialogInterface"));
+				args.putParcelable("valutazione", val);
+				args.putInt("posizione", position);
 
-					dialog.setArguments(args);
-					dialog.show(manager, "myDialog");
-				}
+				dialog.setArguments(args);
+				dialog.show(manager, "myDialog");
+
 			}
 		});
 
@@ -268,12 +271,20 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 	}
 
 	private void settaInserzioneValutata(int posizione){
-		System.out.println(posizione);
-		View itemView = (View) listView.getChildAt(posizione);
-		RelativeLayout transparentOverlay = (RelativeLayout) itemView.findViewById(R.id.listview_item_inserzione_da_valutare_rl_transparentOverlay);
-		RelativeLayout contentElement = (RelativeLayout) itemView.findViewById(R.id.listview_item_inserzione_da_valutare_rl_contentElement);
-		contentElement.setAlpha(0.2f);
-		transparentOverlay.setVisibility(1);
+		animateDismissAdapter.animateDismiss(posizione);
+	}
+
+	/*-----------------------------------  INNER CLASSES  -----------------------------------------------*/
+
+	private class MyOnDismissCallback implements OnDismissCallback {
+
+		@Override
+		public void onDismiss(final AbsListView listView, final int[] reverseSortedPositions) {
+			for (int position : reverseSortedPositions) {
+				valutazioneArrayAdapter.remove(valutazioneArrayAdapter.getItem(position));
+			}
+		}
+
 	}
 
 	private class ValutazioneAdapter extends ArrayAdapter<InserzioneDaValutare> {
