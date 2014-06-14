@@ -24,6 +24,8 @@
 
 	<string name="string_button_addItem">Add</string>
 	<string name="string_button_addItem_byBarCode">BarCode</string>
+	<string name="string_button_hint">Hint</string>
+	<string name="string_button_hint_close">Close Hint</string>
     
     <string-array name="list_item_quantity">
         <item>Kg</item>
