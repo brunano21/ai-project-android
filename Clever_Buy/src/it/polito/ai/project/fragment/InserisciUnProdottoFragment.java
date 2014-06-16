@@ -26,6 +26,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -49,6 +50,7 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -63,14 +65,13 @@ public class InserisciUnProdottoFragment extends Fragment {
 
 	private ImageButton ib_scan, ib_foto;
 	private ImageView iv_foto;
-	private EditText et_descrizione, et_prezzo, et_barcode_number, et_valore_argomento;
+	private TextView tv_barcode_number;
+	private EditText et_descrizione, et_prezzo, et_valore_argomento;
 	private Button btn_inserisci, btn_reset;
 	private DatePicker dp_data_inizio, dp_data_fine;
 	private Spinner spin_categoria, spin_sottocategoria, spin_supermercato, spin_argomento;
 	private View rootView;
 	private Switch switch_data_fine, switch_ulteriori_dettagli;
-	
-	private LocationManager locationManager;
 
 	private ProgressDialog progressDialog;
 
@@ -81,10 +82,17 @@ public class InserisciUnProdottoFragment extends Fragment {
 
 	private Bitmap bitmapFoto;
 
-	@Override 
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	private boolean modificaInserzione = false;
 
+	@Override 
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+		Bundle bundle = this.getArguments();
+		System.out.println("pre check");
+		if(bundle.containsKey("idInserzione")) {
+			modificaInserzione  = true;
+			System.out.println("lo contiene");
+		}
 		rootView 			= inflater.inflate(R.layout.fragment_inserisci_un_prodotto, container, false);
 
 		ib_foto 			= (ImageButton) rootView.findViewById(R.id.ip_ib_foto);
@@ -95,7 +103,7 @@ public class InserisciUnProdottoFragment extends Fragment {
 		btn_reset			= (Button) rootView.findViewById(R.id.ip_btn_reset);
 
 		et_descrizione  	= (EditText) rootView.findViewById(R.id.ip_et_descrizione);
-		et_barcode_number  	= (EditText) rootView.findViewById(R.id.ip_et_barcode_number);
+		tv_barcode_number  	= (TextView) rootView.findViewById(R.id.ip_et_barcode_number);
 		et_prezzo			= (EditText) rootView.findViewById(R.id.ip_et_prezzo);
 		et_valore_argomento = (EditText) rootView.findViewById(R.id.ip_et_valore_argomento);
 
@@ -110,16 +118,22 @@ public class InserisciUnProdottoFragment extends Fragment {
 		switch_data_fine = (Switch) rootView.findViewById(R.id.ip_switch_data_fine);
 		switch_ulteriori_dettagli = (Switch) rootView.findViewById(R.id.ip_switch_ulteriori_dettagli);
 
+
+
 		addListeners();
 		nascondiAnnoDatePicker();
 		ottieniCategorie();
+		
 
 		supermercatiArrayList = new ArrayList<Supermercato>();
 
-		
 		ottieniSupermercati(MainActivity.getLocation().getLatitude(), MainActivity.getLocation().getLongitude());
 		dp_data_fine.setEnabled(false);
-		
+
+		if(modificaInserzione)
+			getInserzioneById(bundle.getInt("idInserzione"));
+
+
 		return rootView;
 	}
 
@@ -194,11 +208,11 @@ public class InserisciUnProdottoFragment extends Fragment {
 				params.put("descrizione", et_descrizione.getText().toString());
 
 				/* BAR CODE */
-				if(et_barcode_number.getText().toString() == null || et_barcode_number.getText().toString().matches("")) {
+				if(tv_barcode_number.getText().toString() == null || tv_barcode_number.getText().toString().matches("")) {
 					Toast.makeText(getActivity().getBaseContext(), "Codice a barre del prodotto mancante", Toast.LENGTH_SHORT).show();
 					return;
 				}
-				params.put("codiceBarre", et_barcode_number.getText().toString());
+				params.put("codiceBarre", tv_barcode_number.getText().toString());
 
 				/* CATEGORIA */
 				params.put("categoria", spin_categoria.getSelectedItem().toString());
@@ -273,10 +287,10 @@ public class InserisciUnProdottoFragment extends Fragment {
 						params.put("valore_argomento", et_valore_argomento.getText().toString());
 					}
 
-				
+
 				/* SHOW OVERLAY PANEL*/
 				showOverlayPanel();
-				
+
 				/* INVIO DATI! */
 				MyHttpClient.post("/inserzione/aggiungi", params , new JsonHttpResponseHandler(){
 					@Override
@@ -398,7 +412,7 @@ public class InserisciUnProdottoFragment extends Fragment {
 		case IntentIntegrator.REQUEST_CODE:	// barcode scanner
 			IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
 			if(resultCode != Activity.RESULT_CANCELED && scanResult != null) {
-				et_barcode_number.setText(scanResult.getContents());
+				tv_barcode_number.setText(scanResult.getContents());
 				controllaBarcode(scanResult.getContents());
 			}
 			break;
@@ -432,10 +446,10 @@ public class InserisciUnProdottoFragment extends Fragment {
 		try {
 			jsonObj = response.getJSONObject(0);
 			if(jsonObj.getBoolean("trovato")) {
-				
+
 				// prodotto trovato
 				Toast.makeText(getActivity().getBaseContext(), "Prodotto trovato nei nostri database!", Toast.LENGTH_SHORT).show();
-				
+
 				et_descrizione.setText(jsonObj.getString("descrizione")); 
 
 				int position = 0;
@@ -556,18 +570,18 @@ public class InserisciUnProdottoFragment extends Fragment {
 		});
 	}
 
-	
+
 	private void showOverlayPanel() {
 		progressDialog = ProgressDialog.show(getActivity(), "Caricamento", "Caricamento dati...", false);
 	}
-	
+
 	private void hideOverlayPanel() {
 		progressDialog.dismiss();
 	}
-	
+
 	private void resetVista() {
 		et_descrizione.setText("");
-		et_barcode_number.setText("");
+		tv_barcode_number.setText("");
 		et_prezzo.setText("");
 
 		spin_categoria.setSelection(0);
@@ -593,5 +607,57 @@ public class InserisciUnProdottoFragment extends Fragment {
 		sv.fullScroll(View.FOCUS_UP);
 		et_descrizione.requestFocus();
 	}
+	
+	private void getInserzioneById(Integer idInserzione) {
+		RequestParams params = new RequestParams();
+		params.put("idInserzione", String.valueOf(idInserzione));
+		MyHttpClient.get("/inserzione/modifica/getInserzioneById", params, new JsonHttpResponseHandler() {
+			@Override
+			public void onSuccess(JSONArray response) {
+					setDatiInserzione(response);
+			}
+			
+			@Override
+			public void onFailure(Throwable error, String content) {
+				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			}
+		});
+	}
+	
+	private void setDatiInserzione(JSONArray response) {
+		try {
+			et_descrizione.setText(response.getJSONObject(0).getString("descrizione"));
+			tv_barcode_number.setText(response.getJSONObject(0).getString("codiceBarre"));
+			et_prezzo.setText(response.getJSONObject(0).getString("prezzo"));
+			for(int i = 0; i < spin_supermercato.getCount(); i++) {
+				Supermercato s = (Supermercato) spin_supermercato.getItemAtPosition(i);
+				if(s.getId() == response.getJSONObject(0).getInt("supermercato")) {
+					spin_supermercato.setSelection(i);
+					break;
+				}
+			}
+			/*
+			int i = categoriaSpinnerArrayAdapter.getPosition(response.getJSONObject(0).getString("categoria"));
+			spin_categoria.setSelection(i);
+			i = sottocategoriaSpinnerArrayAdapter.getPosition(response.getJSONObject(0).getString("sottocategoria"));
+			spin_sottocategoria.setSelection(i);
+			*/
+			DateTime data_inizio = DateTimeFormat.forPattern("yyyy/MM/dd").parseDateTime(response.getJSONObject(0).getString("data_inizio"));
+			dp_data_inizio.updateDate(data_inizio.getYear(), data_inizio.getMonthOfYear(), data_inizio.getDayOfWeek());
+			
+			DateTime data_fine = DateTimeFormat.forPattern("yyyy/MM/dd").parseDateTime(response.getJSONObject(0).getString("data_fine"));
+			dp_data_fine.updateDate(data_fine.getYear(), data_fine.getMonthOfYear(), data_fine.getDayOfWeek());
+			
+			switch_data_fine.setChecked(true);
+			
+			byte[] decodedString = Base64.decode(response.getJSONObject(0).getString("foto"), Base64.DEFAULT);
+			Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length); 
+			iv_foto.setImageBitmap(decodedByte);
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+	
 }
 

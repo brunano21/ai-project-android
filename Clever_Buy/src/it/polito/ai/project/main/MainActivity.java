@@ -8,6 +8,7 @@ import it.polito.ai.project.fragment.HomeFragment;
 import it.polito.ai.project.fragment.HomeRegistrationLoginFragment;
 import it.polito.ai.project.fragment.InScadenzaFragment;
 import it.polito.ai.project.fragment.InserisciUnProdottoFragment;
+import it.polito.ai.project.fragment.LeMieInserzioniFragment;
 import it.polito.ai.project.fragment.ListFragment;
 import it.polito.ai.project.fragment.ValutaInserzioneFragment;
 import it.polito.ai.project.model.NavDrawerItem;
@@ -289,6 +290,7 @@ public class MainActivity extends Activity {
 			fragment = new ValutaInserzioneFragment();
 			break;
 		case 3: 			// cerca_un_prodotto
+			fragment = new LeMieInserzioniFragment();
 			break;
 		case 4: 			// le_tue_liste
 			break;
@@ -353,7 +355,25 @@ public class MainActivity extends Activity {
 		mDrawerToggle.onConfigurationChanged(newConfig);
 	}
 
-
+	public void modificaInserzioneById(Integer idInserzione) {
+		// do some stuff
+		Fragment fragment = new InserisciUnProdottoFragment(); 
+		Bundle bundle = new Bundle();
+		Integer id = idInserzione;
+		bundle.putInt("idInserzione", id);
+		fragment.setArguments(bundle);
+		
+		FragmentManager fragmentManager = getFragmentManager();
+		FragmentTransaction ft = fragmentManager.beginTransaction();
+		ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, 0, 0);
+		ft.replace(R.id.frame_container, fragment, "modificaInserzione");
+		ft.commit();
+		
+	    return;
+	}
+	
+	
+	
 	/** Determines whether one Location reading is better than the current Location fix
 	 * @param location  The new Location that you want to evaluate
 	 * @param currentBestLocation  The current Location fix, to which you want to compare the new one

@@ -1,8 +1,8 @@
 package it.polito.ai.project.fragment;
 
 import it.polito.ai.project.R;
+import it.polito.ai.project.main.MainActivity;
 import it.polito.ai.project.main.MyHttpClient;
-import it.polito.ai.project.model.InserzioneDaValutare;
 import it.polito.ai.project.model.MiaInserzione;
 
 import java.util.ArrayList;
@@ -14,12 +14,14 @@ import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
-import com.nhaarman.listviewanimations.itemmanipulation.AnimateDismissAdapter;
 
+
+
+
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -29,12 +31,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AbsListView.OnScrollListener;
+
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 public class LeMieInserzioniFragment extends Fragment{
 
@@ -68,7 +74,7 @@ public class LeMieInserzioniFragment extends Fragment{
 		listView.setAdapter(miaInserzioneArrayAdapter);
 		registerListenersOnListView();
 
-		progressDialog = ProgressDialog.show(getActivity(), "Download", "Sto le tue inserzioni. Attendi...", false);
+		progressDialog = ProgressDialog.show(getActivity(), "Download", "Sto ricercando le tue inserzioni. Attendi...", false);
 
 		return rootView;
 	}
@@ -106,7 +112,7 @@ public class LeMieInserzioniFragment extends Fragment{
 	private void getInserzioniById(int totalItemCount) {
 		int count = totalItemCount;
 		List<Integer> idProssimaInserzioneList = new ArrayList<Integer>();
-		
+
 		idProssimaInserzioneList = idMiaInserzioneList.subList(count, (count + AUTOLOAD_THRESHOLD) < idMiaInserzioneList.size() ? (count + AUTOLOAD_THRESHOLD) : idMiaInserzioneList.size());
 		if(idProssimaInserzioneList.size() == 0)
 			return;
@@ -160,11 +166,47 @@ public class LeMieInserzioniFragment extends Fragment{
 		listView.removeFooterView(footerView);
 		miaInserzioneArrayAdapter.notifyDataSetChanged();
 		progressDialog.dismiss();
+		
 	}
 
 	private void registerListenersOnListView() {
+		
+		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-		// TODO: aggiungere il listener,
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				final MiaInserzione inserzione = miaInserzioneList.get(position);
+				DateTime today = new  DateTime();
+				//if(today.withTimeAtStartOfDay().isBefore(inserzione.getDataFine().withTimeAtStartOfDay()));
+				
+				if(Integer.valueOf(inserzione.getValutazioniPositive()) == 0 && Integer.valueOf(inserzione.getValutazioniNegative()) == 0 && !(DateTime.now().withTimeAtStartOfDay().isAfter(inserzione.getDataFine().withTimeAtStartOfDay()))) {
+					// inserzione modificabile
+					AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+					builder.setIcon(android.R.drawable.ic_dialog_info);
+					builder.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+					           public void onClick(DialogInterface dialog, int id) {
+					               ((MainActivity) getActivity()).modificaInserzioneById(inserzione.getIdInserzione());
+					           }
+					       });
+					builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+					           public void onClick(DialogInterface dialog, int id) {
+					               // User cancelled the dialog
+					           }
+					       });
+					builder.setTitle("Modificare?");
+					builder.setMessage("Vuoi modificare la tua inserzione?");
+					builder.setCancelable(false);
+					AlertDialog dialog = builder.create();
+					dialog.show();
+
+				} else {
+					// inserzione non modificabile
+					Toast.makeText(getActivity(), "Inserzione non più modificabile!", Toast.LENGTH_SHORT).show();
+				}
+
+
+			}
+		});
 
 		listView.setOnScrollListener(new OnScrollListener() {
 
@@ -190,7 +232,7 @@ public class LeMieInserzioniFragment extends Fragment{
 			}
 		});
 	}
-	
+
 	/*-----------------------------------  INNER CLASSES  -----------------------------------------------*/
 
 	private class MiaInserzioneArrayAdapter extends ArrayAdapter<MiaInserzione> {
@@ -213,33 +255,33 @@ public class LeMieInserzioniFragment extends Fragment{
 			TextView descrizione = (TextView) itemView.findViewById(R.id.listview_item_mia_inserzione_tv_descrizione);
 			TextView cat_sotto_cat = (TextView) itemView.findViewById(R.id.listview_item_mia_inserzione_tv_categoria_sottocategoria);
 			TextView data_inizio = (TextView) itemView.findViewById(R.id.listview_item_mia_inserzione_tv_data_inizio);
-			TextView data_fine = (TextView) itemView.findViewById(R.id.listview_item_inserzione_da_valutare_tv_data_fine);
+			TextView data_fine = (TextView) itemView.findViewById(R.id.listview_item_mia_inserzione_tv_data_fine);
 			TextView prezzo = (TextView) itemView.findViewById(R.id.listview_item_mia_inserzione_tv_prezzo);
 			TextView val_pos = (TextView) itemView.findViewById(R.id.listview_item_mia_inserzione_tv_valutazioni_positive);
 			TextView val_neg = (TextView) itemView.findViewById(R.id.listview_item_mia_inserzione_tv_valutazioni_negative);
 
 			descrizione.setText(inserzione.getDescrizione());
 			cat_sotto_cat.setText(inserzione.getCategoria() + " > " + inserzione.getSottocategoria());
-			data_inizio.setText(DateTimeFormat.forPattern("yyyy-MM-dd").print(inserzione.getDataInizio()));
-			
-			if(inserzione.getDataFine().isBeforeNow()) {
+			data_inizio.setText(DateTimeFormat.forPattern("dd-MM-yyyy").print(inserzione.getDataInizio()));
+
+			if(DateTime.now().withTimeAtStartOfDay().isAfter(inserzione.getDataFine().withTimeAtStartOfDay())) {
 				data_fine.setTextColor(getResources().getColor(R.color.red));
 				data_fine.setText("Scaduta!");
 			}
 			else {
-				data_fine.setTextColor(data_fine.getTextColors().getDefaultColor());
-				data_fine.setText(DateTimeFormat.forPattern("yyyy-MM-dd").print(inserzione.getDataFine()));
+				data_fine.setTextColor(data_inizio.getTextColors().getDefaultColor());
+				data_fine.setText(DateTimeFormat.forPattern("dd-MM-yyyy").print(inserzione.getDataFine()));
 			}
-			
+
 			prezzo.setText(Float.toString(inserzione.getPrezzo()) + " €");
 
 			byte[] decodedString = Base64.decode(inserzione.getFoto(), Base64.DEFAULT);
 			Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length); 
 			foto.setImageBitmap(decodedByte);
-			
+
 			val_pos.setText(inserzione.getValutazioniPositive());
 			val_neg.setText(inserzione.getValutazioniNegative());
-			
+
 			return itemView;
 		}
 	}
