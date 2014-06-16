@@ -20,6 +20,12 @@
     <string name="action_refresh">Refresh</string>
     
     
+    <!-- fagment Home -->
+    
+	<string name="string_auto_login">Abilita accesso automatico</string>
+    
+    
+    
     <!-- fagment List -->
 
 	<string name="string_button_addItem">Add</string>

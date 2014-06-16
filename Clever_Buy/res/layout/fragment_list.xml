@@ -5,19 +5,26 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <Spinner
-        android:id="@+id/spinner_allList"
+    <LinearLayout
+        android:id="@+id/listPage_header"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
 
-    <ListView
-        android:id="@+id/itemListView_ListFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="226dp"
-        android:layout_weight="0.79" />
+        <Spinner
+            android:id="@+id/spinner_allList"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+
+        <ListView
+            android:id="@+id/itemListView_ListFragment"
+            android:layout_width="wrap_content"
+            android:layout_height="226dp"
+            android:layout_weight="0.79" />
+    </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/footer_listPage"
+        android:id="@+id/listPage_central"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
@@ -42,12 +49,6 @@
                 android:hint="@string/add_item_quantity_hint"
                 android:imeOptions="actionSend"
                 android:inputType="number" />
-
-            <Spinner
-                android:id="@+id/spinner_item_quantity"
-                android:layout_width="75dp"
-                android:layout_height="wrap_content"
-                android:prompt="@string/desc_list_item_icon" />
         </LinearLayout>
 
         <LinearLayout
@@ -64,20 +65,14 @@
             <Button
                 android:id="@+id/button_addItem_byBarCode"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" 
-                android:text="@string/string_button_addItem_byBarCode"/>
+                android:layout_height="wrap_content"
+                android:text="@string/string_button_addItem_byBarCode" />
 
             <Button
                 android:id="@+id/button_hint"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" 
-                android:text="@string/string_button_hint"/>/>
-
-            <Button
-                android:id="@+id/button_hint_close"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/string_button_hint_close" />
+                android:text="@string/string_button_hint" />
         </LinearLayout>
     </LinearLayout>
 

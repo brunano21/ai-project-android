@@ -16,7 +16,6 @@ import com.google.zxing.integration.android.IntentResult;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -36,15 +35,15 @@ import android.widget.Toast;
 public class ListFragment extends Fragment {
 
 	private View rootView;
-	private Spinner _spinner_allList, _spinner_item_quantity;
+	private Spinner _spinner_allList;
 	private EditText _edit_item_name, _edit_item_quantity;
-	private Button  _button_addItem, _button_barcode, _button_hint, _button_hint_close;
+	private Button  _button_addItem, _button_barcode, _button_hint;
 	private ListView _listView;
+	
 
 	private ArrayAdapter<String> allListSpinnerArrayAdapter;
 	ItemAdapterListFragment itemAdapter;
 
-	private boolean visualeHINTabilitata = false;   // uso quesa visuale per 
 	public ListFragment(){}
 
 	@Override
@@ -56,20 +55,21 @@ public class ListFragment extends Fragment {
 		_button_addItem = (Button) rootView.findViewById(R.id.button_addItem);
 		_button_barcode = (Button) rootView.findViewById(R.id.button_addItem_byBarCode);
 		_button_hint = (Button) rootView.findViewById(R.id.button_hint);
-		_button_hint_close = (Button) rootView.findViewById(R.id.button_hint);
 
 		_spinner_allList = (Spinner) rootView.findViewById(R.id.spinner_allList);
-		_spinner_item_quantity = (Spinner) rootView.findViewById(R.id.spinner_item_quantity);
 
 		_edit_item_name = (EditText) rootView.findViewById(R.id.edit_item_name);
 		_edit_item_quantity = (EditText) rootView.findViewById(R.id.edit_item_quantity);
 
 		_listView = (ListView) rootView.findViewById(R.id.itemListView_ListFragment);
 
+		
 		itemAdapter = new ItemAdapterListFragment( container.getContext(), R.layout.fragment_list_item, new ArrayList<ItemListFragment>());
 
 		_listView.setAdapter(itemAdapter);
+		
 
+		
 		new BackgroundWorker().execute();
 
 		_button_addItem.setEnabled(false);
@@ -78,19 +78,15 @@ public class ListFragment extends Fragment {
 		addListnerOnTexts();
 		addListenerOnButtons();
 
+		//commentato perchè carico mnualemente io i linear layout
 		return rootView;
 	}
 
 	private void addSpinner() {
 
-
-
-		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource( 
-				getActivity(), R.array.list_item_quantity, android.R.layout.simple_spinner_item);
-
-		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); 
-		_spinner_item_quantity.setAdapter(adapter);
-
+		// TODO creare metodo che tramite get http 
+		aggiornaSpinnerAllList(null); 		
+		
 	}
 
 	private void addListnerOnTexts() {
@@ -122,11 +118,9 @@ public class ListFragment extends Fragment {
 				try {
 					IntentIntegrator integrator = new IntentIntegrator(ListFragment.this);
 					integrator.initiateScan();
-
 				} catch (Exception e){
 					e.printStackTrace();
 				}
-
 			}
 		});
 
@@ -134,26 +128,25 @@ public class ListFragment extends Fragment {
 			@Override
 			public void onClick(View arg0) {
 				aggiungiProdottoAllaLista(_edit_item_name.getText().toString(), 
-						_edit_item_quantity.getText().toString(),
-						String.valueOf(_spinner_item_quantity.getSelectedItem()));
+						_edit_item_quantity.getText().toString());
 				memorizzaProdottoNellaLista(_edit_item_name.getText().toString(), 
-						_edit_item_quantity.getText().toString(),
-						String.valueOf(_spinner_item_quantity.getSelectedItem()));
+						_edit_item_quantity.getText().toString());
 			}
-
 		});
 
 		_button_hint.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
+				Toast.makeText(getActivity().getBaseContext(), " - COD_006_todo - test per acendere la luce - dopo elimina", Toast.LENGTH_LONG).show();
+				// TODO COD_006_todo
+				for(int i=0; i<itemAdapter.getCount(); i++)
+				{
+					itemAdapter.getItem(i);
+					//_listView.getItemAtPosition(i).
+				}
 			}
 		});
-		
-		_button_hint_close.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-			}
-		});
+	
 
 	}
 
@@ -190,17 +183,16 @@ public class ListFragment extends Fragment {
 	}
 
 
-	protected void aggiungiProdottoAllaLista(String item_name, String edit_item_quantity,String spinner_item_quantity) {
+	protected void aggiungiProdottoAllaLista(String item_name, String edit_item_quantity) {
 		//		aggoingi elementi nella lista
-		ItemListFragment i = new ItemListFragment(	item_name, 
-				edit_item_quantity,
-				spinner_item_quantity);
+		ItemListFragment i = new ItemListFragment(	item_name, edit_item_quantity);
 		itemAdapter.add(i);
+		
 		_edit_item_name.setText("");
 		_edit_item_quantity.setText("");
 	}
 
-	protected void memorizzaProdottoNellaLista(String item_name, String edit_item_quantity,String spinner_item_quantity) {
+	protected void memorizzaProdottoNellaLista(String item_name, String edit_item_quantity) {
 		Toast.makeText(getActivity().getBaseContext(), " chiama funzione per cercare nel DB i prodotti da suggerire - COD_002_todo - ", Toast.LENGTH_LONG).show();
 		// TODO  COD_002_todo
 	}

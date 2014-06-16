@@ -6,27 +6,33 @@
 
     <TextView
         android:id="@+id/text_item_name"
-        android:layout_width="170dp"
+        android:layout_width="150dp"
         android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/text_item_quantity"
-        android:layout_width="80dp"
+        android:layout_width="60dp"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/text_item_name" />
 
-    <TextView
-        android:id="@+id/text_item_quantity_type"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/text_item_quantity" />
-
     <ImageButton
         android:id="@+id/img_item_remove"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/text_item_quantity"
         android:contentDescription="@string/app_name"
-        android:layout_alignRight="@+id/text_item_quantity_type"
+        android:background="@android:color/transparent"
         android:src="@android:drawable/ic_menu_delete" />
 
+    <ImageButton
+        android:id="@+id/img_item_hint"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_alignTop="@+id/text_item_quantity"
+        android:layout_toRightOf="@+id/text_item_quantity"
+        android:contentDescription="@string/app_name"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_help_hint" />
+    
 </RelativeLayout>

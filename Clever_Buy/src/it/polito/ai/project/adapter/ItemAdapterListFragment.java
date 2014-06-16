@@ -41,15 +41,15 @@ public class ItemAdapterListFragment extends ArrayAdapter<ItemListFragment> {
 		holder.item = items.get(position);
 		holder.nameTextView = (TextView) v.findViewById(R.id.text_item_name);
 		holder.quantityTextView = (TextView) v.findViewById(R.id.text_item_quantity);
-		holder.quntityTypeTextView = (TextView) v.findViewById(R.id.text_item_quantity_type);
 		holder.deleteItem = (ImageButton) v.findViewById(R.id.img_item_remove);
+		holder.hint = (ImageButton) v.findViewById(R.id.img_item_hint);
+		
 		holder.deleteItem.setTag(holder.item);
 		
 		v.setTag(holder);
 
 		holder.nameTextView.setText(item.getItem_name());
 		holder.quantityTextView.setText( String.valueOf(item.getItem_quantity()) );
-		holder.quntityTypeTextView.setText(item.getItem_quantity_type());
 		holder.deleteItem.setTag(holder.item);
 		holder.deleteItem.setOnClickListener(new OnClickListener() {
 			@Override
@@ -59,53 +59,26 @@ public class ItemAdapterListFragment extends ArrayAdapter<ItemListFragment> {
 				
 				remove(itemToRemove);
 				notifyDataSetChanged();
+				}
+		});
+		holder.hint.setTag(holder.item);
+		holder.hint.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO  - COD_005_todo - 
+				Toast.makeText(getContext(), " - COD_005_todo - se cliccato vai alla schermata dei suggerimenti - TODO", Toast.LENGTH_SHORT).show();
+				
 				}
 		});
 		
 		return v;
-		/*// Recuperiamo l'oggetto che dobbiamo inserire a questa posizione
-		ItemListFragment item = getItem(position);
-
-		ViewHolder holder;
-
-		if (v == null) {
-			//Toast.makeText(getContext(), "...001___", Toast.LENGTH_LONG).show();
-			v = inflater.inflate(resource, parent, false);
-			holder = new ViewHolder();
-			holder.item = items.get(position);
-			holder.nameTextView = (TextView) v.findViewById(R.id.text_item_name);
-			holder.quantityTextView = (TextView) v.findViewById(R.id.text_item_quantity);
-			holder.quntityTypeTextView = (TextView) v.findViewById(R.id.text_item_quantity_type);
-			holder.deleteItem = (ImageButton) v.findViewById(R.id.img_item_remove);
-			
-			
-			v.setTag(holder);
-		} else {
-			holder = (ViewHolder) v.getTag();
-		}
-
-		holder.nameTextView.setText(item.getItem_name());
-		holder.quantityTextView.setText( String.valueOf(item.getItem_quantity()) );
-		holder.quntityTypeTextView.setText(item.getItem_quantity_type());
-		holder.deleteItem.setTag(holder.item);
-		holder.deleteItem.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				ItemListFragment itemToRemove = (ItemListFragment)v.getTag();
-				Toast.makeText(getContext(), "delete "+itemToRemove.getItem_name(), Toast.LENGTH_SHORT).show();
-				
-				remove(itemToRemove);
-				notifyDataSetChanged();
-				}
-		});
-		return v;*/
 	}
 
 	private static class ViewHolder {
 		ItemListFragment item;
 		TextView nameTextView;
 		TextView quantityTextView;
-		TextView quntityTypeTextView;
+		ImageButton hint;
 		ImageButton deleteItem;
 	}
 }
