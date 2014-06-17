@@ -207,7 +207,6 @@
             android:id="@+id/ip_btn_reset"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignRight="@+id/ip_dp_data_inizio"
             android:layout_below="@+id/ip_spin_argomento"
             android:layout_marginTop="21dp"
             android:text="Reset" />

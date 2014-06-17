@@ -140,16 +140,16 @@ public class LeMieInserzioniFragment extends Fragment{
 	}
 
 	private void popolaMiaInserzioneList(JSONArray response) {
-		DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
 		for(int i = 0; i < response.length(); i++) {
 			try {
+				System.out.println(response.getJSONObject(i).getString("data_inizio"));
 				System.out.println("ID_INSERZIONE: " + response.getJSONObject(i).getInt("id"));
 				MiaInserzione inserzione = new MiaInserzione(Integer.valueOf(response.getJSONObject(i).getInt("id")),
 						response.getJSONObject(i).getString("categoria"),
 						response.getJSONObject(i).getString("sottocategoria"),
 						Float.valueOf(response.getJSONObject(i).getString("prezzo")),
-						formatter.parseDateTime(response.getJSONObject(i).getString("data_inizio")),
-						formatter.parseDateTime(response.getJSONObject(i).getString("data_fine")),
+						DateTimeFormat.forPattern("yyyy/MM/dd").parseDateTime(response.getJSONObject(i).getString("data_inizio")),
+						DateTimeFormat.forPattern("yyyy/MM/dd").parseDateTime(response.getJSONObject(i).getString("data_fine")),
 						response.getJSONObject(i).getString("descrizione"),
 						response.getJSONObject(i).getString("foto"),
 						response.getJSONObject(i).getString("valutazioni_positive"),
