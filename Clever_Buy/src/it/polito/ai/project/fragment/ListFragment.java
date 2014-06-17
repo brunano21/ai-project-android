@@ -214,7 +214,7 @@ public class ListFragment extends Fragment {
 			@Override
 			public void onSuccess(JSONArray response) {
 				for (int i = 0; i < response.length(); i++) 
-					;//TODO aggiungiProdottoAllaLista(,);	
+					;//TODO aggiungiProdottoAllaLista(,);;	
 					
 			}
 
