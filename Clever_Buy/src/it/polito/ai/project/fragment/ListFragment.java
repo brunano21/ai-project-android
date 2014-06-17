@@ -34,7 +34,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
-
+// After merge
 public class ListFragment extends Fragment {
 
 	private View rootView;
