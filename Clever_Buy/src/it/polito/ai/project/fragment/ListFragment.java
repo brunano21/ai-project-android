@@ -4,6 +4,7 @@ package it.polito.ai.project.fragment;
 import it.polito.ai.project.R;
 import it.polito.ai.project.adapter.ItemAdapterListFragment;
 import it.polito.ai.project.main.ItemListFragment;
+import it.polito.ai.project.main.MyHttpClient;
 
 import java.util.ArrayList;
 
@@ -12,6 +13,7 @@ import org.json.JSONException;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.loopj.android.http.JsonHttpResponseHandler;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -20,6 +22,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -85,7 +88,18 @@ public class ListFragment extends Fragment {
 	private void addSpinner() {
 
 		// TODO creare metodo che tramite get http 
-		aggiornaSpinnerAllList(null); 		
+		MyHttpClient.get("/todolist/getTodoList", null, new JsonHttpResponseHandler() {
+
+			@Override
+			public void onSuccess(JSONArray response) {
+				aggiornaSpinnerAllList(response);
+			}
+
+			@Override
+			public void onFailure(Throwable error, String content) {
+				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			}
+		});
 
 	}
 
@@ -159,32 +173,59 @@ public class ListFragment extends Fragment {
 		// TODO  COD_003_todo
 		if(response== null)
 			return;
-		try {
-			ArrayList<String> allListArray = new ArrayList<String>();
-			for (int i = 0; i < response.length(); i++) 
-				allListArray.add(response.getString(i));
+		else
+		{
 
-			allListSpinnerArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, allListArray);
-			allListSpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-			_spinner_allList.setAdapter(allListSpinnerArrayAdapter);
-			_spinner_allList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
-				@Override
-				public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-					// aggiorna la lista dei prodotti contenuti nella lista della spesa appena selezionata.
+			try {
+				ArrayList<String> allListArray = new ArrayList<String>();
+				for (int i = 0; i < response.length(); i++) 
+					allListArray.add(response.getString(i));
 
-					// -1- ottieni i dati
+				allListSpinnerArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, allListArray);
+				allListSpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+				_spinner_allList.setAdapter(allListSpinnerArrayAdapter);
+				_spinner_allList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+					@Override
+					public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+						// aggiorna la lista dei prodotti contenuti nella lista della spesa appena selezionata.
 
-				}
+						aggiornaItemList(position);
 
-				@Override
-				public void onNothingSelected(AdapterView<?> parent) {
-				}});
+					}
 
-		} catch (JSONException e) {
-			e.printStackTrace();
+					@Override
+					public void onNothingSelected(AdapterView<?> parent) {
+					}});
+
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
+	/**
+	 * 
+	 * @param position  uso questo per capire quale lista della spesa devo caricare
+	 */
+	protected void aggiornaItemList(int position) {
+
+		MyHttpClient.get("/", null, new JsonHttpResponseHandler() {
+
+			@Override
+			public void onSuccess(JSONArray response) {
+				for (int i = 0; i < response.length(); i++) 
+					aggiungiProdottoAllaLista(,);	
+					
+			}
+
+			@Override
+			public void onFailure(Throwable error, String content) {
+				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			}
+		});
+		
+			
+	}
 
 	protected void aggiungiProdottoAllaLista(String item_name, String edit_item_quantity) {
 		//		aggoingi elementi nella lista
