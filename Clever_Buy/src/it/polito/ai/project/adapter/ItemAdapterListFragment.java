@@ -3,7 +3,9 @@ package it.polito.ai.project.adapter;
 import it.polito.ai.project.R;
 import it.polito.ai.project.main.ItemListFragment;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -20,6 +22,8 @@ public class ItemAdapterListFragment extends ArrayAdapter<ItemListFragment> {
 	private int resource;
 	private LayoutInflater inflater;
 	private List<ItemListFragment> items;
+	
+	private Map<Integer, ImageButton> mapOfHint;
 
 	public ItemAdapterListFragment(Context context, int resourceId, List<ItemListFragment> items) {
 		super(context, resourceId, items);
@@ -56,11 +60,12 @@ public class ItemAdapterListFragment extends ArrayAdapter<ItemListFragment> {
 			public void onClick(View v) {
 				ItemListFragment itemToRemove = (ItemListFragment)v.getTag();
 				Toast.makeText(getContext(), "delete "+itemToRemove.getItem_name(), Toast.LENGTH_SHORT).show();
-				
 				remove(itemToRemove);
 				notifyDataSetChanged();
 				}
 		});
+		
+		
 		holder.hint.setTag(holder.item);
 		holder.hint.setOnClickListener(new OnClickListener() {
 			@Override
@@ -70,7 +75,8 @@ public class ItemAdapterListFragment extends ArrayAdapter<ItemListFragment> {
 				
 				}
 		});
-		
+		holder.hint.setImageResource(item.isHint_is_present() ? R.drawable.ic_help_hint_sun : R.drawable.ic_help_hint );
+	 
 		return v;
 	}
 

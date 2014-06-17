@@ -76,6 +76,5 @@
     <string name="tv_description">Descrizione</string>
     <string name="tv_barcode">Codice a barre</string>
 
-    <string name="title_activity_login">Login</string>
     <string name="hello_world">Hello world!</string>
 </resources>

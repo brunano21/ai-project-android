@@ -419,7 +419,7 @@ public class SplashScreen extends Activity {
 		String message = "porccoooo";
 		intent.putExtra(EXTRA_MESSAGE, message);
 		startActivity(intent);
-		finish(); // TODO, verifica se serve
+		finish(); // TODO, come mai non funge?
 	}
 
 

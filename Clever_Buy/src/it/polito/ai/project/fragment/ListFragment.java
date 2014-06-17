@@ -39,10 +39,11 @@ public class ListFragment extends Fragment {
 	private EditText _edit_item_name, _edit_item_quantity;
 	private Button  _button_addItem, _button_barcode, _button_hint;
 	private ListView _listView;
-	
+
 
 	private ArrayAdapter<String> allListSpinnerArrayAdapter;
-	ItemAdapterListFragment itemAdapter;
+	private ArrayList<ItemListFragment> itemArrayList;
+	private ItemAdapterListFragment itemAdapter;
 
 	public ListFragment(){}
 
@@ -63,13 +64,12 @@ public class ListFragment extends Fragment {
 
 		_listView = (ListView) rootView.findViewById(R.id.itemListView_ListFragment);
 
-		
-		itemAdapter = new ItemAdapterListFragment( container.getContext(), R.layout.fragment_list_item, new ArrayList<ItemListFragment>());
-
+		itemArrayList = new ArrayList<ItemListFragment>();
+		itemAdapter = new ItemAdapterListFragment( container.getContext(), R.layout.fragment_list_item, itemArrayList);
 		_listView.setAdapter(itemAdapter);
-		
 
-		
+
+
 		new BackgroundWorker().execute();
 
 		_button_addItem.setEnabled(false);
@@ -86,7 +86,7 @@ public class ListFragment extends Fragment {
 
 		// TODO creare metodo che tramite get http 
 		aggiornaSpinnerAllList(null); 		
-		
+
 	}
 
 	private void addListnerOnTexts() {
@@ -139,14 +139,17 @@ public class ListFragment extends Fragment {
 			public void onClick(View arg0) {
 				Toast.makeText(getActivity().getBaseContext(), " - COD_006_todo - test per acendere la luce - dopo elimina", Toast.LENGTH_LONG).show();
 				// TODO COD_006_todo
-				for(int i=0; i<itemAdapter.getCount(); i++)
+				for(int i=0; i<itemArrayList.size(); i++)
 				{
-					itemAdapter.getItem(i);
-					//_listView.getItemAtPosition(i).
+					// qui per ogni elemento devo chiedere al server se ci sono suggerimenti
+					if(i%2==0)
+						itemArrayList.get(i).setHint_is_present(true);			
+
 				}
+				itemAdapter.notifyDataSetChanged();
 			}
 		});
-	
+
 
 	}
 
@@ -185,9 +188,12 @@ public class ListFragment extends Fragment {
 
 	protected void aggiungiProdottoAllaLista(String item_name, String edit_item_quantity) {
 		//		aggoingi elementi nella lista
-		ItemListFragment i = new ItemListFragment(	item_name, edit_item_quantity);
-		itemAdapter.add(i);
-		
+		ItemListFragment item = new ItemListFragment(	item_name, edit_item_quantity);
+
+		//itemAdapter.add(i);
+		itemArrayList.add(item);
+		itemAdapter.notifyDataSetChanged();
+
 		_edit_item_name.setText("");
 		_edit_item_quantity.setText("");
 	}
