@@ -105,7 +105,6 @@ public class HomeRegistrationLoginFragment extends Fragment {
 		_linearLayout_home_registration_login.addView(_tv_login);
 
 
-
 		addListnerOnTexts();
 
 		_buttonLogin.setOnClickListener(new View.OnClickListener() {

@@ -56,14 +56,14 @@ public class InserisciUnProdottoFragment extends Fragment {
 	protected static final int RESULT_INTENT_CAMERA = 0;
 	protected static final int RESULT_ENABLE_GPS = 1;
 
-	private ImageButton ib_scan, ib_foto;
-	private ImageView iv_foto;
-	private EditText et_descrizione, et_prezzo, et_barcode_number, et_valore_argomento;
-	private Button btn_inserisci, btn_reset;
-	private DatePicker dp_data_inizio, dp_data_fine;
-	private Spinner spin_categoria, spin_sottocategoria, spin_supermercato, spin_argomento;
+	private ImageButton _ib_scan, _ib_foto;
+	private ImageView _iv_foto;
+	private EditText _et_descrizione, _et_prezzo, _et_barcode_number, _et_valore_argomento;
+	private Button _btn_inserisci, _btn_reset;
+	private DatePicker _dp_data_inizio, _dp_data_fine;
+	private Spinner _spin_categoria, _spin_sottocategoria, _spin_supermercato, _spin_argomento;
 	private View rootView;
-	private Switch switch_data_fine, switch_ulteriori_dettagli;
+	private Switch _switch_data_fine, _switch_ulteriori_dettagli;
 	
 	private ArrayList<Supermercato> supermercatiArrayList;
 	private SupermercatoCustomAdapter supermercatiCustomAdapter;
@@ -78,28 +78,28 @@ public class InserisciUnProdottoFragment extends Fragment {
 
 		rootView 			= inflater.inflate(R.layout.fragment_inserisci_un_prodotto, container, false);
 
-		ib_foto 			= (ImageButton) rootView.findViewById(R.id.ip_ib_foto);
-		iv_foto 			= (ImageView) rootView.findViewById(R.id.ip_iv_foto);
-		ib_scan 			= (ImageButton) rootView.findViewById(R.id.ip_ib_scan);
+		_ib_foto 			= (ImageButton) rootView.findViewById(R.id.ip_ib_foto);
+		_iv_foto 			= (ImageView) rootView.findViewById(R.id.ip_iv_foto);
+		_ib_scan 			= (ImageButton) rootView.findViewById(R.id.ip_ib_scan);
 
-		btn_inserisci 		= (Button) rootView.findViewById(R.id.ip_btn_inserisci);
-		btn_reset			= (Button) rootView.findViewById(R.id.ip_btn_reset);
+		_btn_inserisci 		= (Button) rootView.findViewById(R.id.ip_btn_inserisci);
+		_btn_reset			= (Button) rootView.findViewById(R.id.ip_btn_reset);
 		
-		et_descrizione  	= (EditText) rootView.findViewById(R.id.ip_et_descrizione);
-		et_barcode_number  	= (EditText) rootView.findViewById(R.id.ip_et_barcode_number);
-		et_prezzo			= (EditText) rootView.findViewById(R.id.ip_et_prezzo);
-		et_valore_argomento = (EditText) rootView.findViewById(R.id.ip_et_valore_argomento);
+		_et_descrizione  	= (EditText) rootView.findViewById(R.id.ip_et_descrizione);
+		_et_barcode_number  	= (EditText) rootView.findViewById(R.id.ip_et_barcode_number);
+		_et_prezzo			= (EditText) rootView.findViewById(R.id.ip_et_prezzo);
+		_et_valore_argomento = (EditText) rootView.findViewById(R.id.ip_et_valore_argomento);
 
-		dp_data_inizio 		= (DatePicker) rootView.findViewById(R.id.ip_dp_data_inizio);
-		dp_data_fine    	= (DatePicker) rootView.findViewById(R.id.ip_dp_data_fine);
+		_dp_data_inizio 		= (DatePicker) rootView.findViewById(R.id.ip_dp_data_inizio);
+		_dp_data_fine    	= (DatePicker) rootView.findViewById(R.id.ip_dp_data_fine);
 
-		spin_categoria 		= (Spinner) rootView.findViewById(R.id.ip_spin_categoria);
-		spin_sottocategoria = (Spinner) rootView.findViewById(R.id.ip_spin_sottocategoria);
-		spin_supermercato 	= (Spinner) rootView.findViewById(R.id.ip_spin_supermercato);
-		spin_argomento 		= (Spinner) rootView.findViewById(R.id.ip_spin_argomento);
+		_spin_categoria 		= (Spinner) rootView.findViewById(R.id.ip_spin_categoria);
+		_spin_sottocategoria = (Spinner) rootView.findViewById(R.id.ip_spin_sottocategoria);
+		_spin_supermercato 	= (Spinner) rootView.findViewById(R.id.ip_spin_supermercato);
+		_spin_argomento 		= (Spinner) rootView.findViewById(R.id.ip_spin_argomento);
 
-		switch_data_fine = (Switch) rootView.findViewById(R.id.ip_switch_data_fine);
-		switch_ulteriori_dettagli = (Switch) rootView.findViewById(R.id.ip_switch_ulteriori_dettagli);
+		_switch_data_fine = (Switch) rootView.findViewById(R.id.ip_switch_data_fine);
+		_switch_ulteriori_dettagli = (Switch) rootView.findViewById(R.id.ip_switch_ulteriori_dettagli);
 
 		addListeners();
 		nascondiAnnoDatePicker();
@@ -109,7 +109,7 @@ public class InserisciUnProdottoFragment extends Fragment {
 
 
 		ottieniSupermercati(MainActivity.getLocation().getLatitude(), MainActivity.getLocation().getLongitude());
-		dp_data_fine.setEnabled(false);
+		_dp_data_fine.setEnabled(false);
 		
 		
 		return rootView;
@@ -119,15 +119,15 @@ public class InserisciUnProdottoFragment extends Fragment {
 
 	private void nascondiAnnoDatePicker() {
 		try {
-			Field f[] = dp_data_inizio.getClass().getDeclaredFields();
+			Field f[] = _dp_data_inizio.getClass().getDeclaredFields();
 			for (Field field : f) {
 				if (field.getName().equals("mYearSpinner")) {
 					field.setAccessible(true);
 					Object yearPickerInizio = new Object();
 					Object yearPickerFine = new Object();
 
-					yearPickerInizio = field.get(dp_data_inizio);
-					yearPickerFine = field.get(dp_data_fine);
+					yearPickerInizio = field.get(_dp_data_inizio);
+					yearPickerFine = field.get(_dp_data_fine);
 					((View) yearPickerInizio).setVisibility(View.GONE);
 					((View) yearPickerFine).setVisibility(View.GONE);
 				}
@@ -159,7 +159,7 @@ public class InserisciUnProdottoFragment extends Fragment {
 
 	private void addListeners() {
 
-		ib_scan.setOnClickListener(new OnClickListener() {
+		_ib_scan.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				try {
@@ -174,31 +174,31 @@ public class InserisciUnProdottoFragment extends Fragment {
 			}
 		});
 
-		btn_inserisci.setOnClickListener(new OnClickListener() {
+		_btn_inserisci.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				RequestParams params = new RequestParams();
 
 				/* DESCRIZIONE */
-				if(et_descrizione.getText().toString() == null || et_descrizione.getText().toString().matches("")) {
+				if(_et_descrizione.getText().toString() == null || _et_descrizione.getText().toString().matches("")) {
 					Toast.makeText(getActivity().getBaseContext(), "Descrizione del prodotto mancante!", Toast.LENGTH_SHORT).show();
 					return;
 				}
-				params.put("descrizione", et_descrizione.getText().toString());
+				params.put("descrizione", _et_descrizione.getText().toString());
 
 				/* BAR CODE */
-				if(et_barcode_number.getText().toString() == null || et_barcode_number.getText().toString().matches("")) {
+				if(_et_barcode_number.getText().toString() == null || _et_barcode_number.getText().toString().matches("")) {
 					Toast.makeText(getActivity().getBaseContext(), "Codice a barre del prodotto mancante", Toast.LENGTH_SHORT).show();
 					return;
 				}
-				params.put("codiceBarre", et_barcode_number.getText().toString());
+				params.put("codiceBarre", _et_barcode_number.getText().toString());
 
 				/* CATEGORIA */
-				params.put("categoria", spin_categoria.getSelectedItem().toString());
+				params.put("categoria", _spin_categoria.getSelectedItem().toString());
 
 				/* SOTTOCATEGORIA */
-				params.put("sottocategoria", spin_sottocategoria.getSelectedItem().toString());
+				params.put("sottocategoria", _spin_sottocategoria.getSelectedItem().toString());
 
 
 				/* FOTO */
@@ -217,14 +217,14 @@ public class InserisciUnProdottoFragment extends Fragment {
 
 				/* DATA INIZIO */
 				DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy");
-				String data_inizio_str = dp_data_inizio.getDayOfMonth() + "/" + (dp_data_inizio.getMonth() + 1) + "/" + dp_data_inizio.getYear();
+				String data_inizio_str = _dp_data_inizio.getDayOfMonth() + "/" + (_dp_data_inizio.getMonth() + 1) + "/" + _dp_data_inizio.getYear();
 				DateTime data_inizio = formatter.parseDateTime(data_inizio_str);
 
 				/* DATA FINE */
 				String data_fine_str = null;
 				DateTime data_fine = null;
-				if(switch_data_fine.isChecked()) {
-					data_fine_str = dp_data_fine.getDayOfMonth() + "/" + (dp_data_fine.getMonth() + 1) + "/" + dp_data_fine.getYear();
+				if(_switch_data_fine.isChecked()) {
+					data_fine_str = _dp_data_fine.getDayOfMonth() + "/" + (_dp_data_fine.getMonth() + 1) + "/" + _dp_data_fine.getYear();
 					data_fine = formatter.parseDateTime(data_fine_str);
 				}
 				else{
@@ -246,24 +246,24 @@ public class InserisciUnProdottoFragment extends Fragment {
 				}
 
 				/* PREZZO */
-				if(et_prezzo.getText().toString() == null || et_prezzo.getText().toString().matches("")) {
+				if(_et_prezzo.getText().toString() == null || _et_prezzo.getText().toString().matches("")) {
 					Toast.makeText(getActivity().getBaseContext(), "Prezzo del prodotto mancante", Toast.LENGTH_SHORT).show();
 					return;
 				}
-				params.put("prezzo", et_prezzo.getText().toString());
+				params.put("prezzo", _et_prezzo.getText().toString());
 
 				/* SUPERMERCATO */
-				Supermercato s = (Supermercato) spin_supermercato.getSelectedItem();
+				Supermercato s = (Supermercato) _spin_supermercato.getSelectedItem();
 				params.put("supermercato", Integer.toString(s.getId()));
 
 				/* ULTERIORI DETTAGLI*/
-				if(switch_ulteriori_dettagli.isChecked())
-					if(et_valore_argomento.getText().toString() == null || et_valore_argomento.getText().toString().matches("")) {
+				if(_switch_ulteriori_dettagli.isChecked())
+					if(_et_valore_argomento.getText().toString() == null || _et_valore_argomento.getText().toString().matches("")) {
 						Toast.makeText(getActivity().getBaseContext(), "Valore del dettaglio mancante", Toast.LENGTH_SHORT).show();
 						return;
 					} else {
-						params.put("argomento", spin_argomento.getSelectedItem().toString());
-						params.put("valore_argomento", et_valore_argomento.getText().toString());
+						params.put("argomento", _spin_argomento.getSelectedItem().toString());
+						params.put("valore_argomento", _et_valore_argomento.getText().toString());
 					}
 				
 				/* INVIO DATI! */
@@ -289,17 +289,17 @@ public class InserisciUnProdottoFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				Calendar cal = Calendar.getInstance();
-				cal.set(Calendar.YEAR, dp_data_inizio.getYear());
-				cal.set(Calendar.MONTH, dp_data_inizio.getMonth());
-				cal.set(Calendar.DAY_OF_MONTH, dp_data_inizio.getDayOfMonth());
-				dp_data_fine.setMinDate(cal.getTimeInMillis());
+				cal.set(Calendar.YEAR, _dp_data_inizio.getYear());
+				cal.set(Calendar.MONTH, _dp_data_inizio.getMonth());
+				cal.set(Calendar.DAY_OF_MONTH, _dp_data_inizio.getDayOfMonth());
+				_dp_data_fine.setMinDate(cal.getTimeInMillis());
 			}
 		}; 
 
-		dp_data_inizio.setOnClickListener(data_inizio_fine);
-		dp_data_fine.setOnClickListener(data_inizio_fine);
+		_dp_data_inizio.setOnClickListener(data_inizio_fine);
+		_dp_data_fine.setOnClickListener(data_inizio_fine);
 
-		ib_foto.setOnClickListener(new OnClickListener() {
+		_ib_foto.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
@@ -307,21 +307,21 @@ public class InserisciUnProdottoFragment extends Fragment {
 			}
 		});
 
-		switch_data_fine.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+		_switch_data_fine.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				if (isChecked) 
-					dp_data_fine.setEnabled(true);
+					_dp_data_fine.setEnabled(true);
 				else
-					dp_data_fine.setEnabled(false);
+					_dp_data_fine.setEnabled(false);
 			}
 		});
 
-		switch_ulteriori_dettagli.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+		_switch_ulteriori_dettagli.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				System.out.println("changed!");
 				if (isChecked) {
 					// faccio partire una richiesta verso il server per avere tutti gli argomenti disponibili.
-					if(spin_argomento.getChildCount() == 0)
+					if(_spin_argomento.getChildCount() == 0)
 						MyHttpClient.get("/inserzione/getArgomenti", null, new JsonHttpResponseHandler() {
 							public void onSuccess(JSONArray response) {
 								Log.v("DEBUG", "onSuccess : " + response.toString());
@@ -331,12 +331,12 @@ public class InserisciUnProdottoFragment extends Fragment {
 										argomentiArrayList.add(response.getString(i));
 										ArrayAdapter<String> argomentiArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, argomentiArrayList);
 										argomentiArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-										spin_argomento.setAdapter(argomentiArrayAdapter);
+										_spin_argomento.setAdapter(argomentiArrayAdapter);
 
-										spin_argomento.setEnabled(true);
-										spin_argomento.setClickable(true);
-										et_valore_argomento.setEnabled(true);
-										et_valore_argomento.setFocusable(true);
+										_spin_argomento.setEnabled(true);
+										_spin_argomento.setClickable(true);
+										_et_valore_argomento.setEnabled(true);
+										_et_valore_argomento.setFocusable(true);
 									} catch (JSONException e) {
 										e.printStackTrace();
 									}
@@ -349,15 +349,15 @@ public class InserisciUnProdottoFragment extends Fragment {
 						});
 				}
 				else {
-					spin_argomento.setEnabled(false);
-					spin_argomento.setClickable(false);
-					et_valore_argomento.setEnabled(false);
-					et_valore_argomento.setFocusable(false);
+					_spin_argomento.setEnabled(false);
+					_spin_argomento.setClickable(false);
+					_et_valore_argomento.setEnabled(false);
+					_et_valore_argomento.setFocusable(false);
 				}
 			}
 		});
 		
-		btn_reset.setOnClickListener(new OnClickListener() {
+		_btn_reset.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
@@ -389,14 +389,14 @@ public class InserisciUnProdottoFragment extends Fragment {
 		case IntentIntegrator.REQUEST_CODE:	// barcode scanner
 			IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
 			if(resultCode != Activity.RESULT_CANCELED && scanResult != null) {
-				et_barcode_number.setText(scanResult.getContents());
+				_et_barcode_number.setText(scanResult.getContents());
 				controllaBarcode(scanResult.getContents());
 			}
 			break;
 		case RESULT_INTENT_CAMERA: 
 			super.onActivityResult(requestCode, resultCode, intent);
 			bitmapFoto = (Bitmap) intent.getExtras().get("data");
-			iv_foto.setImageBitmap(bitmapFoto);
+			_iv_foto.setImageBitmap(bitmapFoto);
 			break;
 		} // switch
 	}
@@ -423,18 +423,18 @@ public class InserisciUnProdottoFragment extends Fragment {
 			if(jsonObj.getBoolean("trovato")) {
 				
 				// prodotto trovato
-				et_descrizione.setText(jsonObj.getString("descrizione")); 
+				_et_descrizione.setText(jsonObj.getString("descrizione")); 
 				
 				int position = 0;
 				position = categoriaSpinnerArrayAdapter.getPosition(jsonObj.getString("categoria"));
-				spin_categoria.setSelection(position);
-				spin_categoria.setEnabled(false);
-				spin_categoria.setClickable(false);
+				_spin_categoria.setSelection(position);
+				_spin_categoria.setEnabled(false);
+				_spin_categoria.setClickable(false);
 				
 				position = sottocategoriaSpinnerArrayAdapter.getPosition(jsonObj.getString("sottocategoria"));
-				spin_sottocategoria.setSelection(position);
-				spin_sottocategoria.setEnabled(false);
-				spin_sottocategoria.setClickable(false);
+				_spin_sottocategoria.setSelection(position);
+				_spin_sottocategoria.setEnabled(false);
+				_spin_sottocategoria.setClickable(false);
 
 
 			} else {
@@ -454,8 +454,8 @@ public class InserisciUnProdottoFragment extends Fragment {
 
 			categoriaSpinnerArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, categorieArray);
 			categoriaSpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-			spin_categoria.setAdapter(categoriaSpinnerArrayAdapter);
-			spin_categoria.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+			_spin_categoria.setAdapter(categoriaSpinnerArrayAdapter);
+			_spin_categoria.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
 				@Override
 				public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 					richiediSottocategorie(parent.getItemAtPosition(position).toString());
@@ -482,7 +482,7 @@ public class InserisciUnProdottoFragment extends Fragment {
 
 					sottocategoriaSpinnerArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, sottocategorieArray);
 					sottocategoriaSpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-					spin_sottocategoria.setAdapter(sottocategoriaSpinnerArrayAdapter);
+					_spin_sottocategoria.setAdapter(sottocategoriaSpinnerArrayAdapter);
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
@@ -513,7 +513,7 @@ public class InserisciUnProdottoFragment extends Fragment {
 								));
 
 					supermercatiCustomAdapter = new SupermercatoCustomAdapter(getActivity(), R.layout.supermercato_custom_spinner, supermercatiArrayList);
-					spin_supermercato.setAdapter(supermercatiCustomAdapter);
+					_spin_supermercato.setAdapter(supermercatiCustomAdapter);
 
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -529,28 +529,28 @@ public class InserisciUnProdottoFragment extends Fragment {
 	}
 	
 	private void resetVista() {
-		et_descrizione.setText("");
-		et_barcode_number.setText("");
-		et_prezzo.setText("");
+		_et_descrizione.setText("");
+		_et_barcode_number.setText("");
+		_et_prezzo.setText("");
 
-		spin_categoria.setSelection(0);
-		spin_categoria.setEnabled(true);
-		spin_categoria.setClickable(true);
-		spin_sottocategoria.setEnabled(true);
-		spin_sottocategoria.setClickable(true);
+		_spin_categoria.setSelection(0);
+		_spin_categoria.setEnabled(true);
+		_spin_categoria.setClickable(true);
+		_spin_sottocategoria.setEnabled(true);
+		_spin_sottocategoria.setClickable(true);
 
-		spin_supermercato.setSelection(0);
+		_spin_supermercato.setSelection(0);
 		
-		iv_foto.setImageResource(R.drawable.no);
-		dp_data_inizio.updateDate(DateTime.now().getYear(), DateTime.now().getMonthOfYear(), DateTime.now().getDayOfMonth());
+		_iv_foto.setImageResource(R.drawable.no);
+		_dp_data_inizio.updateDate(DateTime.now().getYear(), DateTime.now().getMonthOfYear(), DateTime.now().getDayOfMonth());
 		
 		
-		if(switch_data_fine.isChecked()) {
-			dp_data_fine.updateDate(DateTime.now().getYear(), DateTime.now().getMonthOfYear(), DateTime.now().getDayOfMonth());
-			switch_data_fine.setChecked(false);
+		if(_switch_data_fine.isChecked()) {
+			_dp_data_fine.updateDate(DateTime.now().getYear(), DateTime.now().getMonthOfYear(), DateTime.now().getDayOfMonth());
+			_switch_data_fine.setChecked(false);
 		}
-		if(switch_ulteriori_dettagli.isChecked()) {
-			switch_ulteriori_dettagli.setChecked(false);
+		if(_switch_ulteriori_dettagli.isChecked()) {
+			_switch_ulteriori_dettagli.setChecked(false);
 		}
 	}
 

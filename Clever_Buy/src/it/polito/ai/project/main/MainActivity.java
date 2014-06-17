@@ -286,7 +286,7 @@ public class MainActivity extends Activity {
 				if( "Home".equals(stringFragment) )
 					fragment = new HomeFragment();
 				else
-					if( "List".equals(stringFragment) )
+					if( "Le tue liste".equals(stringFragment) )
 						fragment = new ListFragment();
 					else
 						if( "AquireBarCode".equals(stringFragment) )

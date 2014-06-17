@@ -1,16 +1,18 @@
 package it.polito.ai.project.main;
 
 public class ItemListFragment {
-	
+
+	private int item_id;
 	private String item_name;
 	private String item_quantity;
-	private String item_quantity_type;
+	private boolean hint_is_present;
 	
 	
-	public ItemListFragment(String item_name, String item_quantity,	String item_quantity_type) {
+	public ItemListFragment(String item_name, String item_quantity) {
+		this.item_id=-1;
 		this.item_name = item_name;
 		this.item_quantity = item_quantity;
-		this.item_quantity_type = item_quantity_type;
+		this.hint_is_present = false;
 	}
 	
 	
@@ -26,11 +28,17 @@ public class ItemListFragment {
 	public void setItem_quantity(String item_quantity) {
 		this.item_quantity = item_quantity;
 	}
-	public String getItem_quantity_type() {
-		return item_quantity_type;
+	public int getItem_id() {
+		return item_id;
 	}
-	public void setItem_quantity_type(String item_quantity_type) {
-		this.item_quantity_type = item_quantity_type;
+	public void setItem_id(int item_id) {
+		this.item_id = item_id;
+	}
+	public boolean isHint_is_present() {
+		return hint_is_present;
+	}
+	public void setHint_is_present(boolean hint_is_present) {
+		this.hint_is_present = hint_is_present;
 	}
 	
 }
