@@ -17,6 +17,14 @@
         android:layout_alignBottom="@+id/checkBox_item_acquistato"
         android:layout_toRightOf="@+id/checkBox_item_acquistato" />
 
+    
+    <TextView
+        android:id="@+id/text_item_quantity"
+        android:layout_width="55dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/text_item_name"
+        android:layout_alignBottom="@+id/text_item_name"
+        android:layout_toRightOf="@+id/text_item_name" />
     <ImageButton
         android:id="@+id/img_item_remove"
         android:layout_width="32dp"
@@ -27,13 +35,6 @@
         android:contentDescription="@string/app_name"
         android:src="@android:drawable/ic_menu_delete" />
 
-    <TextView
-        android:id="@+id/text_item_quantity"
-        android:layout_width="55dp"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/text_item_name"
-        android:layout_alignBottom="@+id/text_item_name"
-        android:layout_toRightOf="@+id/text_item_name" />
 
     <ImageButton
         android:id="@+id/img_item_hint"

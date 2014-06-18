@@ -70,14 +70,20 @@ public class ItemAdapterListFragment extends ArrayAdapter<ItemListFragment> {
 			}
 		});
 		if(item.isAcquistato())
-		{
-			holder.nameTextView.setPaintFlags(holder.nameTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-			holder.quantityTextView.setPaintFlags(holder.quantityTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+		{	
+			if(!"".equals(holder.nameTextView))
+			{
+				holder.nameTextView.setPaintFlags(holder.nameTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+				holder.quantityTextView.setPaintFlags(holder.quantityTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+			}
 		}
 		else
 		{
-			holder.nameTextView.setPaintFlags(holder.nameTextView.getPaintFlags());
-			holder.quantityTextView.setPaintFlags(holder.nameTextView.getPaintFlags());
+			if(!"".equals(holder.nameTextView))
+			{
+				holder.nameTextView.setPaintFlags(holder.nameTextView.getPaintFlags());
+				holder.quantityTextView.setPaintFlags(holder.nameTextView.getPaintFlags());
+			}
 		}
 
 		holder.acquistato.setChecked( item.isAcquistato() );
