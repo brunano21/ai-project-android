@@ -6,5 +6,7 @@
     <color name="list_divider">#272727</color>
     <color name="counter_text_bg">#626262</color>
     <color name="counter_text_color">#c5c4c4</color>
-    <color name="red_transparent">#3BB041</color>
+    <color name="green">#3BB041</color>
+    <color name="yellow">#F2F200</color>
+    <color name="red">#E60000</color>
 </resources>

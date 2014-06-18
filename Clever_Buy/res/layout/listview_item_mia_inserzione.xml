@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="15dp" >
+
+    <ImageView
+        android:id="@+id/listview_item_mia_inserzione_iv_foto"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/no" />
+
+    <TextView
+        android:id="@+id/listview_item_mia_inserzione_tv_descrizione"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/listview_item_mia_inserzione_tv_categoria_sottocategoria"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/listview_item_mia_inserzione_iv_foto"
+        android:layout_marginLeft="14dp"
+        android:layout_toRightOf="@+id/listview_item_mia_inserzione_iv_foto"
+        android:text="Large Text"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/listview_item_mia_inserzione_tv_categoria_sottocategoria"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/listview_item_mia_inserzione_iv_foto"
+        android:layout_alignLeft="@+id/listview_item_mia_inserzione_tv_descrizione"
+        android:text="Medium Text"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textStyle="italic" />
+
+    <TextView
+        android:id="@+id/listview_item_mia_inserzione_tv_data_inizio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/listview_item_mia_inserzione_tv_data_fine"
+        android:layout_alignBottom="@+id/listview_item_mia_inserzione_tv_data_fine"
+        android:layout_toLeftOf="@+id/listview_item_mia_inserzione_tv_categoria_sottocategoria"
+        android:text="Small Text"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/listview_item_mia_inserzione_tv_data_inizio_testo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/listview_item_mia_inserzione_tv_data_inizio"
+        android:layout_below="@+id/listview_item_mia_inserzione_iv_foto"
+        android:layout_marginTop="15dp"
+        android:text="Inserito il:"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/listview_item_mia_inserzione_tv_data_fine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/listview_item_mia_inserzione_tv_data_fine_testo"
+        android:layout_below="@+id/listview_item_mia_inserzione_tv_data_inizio_testo"
+        android:text="Small Text"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/listview_item_mia_inserzione_tv_prezzo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/listview_item_mia_inserzione_tv_categoria_sottocategoria"
+        android:layout_alignBottom="@+id/listview_item_mia_inserzione_tv_categoria_sottocategoria"
+        android:layout_alignParentRight="true"
+        android:text="Prezzo"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/listview_item_mia_inserzione_tv_valutazioni_testo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/listview_item_mia_inserzione_tv_prezzo"
+        android:layout_below="@+id/listview_item_mia_inserzione_tv_prezzo"
+        android:layout_marginTop="12dp"
+        android:text="Valutazioni"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/listview_item_mia_inserzione_tv_separatore_valutazioni"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/listview_item_mia_inserzione_tv_valutazioni_positive"
+        android:layout_alignBottom="@+id/listview_item_mia_inserzione_tv_valutazioni_positive"
+        android:layout_toLeftOf="@+id/listview_item_mia_inserzione_tv_valutazioni_negative"
+        android:text="/"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/listview_item_mia_inserzione_tv_valutazioni_negative"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/listview_item_mia_inserzione_tv_valutazioni_testo"
+        android:layout_below="@+id/listview_item_mia_inserzione_tv_valutazioni_testo"
+        android:text="99"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/red" />
+
+    <TextView
+        android:id="@+id/listview_item_mia_inserzione_tv_valutazioni_positive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/listview_item_mia_inserzione_tv_valutazioni_negative"
+        android:layout_alignBottom="@+id/listview_item_mia_inserzione_tv_valutazioni_negative"
+        android:layout_toLeftOf="@+id/listview_item_mia_inserzione_tv_separatore_valutazioni"
+        android:text="99"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/green" />
+
+    <TextView
+        android:id="@+id/listview_item_mia_inserzione_tv_data_fine_testo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/listview_item_mia_inserzione_tv_data_inizio"
+        android:layout_alignLeft="@+id/listview_item_mia_inserzione_tv_categoria_sottocategoria"
+        android:layout_marginLeft="20dp"
+        android:text="Scadrà il:"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+</RelativeLayout>
