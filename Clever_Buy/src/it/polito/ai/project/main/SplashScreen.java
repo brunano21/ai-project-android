@@ -311,7 +311,7 @@ public class SplashScreen extends Activity {
 						}
 						_tv_error_message.setText("lol " + jsonObj.toString());
 						//onSuccess verifica solo che ho avuto una connessione http, devo testare anche il valore ritornato nel JSON
-						// TODO su
+						// ddddddWhit the prviouslssbb
 						Toast.makeText(getApplicationContext(), 
 								"Controlla la mail per abilitare il tuo account",
 								Toast.LENGTH_LONG).show();
