@@ -40,6 +40,11 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 public class MainActivity extends Activity {
+
+	// User Session Manager Class
+	UserSessionManager session;
+	
+	
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
 	private ActionBarDrawerToggle mDrawerToggle;
@@ -71,6 +76,9 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		// Session class instance
+		session = new UserSessionManager(getApplicationContext());
+		
 		// TODO: leggere dalle shared preferences le credenziali.
 		MyHttpClient.setBasicAuth("zorro@zorro.it", "zorro");
 
@@ -245,6 +253,8 @@ public class MainActivity extends Activity {
 			return true;
 		case R.id.action_logout:
 			// effettuare il logout, eliminando i dati dalla shared preferences and avviare la splashscreen
+			// TODO discutine con Bruno. Secondo me non devo togliere nulla dalla share pref.
+			//      logout deve solo comunicare al server che si vuole disconettere.
 			Intent intent = new Intent(this, SplashScreen.class);
 			finish();
 			startActivity(intent);
@@ -302,6 +312,7 @@ public class MainActivity extends Activity {
 			fragment = new LeMieInserzioniFragment();
 			break;
 		case 4: 			// le_tue_liste
+			fragment = new ListFragment();
 			break;
 		case 5: 			// i_migliori_affari
 			break;

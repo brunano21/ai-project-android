@@ -16,7 +16,9 @@ import com.google.zxing.integration.android.IntentResult;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -31,8 +33,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 // After merge
 public class ListFragment extends Fragment {
@@ -47,13 +51,14 @@ public class ListFragment extends Fragment {
 	private ArrayAdapter<String> allListSpinnerArrayAdapter;
 	private ArrayList<ItemListFragment> itemArrayList;
 	private ItemAdapterListFragment itemAdapter;
+	private Context _context;
 
 	public ListFragment(){}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-
+		_context = container.getContext();
 		rootView = inflater.inflate(R.layout.fragment_list, container, false);
 
 		_button_addItem = (Button) rootView.findViewById(R.id.button_addItem);
@@ -70,9 +75,7 @@ public class ListFragment extends Fragment {
 		itemArrayList = new ArrayList<ItemListFragment>();
 		itemAdapter = new ItemAdapterListFragment( container.getContext(), R.layout.fragment_list_item, itemArrayList);
 		_listView.setAdapter(itemAdapter);
-
-
-
+ 
 		new BackgroundWorker().execute();
 
 		_button_addItem.setEnabled(false);
@@ -161,6 +164,23 @@ public class ListFragment extends Fragment {
 
 				}
 				itemAdapter.notifyDataSetChanged();
+				
+				// custom dialog
+				final Dialog dialog = new Dialog(_context);
+				dialog.setContentView(R.layout.fragment_list_dialog_hint);
+				dialog.setTitle("Ricerca Clever");
+	 
+				Button dialogButton = (Button) dialog.findViewById(R.id.dialog_hint_dialogButtonOK);
+				// if button is clicked, close the custom dialog
+				dialogButton.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						dialog.dismiss();
+					}
+				});
+	 
+				dialog.show();
+				
 			}
 		});
 
