@@ -316,7 +316,7 @@ public class MainActivity extends Activity {
 			FragmentTransaction ft = fragmentManager.beginTransaction();
 			ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, 0, 0);
 			ft.replace(R.id.frame_container, fragment, stringFragment);
-			ft.addToBackStack(null);;
+			ft.addToBackStack(null);
 			ft.commit();
 
 			// update selected item and title, then close the drawer
@@ -367,7 +367,12 @@ public class MainActivity extends Activity {
 		FragmentTransaction ft = fragmentManager.beginTransaction();
 		ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, 0, 0);
 		ft.replace(R.id.frame_container, fragment, "modificaInserzione");
+		ft.addToBackStack(null);
 		ft.commit();
+		
+		mDrawerList.setItemChecked(1, true);
+		mDrawerList.setSelection(1);
+		setTitle(navMenuTitles[1]);
 		
 	    return;
 	}
