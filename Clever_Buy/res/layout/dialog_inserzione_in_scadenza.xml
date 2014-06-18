@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="15dp" >
+
+    <ImageView
+        android:id="@+id/dialog_inserzione_in_scadenza_iv_foto"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/no" />
+
+    <TextView
+        android:id="@+id/dialog_inserzione_in_scadenza_tv_descrizione"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/dialog_inserzione_in_scadenza_iv_foto"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/dialog_inserzione_in_scadenza_iv_foto"
+        android:layout_marginLeft="14dp"
+        android:layout_toRightOf="@+id/dialog_inserzione_in_scadenza_iv_foto"
+        android:text="Large Text"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/dialog_inserzione_in_scadenza_tv_prezzo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/dialog_inserzione_in_scadenza_iv_foto"
+        android:layout_below="@+id/dialog_inserzione_in_scadenza_iv_foto"
+        android:layout_marginTop="16dp"
+        android:text="Medium Text"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/dialog_inserzione_in_scadenza_tv_data_fine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/dialog_inserzione_in_scadenza_tv_prezzo"
+        android:layout_alignBottom="@+id/dialog_inserzione_in_scadenza_tv_prezzo"
+        android:layout_alignRight="@+id/dialog_inserzione_in_scadenza_tv_descrizione"
+        android:text="Medium Text"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="italic" />
+
+    <TextView
+        android:id="@+id/dialog_inserzione_in_scadenza_tv_supermercato"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/dialog_inserzione_in_scadenza_tv_prezzo"
+        android:layout_below="@+id/dialog_inserzione_in_scadenza_tv_prezzo"
+        android:layout_marginTop="18dp"
+        android:text="Medium Text"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/dialog_inserzione_in_scadenza_tv_supermercato_indirizzo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/dialog_inserzione_in_scadenza_tv_supermercato"
+        android:layout_below="@+id/dialog_inserzione_in_scadenza_tv_supermercato"
+        android:layout_marginTop="8dp"
+        android:text="Small Text"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <Spinner
+        android:id="@+id/dialog_inserzione_in_scadenza_spin_todolist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/view1"
+        android:layout_alignRight="@+id/view1"
+        android:layout_below="@+id/dialog_inserzione_in_scadenza_tv_scegli"
+        android:layout_marginTop="16dp" />
+
+    <View
+        android:id="@+id/view1"
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:layout_alignLeft="@+id/dialog_inserzione_in_scadenza_tv_supermercato_indirizzo"
+        android:layout_below="@+id/dialog_inserzione_in_scadenza_tv_supermercato_indirizzo"
+        android:layout_marginTop="25dp"
+        android:background="#ff33b5e5" />
+
+    <TextView
+        android:id="@+id/dialog_inserzione_in_scadenza_tv_scegli"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/view1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="Aggiungi in:"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+</RelativeLayout>

@@ -1,13 +1,12 @@
 package it.polito.ai.project.fragment;
 
+import it.polito.ai.project.R;
+import it.polito.ai.project.model.InserzioneDaValutare;
+
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 
 import org.joda.time.format.DateTimeFormat;
 
-import it.polito.ai.project.R;
-import it.polito.ai.project.model.Valutazione;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -18,21 +17,20 @@ import android.os.Bundle;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class ValutazioneDettagliDialog extends DialogFragment {
+public class DialogDettagliValutazioneInserzione extends DialogFragment {
 
 	public interface MyDialogInterface extends Serializable{
-		public void onDialogPositiveClick(ValutazioneDettagliDialog dialog);
-		public void onDialogNegativeClick(ValutazioneDettagliDialog dialog);
+		public void onDialogPositiveClick(DialogDettagliValutazioneInserzione dialog);
+		public void onDialogNegativeClick(DialogDettagliValutazioneInserzione dialog);
 	}
 
-	private Valutazione val;
+	private InserzioneDaValutare val;
 	private int posizione;
 	
-	public Valutazione getValutazione() {
+	public InserzioneDaValutare getValutazione() {
 		return this.val;
 	}
 
@@ -42,10 +40,9 @@ public class ValutazioneDettagliDialog extends DialogFragment {
 	
 	private MyDialogInterface callbackListener;
 
-	public static ValutazioneDettagliDialog getInstance(MyDialogInterface dialogInterface) {
+	public static DialogDettagliValutazioneInserzione getInstance(MyDialogInterface dialogInterface) {
 
-		ValutazioneDettagliDialog fragmentDialog = new ValutazioneDettagliDialog();
-	    // set fragment arguments
+		DialogDettagliValutazioneInserzione fragmentDialog = new DialogDettagliValutazioneInserzione();
 	    Bundle args = new Bundle();
 	    args.putSerializable("dialogInterface", dialogInterface);
 	    fragmentDialog.setArguments(args);
@@ -58,18 +55,18 @@ public class ValutazioneDettagliDialog extends DialogFragment {
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		LayoutInflater inflater = getActivity().getLayoutInflater();
-		View view =  inflater.inflate(R.layout.valutazione_dettagli_dialog, null);
+		View view =  inflater.inflate(R.layout.dialog_inserzione_dettagli, null);
 		callbackListener = (MyDialogInterface) getArguments().getSerializable("dialogInterface");
 
 		builder.setView(view)
 			.setPositiveButton("+1", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
-					callbackListener.onDialogPositiveClick(ValutazioneDettagliDialog.this);
+					callbackListener.onDialogPositiveClick(DialogDettagliValutazioneInserzione.this);
 				}
 			})
 			.setNegativeButton("-1", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
-					callbackListener.onDialogNegativeClick(ValutazioneDettagliDialog.this);
+					callbackListener.onDialogNegativeClick(DialogDettagliValutazioneInserzione.this);
 				}
 			});
 			
