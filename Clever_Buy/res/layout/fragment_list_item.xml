@@ -4,35 +4,46 @@
     android:layout_height="match_parent"
     android:padding="5dip" >
 
-    <TextView
-        android:id="@+id/text_item_name"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content" />
+    <CheckBox 
+        android:id="@+id/checkBox_item_acquistato"
+        android:layout_width="32dp"
+        android:layout_height="32dp"/>
 
     <TextView
-        android:id="@+id/text_item_quantity"
-        android:layout_width="60dp"
+        android:id="@+id/text_item_name"
+        android:layout_width="130dp"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/text_item_name" />
+        android:layout_alignBaseline="@+id/checkBox_item_acquistato"
+        android:layout_alignBottom="@+id/checkBox_item_acquistato"
+        android:layout_toRightOf="@+id/checkBox_item_acquistato" />
 
     <ImageButton
         android:id="@+id/img_item_remove"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/text_item_quantity"
-        android:contentDescription="@string/app_name"
+        android:layout_alignTop="@+id/img_item_hint"
         android:background="@android:color/transparent"
+        android:contentDescription="@string/app_name"
         android:src="@android:drawable/ic_menu_delete" />
+
+    <TextView
+        android:id="@+id/text_item_quantity"
+        android:layout_width="55dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/text_item_name"
+        android:layout_alignBottom="@+id/text_item_name"
+        android:layout_toRightOf="@+id/text_item_name" />
 
     <ImageButton
         android:id="@+id/img_item_hint"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:layout_alignTop="@+id/text_item_quantity"
-        android:layout_toRightOf="@+id/text_item_quantity"
-        android:contentDescription="@string/app_name"
+        android:layout_alignTop="@+id/checkBox_item_acquistato"
+        android:layout_marginRight="14dp"
+        android:layout_toLeftOf="@+id/img_item_remove"
         android:background="@android:color/transparent"
+        android:contentDescription="@string/app_name"
         android:src="@drawable/ic_help_hint" />
     
 </RelativeLayout>

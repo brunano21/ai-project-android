@@ -3,6 +3,7 @@ package it.polito.ai.project.main;
 public class ItemListFragment {
 
 	private int item_id;
+	private boolean acquistato;
 	private String item_name;
 	private String item_quantity;
 	private boolean hint_is_present;
@@ -16,6 +17,16 @@ public class ItemListFragment {
 	}
 	
 	
+	public boolean isAcquistato() {
+		return acquistato;
+	}
+
+
+	public void setAcquistato(boolean acquistato) {
+		this.acquistato = acquistato;
+	}
+
+
 	public String getItem_name() {
 		return item_name;
 	}
