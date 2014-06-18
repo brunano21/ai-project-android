@@ -312,6 +312,7 @@ public class MainActivity extends Activity {
 			fragment = new LeMieInserzioniFragment();
 			break;
 		case 4: 			// le_tue_liste
+			fragment = new ListFragment();
 			break;
 		case 5: 			// i_migliori_affari
 			break;
