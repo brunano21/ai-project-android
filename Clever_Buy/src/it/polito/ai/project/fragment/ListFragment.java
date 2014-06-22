@@ -78,6 +78,15 @@ public class ListFragment extends Fragment {
 		itemAdapter = new ItemAdapterListFragment( container.getContext(), R.layout.fragment_list_item, itemArrayList);
 		_listView.setAdapter(itemAdapter);
  
+		_listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				//TODO apri Dialog Dettagli 
+			}
+		});
+		
+		
 		new BackgroundWorker().execute();
 
 		_button_addItem.setEnabled(false);
