@@ -220,6 +220,7 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 							MoreDataAvailable = false;
 							if(listView.getFooterViewsCount() != 0)
 								listView.removeFooterView(footerView);
+
 							valutazioneArrayAdapter.notifyDataSetChanged();
 						} else if (totalItemCount <= firstVisibleItem + visibleItemCount) {
 							IsLoading = true;

@@ -18,10 +18,12 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -76,6 +78,15 @@ public class ListFragment extends Fragment {
 		itemAdapter = new ItemAdapterListFragment( container.getContext(), R.layout.fragment_list_item, itemArrayList);
 		_listView.setAdapter(itemAdapter);
  
+		_listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				//TODO apri Dialog Dettagli 
+			}
+		});
+		
+		
 		new BackgroundWorker().execute();
 
 		_button_addItem.setEnabled(false);
@@ -166,27 +177,29 @@ public class ListFragment extends Fragment {
 				itemAdapter.notifyDataSetChanged();
 				
 				// custom dialog
-				final Dialog dialog = new Dialog(_context);
-				dialog.setContentView(R.layout.fragment_list_dialog_hint);
-				dialog.setTitle("Ricerca Clever");
-	 
-				Button dialogButton = (Button) dialog.findViewById(R.id.dialog_hint_dialogButtonOK);
-				// if button is clicked, close the custom dialog
-				dialogButton.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						dialog.dismiss();
-					}
-				});
-	 
-				dialog.show();
+				showDialogHint();
 				
 			}
 		});
 
 
 	}
+	
+	void showDialogHint() {
+	    // DialogFragment.show() will take care of adding the fragment
+	    // in a transaction.  We also want to remove any currently showing
+	    // dialog, so make our own transaction and take care of that here.
+	    FragmentTransaction ft = getFragmentManager().beginTransaction();
+	    Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+	    if (prev != null) {
+	        ft.remove(prev);
+	    }
+	    ft.addToBackStack(null);
 
+	    // Create and show the dialog.
+	    DialogHint newFragment = DialogHint.newInstance();
+	    newFragment.show(ft, "dialog");
+	}
 
 	private void aggiornaSpinnerAllList(JSONArray response) {
 		Toast.makeText(getActivity().getBaseContext(), " - COD_003_todo -  aggiornaSpinnerAllList() carica le lise dal DB", Toast.LENGTH_LONG).show();
