@@ -174,7 +174,8 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 		}
 
 		IsLoading = false;
-		listView.removeFooterView(footerView);
+		if(listView.getFooterViewsCount() != 0)
+			listView.removeFooterView(footerView);
 		valutazioneArrayAdapter.notifyDataSetChanged();
 		progressDialog.dismiss();
 	}
@@ -217,7 +218,8 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 						System.out.println("onScroll(): totalItemCount >= idInserzioneList.size() ?? " + totalItemCount + "vs" + idInserzioneList.size());
 						if (totalItemCount >= idInserzioneList.size()) {
 							MoreDataAvailable = false;
-							listView.removeFooterView(footerView);
+							if(listView.getFooterViewsCount() != 0)
+								listView.removeFooterView(footerView);
 							valutazioneArrayAdapter.notifyDataSetChanged();
 						} else if (totalItemCount <= firstVisibleItem + visibleItemCount) {
 							IsLoading = true;

@@ -308,10 +308,10 @@ public class MainActivity extends Activity {
 		case 2: 			// valuta_un_prodotto
 			fragment = new ValutaInserzioneFragment();
 			break;
-		case 3: 			// cerca_un_prodotto
+		case 3: 			// le_mie_inserzioni
 			fragment = new LeMieInserzioniFragment();
 			break;
-		case 4: 			// le_tue_liste
+		case 4: 			// le_mie_liste
 			fragment = new ListFragment();
 			break;
 		case 5: 			// i_migliori_affari
