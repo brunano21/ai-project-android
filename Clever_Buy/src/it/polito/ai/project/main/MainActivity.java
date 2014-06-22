@@ -79,10 +79,6 @@ public class MainActivity extends Activity {
 		// Session class instance
 		session = new UserSessionManager(getApplicationContext());
 		
-		// TODO: leggere dalle shared preferences le credenziali.
-		
-		//MyHttpClient.setBasicAuth("zorro@zorro.it", "zorro");
-
 		Intent intent = getIntent();
 		String msg = intent.getStringExtra(SplashScreen.EXTRA_MESSAGE);
 		Log.v("MSG", msg);

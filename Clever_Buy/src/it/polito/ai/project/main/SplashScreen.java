@@ -372,7 +372,6 @@ public class SplashScreen extends Activity {
 					// username / password doesn't match&
 					Toast.makeText(getApplicationContext(), "Username/Password is incorrect", Toast.LENGTH_LONG).show();
 					//_tv_error_message.setText("Bad credentials");
-					
 				}
 			});
 		}
