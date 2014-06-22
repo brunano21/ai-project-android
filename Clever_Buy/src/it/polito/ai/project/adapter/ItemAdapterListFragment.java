@@ -1,14 +1,26 @@
 package it.polito.ai.project.adapter;
 
 import it.polito.ai.project.R;
+import it.polito.ai.project.main.ItemHintListFragment;
 import it.polito.ai.project.main.ItemListFragment;
+import it.polito.ai.project.main.MyHttpClient;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
 import android.content.Context;
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -87,16 +99,37 @@ public class ItemAdapterListFragment extends ArrayAdapter<ItemListFragment> {
 		}
 
 		holder.acquistato.setChecked( item.isAcquistato() );
-		holder.nameTextView.setText(item.getItem_name());
-		holder.quantityTextView.setText( String.valueOf(item.getItem_quantity()) );
+		holder.nameTextView.setText(item.getDescrizione());
+		holder.quantityTextView.setText( String.valueOf(item.getQuantita()) );
 		holder.deleteItem.setTag(holder.item);
 		holder.deleteItem.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				ItemListFragment itemToRemove = (ItemListFragment)v.getTag();
-				Toast.makeText(getContext(), "delete "+itemToRemove.getItem_name(), Toast.LENGTH_SHORT).show();
+				//Toast.makeText(getContext(), "delete "+itemToRemove.getDescrizione(), Toast.LENGTH_SHORT).show();
+				
+				eliminaElemento( itemToRemove.getId_lista_desideri() ,itemToRemove.getId_elemento());
+				
 				remove(itemToRemove);
 				notifyDataSetChanged();
+			}
+
+			private void eliminaElemento(int id_lista_desideri, int id_elemento) {
+				RequestParams param = new RequestParams();
+				param.put("cmd","eliminaElemento");
+				param.put("id_lista_desideri",Integer.toString(id_lista_desideri));
+				param.put("id_elemento",Integer.toString(id_elemento));
+				MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
+					
+					@Override
+					public void onSuccess(JSONArray response) {
+						
+					}
+					@Override
+					public void onFailure(Throwable error, String content) {
+						Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+					}
+				});
 			}
 		});
 

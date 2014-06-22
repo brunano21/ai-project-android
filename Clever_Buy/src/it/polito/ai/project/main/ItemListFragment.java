@@ -2,54 +2,99 @@ package it.polito.ai.project.main;
 
 public class ItemListFragment {
 
-	private int item_id;
+	
+	
+	private int id_lista_desideri;
+	private int id_elemento;
+	private String descrizione;
+	private String quantita;
 	private boolean acquistato;
-	private String item_name;
-	private String item_quantity;
+	
+	private ItemHintListFragment inserzione;
+	
+	// l'attributo seguente è true solo se inserzione è != 0
 	private boolean hint_is_present;
-	
-	
-	public ItemListFragment(String item_name, String item_quantity) {
-		this.item_id=-1;
-		this.item_name = item_name;
-		this.item_quantity = item_quantity;
-		this.hint_is_present = false;
+
+	public ItemListFragment(int id_lista_desideri, int id_elemento, String descrizione,
+			String quantita, boolean acquistato, ItemHintListFragment inserzione) {
+		super();
+		this.id_lista_desideri = id_lista_desideri;
+		this.id_elemento = id_elemento;
+		this.descrizione = descrizione;
+		this.quantita = quantita;
+		this.acquistato = acquistato;
+		
+		this.setInserzione(inserzione);
 	}
+
 	
 	
+	public int getId_lista_desideri() {
+		return id_lista_desideri;
+	}
+
+
+
+	public void setId_lista_desideri(int id_lista_desideri) {
+		this.id_lista_desideri = id_lista_desideri;
+	}
+
+
+
+	public int getId_elemento() {
+		return id_elemento;
+	}
+
+	public void setId_elemento(int id_elemento) {
+		this.id_elemento = id_elemento;
+	}
+
+	public String getDescrizione() {
+		return descrizione;
+	}
+
+	public void setDescrizione(String descrizione) {
+		this.descrizione = descrizione;
+	}
+
+	public String getQuantita() {
+		return quantita;
+	}
+
+	public void setQuantita(String quantita) {
+		this.quantita = quantita;
+	}
+
 	public boolean isAcquistato() {
 		return acquistato;
 	}
-
 
 	public void setAcquistato(boolean acquistato) {
 		this.acquistato = acquistato;
 	}
 
+	public ItemHintListFragment getInserzione() {
+		return inserzione;
+	}
 
-	public String getItem_name() {
-		return item_name;
+	public void setInserzione(ItemHintListFragment inserzione) {
+		this.inserzione = inserzione;
+		
+		if(inserzione==null)
+			this.hint_is_present=false;
+		else
+			this.hint_is_present=true;
 	}
-	public void setItem_name(String item_name) {
-		this.item_name = item_name;
-	}
-	public String getItem_quantity() {
-		return item_quantity;
-	}
-	public void setItem_quantity(String item_quantity) {
-		this.item_quantity = item_quantity;
-	}
-	public int getItem_id() {
-		return item_id;
-	}
-	public void setItem_id(int item_id) {
-		this.item_id = item_id;
-	}
+
 	public boolean isHint_is_present() {
 		return hint_is_present;
 	}
+
 	public void setHint_is_present(boolean hint_is_present) {
 		this.hint_is_present = hint_is_present;
 	}
+	
+	
+	
 	
 }

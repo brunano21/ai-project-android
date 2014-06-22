@@ -28,7 +28,7 @@
                     android:layout_height="31dp"
                     android:background="@android:color/transparent"
                     android:contentDescription="@string/app_name"
-                    android:src="@android:drawable/ic_menu_delete" />
+                    android:src="@android:drawable/ic_menu_add" />
 
                 <ImageButton
                     android:id="@+id/img_delete_current_list"

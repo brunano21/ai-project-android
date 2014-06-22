@@ -3,17 +3,24 @@ package it.polito.ai.project.fragment;
 
 import it.polito.ai.project.R;
 import it.polito.ai.project.adapter.ItemAdapterListFragment;
+import it.polito.ai.project.adapter.ItemAllListSpinnerAdapter;
+import it.polito.ai.project.main.ItemHintListFragment;
 import it.polito.ai.project.main.ItemListFragment;
+import it.polito.ai.project.main.ItemSpinnerAllList;
 import it.polito.ai.project.main.MyHttpClient;
 
 import java.util.ArrayList;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -35,6 +42,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -47,10 +55,11 @@ public class ListFragment extends Fragment {
 	private Spinner _spinner_allList;
 	private EditText _edit_item_name, _edit_item_quantity;
 	private Button  _button_addItem, _button_barcode, _button_hint;
+	private ImageButton _img_add_new_list, _img_delete_current_list;
 	private ListView _listView;
 
-
-	private ArrayAdapter<String> allListSpinnerArrayAdapter;
+	private ArrayList<ItemSpinnerAllList> itemAllListSpinner_ArrayList;
+	private ItemAllListSpinnerAdapter itemAllListSpinner_ArrayAdapter;
 	private ArrayList<ItemListFragment> itemArrayList;
 	private ItemAdapterListFragment itemAdapter;
 	private Context _context;
@@ -72,12 +81,59 @@ public class ListFragment extends Fragment {
 		_edit_item_name = (EditText) rootView.findViewById(R.id.edit_item_name);
 		_edit_item_quantity = (EditText) rootView.findViewById(R.id.edit_item_quantity);
 
+		_img_add_new_list = (ImageButton) rootView.findViewById(R.id.img_add_new_list);
+		_img_delete_current_list = (ImageButton) rootView.findViewById(R.id.img_delete_current_list);
+		
+		_img_add_new_list.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				aggiungiNuovaLista_User();
+			}
+		});
+		
+		
+		
+		_img_delete_current_list.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				int position = _spinner_allList.getSelectedItemPosition();
+				ItemSpinnerAllList tmp = (ItemSpinnerAllList) _spinner_allList.getSelectedItem();
+				int id = tmp.getId();
+				eliminaLista( tmp );
+			}
+
+			private void eliminaLista(final ItemSpinnerAllList item ) {
+				RequestParams param = new RequestParams();
+				param.put("cmd","eliminaListaDesideri");
+				param.put("id_lista_desideri",Integer.toString(item.getId()));
+				MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
+
+					@Override
+					public void onSuccess(JSONArray response) {
+						// elimino tutti gli oggetti
+						itemArrayList.clear();
+						itemAdapter.notifyDataSetChanged();
+						// elimina lista da spinner
+						itemAllListSpinner_ArrayList.remove(item);
+						itemAllListSpinner_ArrayAdapter.notifyDataSetChanged();
+					}
+					@Override
+					public void onFailure(Throwable error, String content) {
+						Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+					}
+				});
+			}
+		});
+		
+		
 		_listView = (ListView) rootView.findViewById(R.id.itemListView_ListFragment);
+
+
 
 		itemArrayList = new ArrayList<ItemListFragment>();
 		itemAdapter = new ItemAdapterListFragment( container.getContext(), R.layout.fragment_list_item, itemArrayList);
 		_listView.setAdapter(itemAdapter);
- 
+
 		_listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 			@Override
@@ -85,13 +141,15 @@ public class ListFragment extends Fragment {
 				//TODO apri Dialog Dettagli 
 			}
 		});
-		
-		
+
+
 		new BackgroundWorker().execute();
 
 		_button_addItem.setEnabled(false);
 
-		addSpinner();
+
+		aggiornaSpinnerAllList();
+
 		addListnerOnTexts();
 		addListenerOnButtons();
 
@@ -99,23 +157,10 @@ public class ListFragment extends Fragment {
 		return rootView;
 	}
 
-	private void addSpinner() {
 
-		// TODO creare metodo che tramite get http 
-		MyHttpClient.get("/todolist/getTodoList", null, new JsonHttpResponseHandler() {
 
-			@Override
-			public void onSuccess(JSONArray response) {
-				aggiornaSpinnerAllList(response);
-			}
 
-			@Override
-			public void onFailure(Throwable error, String content) {
-				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
-			}
-		});
 
-	}
 
 	private void addListnerOnTexts() {
 		TextWatcher onSearchFieldTextChanged = new TextWatcher(){
@@ -155,10 +200,18 @@ public class ListFragment extends Fragment {
 		_button_addItem.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				aggiungiProdottoAllaLista(_edit_item_name.getText().toString(), 
+				// id_lista_desideri -> prendi dallo spinner all list
+				// id_elemento 
+				// descrizione
+				// quantita
+				int id_elemento = DateTime.now().toString().hashCode();
+				int id_allSpinner = ((ItemSpinnerAllList) _spinner_allList.getSelectedItem()).getId();
+				aggiungiNuovoProdottoAllaLista(	id_allSpinner,
+						id_elemento, 
+						_edit_item_name.getText().toString(), 
 						_edit_item_quantity.getText().toString());
-				memorizzaProdottoNellaLista(_edit_item_name.getText().toString(), 
-						_edit_item_quantity.getText().toString());
+
+
 			}
 		});
 
@@ -175,96 +228,162 @@ public class ListFragment extends Fragment {
 
 				}
 				itemAdapter.notifyDataSetChanged();
-				
+
 				// custom dialog
 				showDialogHint();
-				
+
 			}
 		});
 
 
 	}
-	
-	void showDialogHint() {
-	    // DialogFragment.show() will take care of adding the fragment
-	    // in a transaction.  We also want to remove any currently showing
-	    // dialog, so make our own transaction and take care of that here.
-	    FragmentTransaction ft = getFragmentManager().beginTransaction();
-	    Fragment prev = getFragmentManager().findFragmentByTag("dialog");
-	    if (prev != null) {
-	        ft.remove(prev);
-	    }
-	    ft.addToBackStack(null);
 
-	    // Create and show the dialog.
-	    DialogHint newFragment = DialogHint.newInstance();
-	    newFragment.show(ft, "dialog");
+	void showDialogHint() {
+		// DialogFragment.show() will take care of adding the fragment
+		// in a transaction.  We also want to remove any currently showing
+		// dialog, so make our own transaction and take care of that here.
+		FragmentTransaction ft = getFragmentManager().beginTransaction();
+		Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+		if (prev != null) {
+			ft.remove(prev);
+		}
+		ft.addToBackStack(null);
+
+		// Create and show the dialog.
+		DialogHint newFragment = DialogHint.newInstance();
+		newFragment.show(ft, "dialog");
 	}
 
-	private void aggiornaSpinnerAllList(JSONArray response) {
-		Toast.makeText(getActivity().getBaseContext(), " - COD_003_todo -  aggiornaSpinnerAllList() carica le lise dal DB", Toast.LENGTH_LONG).show();
-		// TODO  COD_003_todo
-		if(response== null)
-			return;
-		else
-		{
 
-			try {
-				ArrayList<String> allListArray = new ArrayList<String>();
-				for (int i = 0; i < response.length(); i++) 
-					allListArray.add(response.getString(i));
-
-				allListSpinnerArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, allListArray);
-				allListSpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-				_spinner_allList.setAdapter(allListSpinnerArrayAdapter);
-				_spinner_allList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
-					@Override
-					public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-						// aggiorna la lista dei prodotti contenuti nella lista della spesa appena selezionata.
-
-						aggiornaItemList(position);
-
-					}
-
-					@Override
-					public void onNothingSelected(AdapterView<?> parent) {
-					}});
-
-			} catch (JSONException e) {
-				e.printStackTrace();
+	protected void aggiornaSpinnerAllList() 
+	{
+		itemAllListSpinner_ArrayList = new ArrayList<ItemSpinnerAllList>();
+		itemAllListSpinner_ArrayAdapter = new ItemAllListSpinnerAdapter(getActivity(), R.layout.fragment_list_all_spinner_item, itemAllListSpinner_ArrayList);
+		//itemAllListSpinner_ArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		_spinner_allList.setAdapter(itemAllListSpinner_ArrayAdapter);
+		_spinner_allList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				// aggiorna la lista dei prodotti contenuti nella lista della spesa appena selezionata.
+				//ItemSpinnerAllList tmp = (ItemSpinnerAllList) view.getTag();
+				ItemSpinnerAllList tmp = (ItemSpinnerAllList) parent.getItemAtPosition(position);
+				aggiornaItemList( tmp.getId() );
 			}
-		}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+			}});
+
+		RequestParams params = new RequestParams();
+		MyHttpClient.get("/todolist/getTodoListIDs", params, new JsonHttpResponseHandler(){
+			@Override
+			public void onSuccess(JSONArray response) {
+				if(response.length() != 0) {
+					for(int i = 0; i<response.length(); i++)
+						try {
+							aggiungiNuovaLista(Integer.valueOf(response.getJSONObject(i).getString("id")),response.getJSONObject(i).getString("nome"));
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+				}
+				else {
+					Toast.makeText(getActivity(), "Nessuna Todo List presente sul server. Clicca sul bottone + per crearne una nuova", Toast.LENGTH_LONG).show();
+				}
+			}
+			@Override
+			public void onFailure(Throwable error, String content) {
+				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+				Toast.makeText(getActivity(), "Ops, c'è stato un problema con il server.", Toast.LENGTH_SHORT).show();
+			}
+		});
+
+
 	}
 
 	/**
 	 * 
 	 * @param position  uso questo per capire quale lista della spesa devo caricare
 	 */
-	protected void aggiornaItemList(int position) {
-
-		MyHttpClient.get("/", null, new JsonHttpResponseHandler() {
+	protected void aggiornaItemList(final int idLista) {
+		RequestParams param = new RequestParams();
+		param.put("cmd","todoListItems");
+		param.put("id_lista_desideri",Integer.toString(idLista));
+		MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
 
 			@Override
 			public void onSuccess(JSONArray response) {
 				for (int i = 0; i < response.length(); i++) 
-					;//TODO aggiungiProdottoAllaLista(,);;	
-					
-			}
+					try {
+						ItemHintListFragment hint = null;
 
+						if(response.getJSONObject(i).has("inserzione"))
+						{
+							DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
+							int item_id = response.getJSONObject(i).getJSONObject("inserzione").getInt("id_inserzione");
+							boolean selezionato = true;
+							String descrizione = response.getJSONObject(i).getJSONObject("inserzione").getString("descrizione");
+							DateTime data_fine = formatter.parseDateTime(response.getJSONObject(i).getJSONObject("inserzione").getString("data_fine"));
+							String supermercato = response.getJSONObject(i).getJSONObject("inserzione").getString("supermercato");
+							String prezzo = response.getJSONObject(i).getJSONObject("inserzione").getString("prezzo");
+							String foto = response.getJSONObject(i).getJSONObject("inserzione").getString("foto");
+							hint = new ItemHintListFragment(item_id, selezionato, descrizione, data_fine, supermercato, prezzo, foto);
+						}
+						int ar1 = response.getJSONObject(i).getInt("id_elemento");
+						String ar2 = response.getJSONObject(i).getString("descrizione");
+						String ar3 = response.getJSONObject(i).getString("quantita");
+						boolean ar4 = response.getJSONObject(i).getBoolean("acquistato"); 
+
+						aggiungiProdottoAllaLista(idLista, ar1,ar2,ar3,ar4, hint  );
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+			}
 			@Override
 			public void onFailure(Throwable error, String content) {
 				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
 			}
 		});
-		
-			
+
+
 	}
 
-	protected void aggiungiProdottoAllaLista(String item_name, String edit_item_quantity) {
-		//		aggoingi elementi nella lista
-		ItemListFragment item = new ItemListFragment(	item_name, edit_item_quantity);
+	/*
+	 * aggiunge una todolist prendendola dal server
+	 */
+	private void aggiungiNuovaLista(int id, String nome) {
 
-		//itemAdapter.add(i);
+		ItemSpinnerAllList item = new ItemSpinnerAllList(id, nome);
+		itemAllListSpinner_ArrayList.add(item );
+		itemAllListSpinner_ArrayAdapter.notifyDataSetChanged();
+	}
+	
+	/*
+	 * associato al bottone + che aggiunge nuova todolist, avvia una dialog box
+	 */
+	private void aggiungiNuovaLista_User(){
+		// TODO dialog per acquisire il nome della nuova todolist
+		
+		String nome = DateTime.now().toString();
+		int id = DateTime.now().toString().hashCode();
+		inviaNuovaLista_User(id, nome);
+		
+	}
+
+	/*
+	 * aggiungo un nuovo prodotto alla lista e mando questa info al server
+	 */
+	protected void aggiungiNuovoProdottoAllaLista(int id_lista_desideri, int id_elemento, String descrizione, String quantita) {
+
+		inviaNuovoProdottoAlServer(id_lista_desideri, id_elemento, descrizione, quantita);
+
+		aggiungiProdottoAllaLista(id_lista_desideri, id_elemento, descrizione, quantita, false, null); 
+
+	}
+
+
+	protected void aggiungiProdottoAllaLista(int id_lista_desideri, int id_elemento, String descrizione, String quantita, boolean acquistato, ItemHintListFragment inserzione) {
+		//		aggoingi elementi nella lista
+		ItemListFragment item = new ItemListFragment(id_lista_desideri, id_elemento, descrizione, quantita, acquistato, inserzione);
 		itemArrayList.add(item);
 		itemAdapter.notifyDataSetChanged();
 
@@ -272,11 +391,65 @@ public class ListFragment extends Fragment {
 		_edit_item_quantity.setText("");
 	}
 
-	protected void memorizzaProdottoNellaLista(String item_name, String edit_item_quantity) {
-		Toast.makeText(getActivity().getBaseContext(), " chiama funzione per cercare nel DB i prodotti da suggerire - COD_002_todo - ", Toast.LENGTH_LONG).show();
-		// TODO  COD_002_todo
+	
+
+	private void inviaNuovaLista_User(final int id, final String nome) {
+		RequestParams param = new RequestParams();
+		param.put("cmd","nuovaListaDesideri");
+		param.put("id_lista_desideri",Integer.toString(id));
+		param.put("nome",nome);
+		MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
+
+			@Override
+			public void onSuccess(JSONArray response) {
+				aggiungiNuovaLista(id,nome);
+			}
+			@Override
+			public void onFailure(Throwable error, String content) {
+				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			}
+		});
+
 	}
 
+	void inviaNuovoProdottoAlServer(int id_lista_desideri, int id_elemento, String descrizione, String quantita){
+		String NULL = null;
+		RequestParams param = new RequestParams();
+		param.put("cmd","nuovo_elemento");
+		param.put("id_lista_desideri",String.valueOf(id_lista_desideri));
+		param.put("id_elemento",String.valueOf(id_elemento));
+		param.put("descrizione",descrizione);
+		param.put("quantita","".equals(quantita)?"1":quantita);
+		param.put("id_inserzione",NULL);
+		// TODO metti le coordinate GPS
+		MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
+
+			@Override
+			public void onSuccess(JSONArray response) {
+				for (int i = 0; i < response.length(); i++) 
+					try {
+						ItemHintListFragment hint = null;
+						DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
+						int item_id = response.getJSONObject(i).getJSONObject("inserzione").getInt("item_id");
+						boolean selezionato = true;
+						String descrizione = response.getJSONObject(i).getString("descrizione");
+						DateTime data_fine = formatter.parseDateTime(response.getJSONObject(i).getString("data_fine"));
+						String supermercato = response.getJSONObject(i).getString("supermercato");
+						String prezzo = response.getJSONObject(i).getString("");
+						String foto = response.getJSONObject(i).getString("");
+						hint = new ItemHintListFragment(item_id, selezionato, descrizione, data_fine, supermercato, prezzo, foto);
+						// TODO queste info le devi memorizzare da qualche parte per visualizzarlo negli hint
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+			}
+			@Override
+			public void onFailure(Throwable error, String content) {
+				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			}
+		});
+
+	}
 
 
 
@@ -300,7 +473,8 @@ public class ListFragment extends Fragment {
 
 			//        publishProgress( oggetto di tipo ItemListFragment );
 
-			//aggiornaSpinnerAllList(null);
+			//
+
 			return null;
 		}
 
