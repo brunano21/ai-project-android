@@ -311,7 +311,7 @@ public class SplashScreen extends Activity {
 						}
 						_tv_error_message.setText("lol " + jsonObj.toString());
 						//onSuccess verifica solo che ho avuto una connessione http, devo testare anche il valore ritornato nel JSON
-						// ddddddWhit the prviouslssbb
+						// TODO su
 						Toast.makeText(getApplicationContext(), 
 								"Controlla la mail per abilitare il tuo account",
 								Toast.LENGTH_LONG).show();
@@ -372,6 +372,7 @@ public class SplashScreen extends Activity {
 					// username / password doesn't match&
 					Toast.makeText(getApplicationContext(), "Username/Password is incorrect", Toast.LENGTH_LONG).show();
 					//_tv_error_message.setText("Bad credentials");
+					
 				}
 			});
 		}

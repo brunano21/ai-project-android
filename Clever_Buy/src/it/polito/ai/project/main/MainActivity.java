@@ -80,7 +80,8 @@ public class MainActivity extends Activity {
 		session = new UserSessionManager(getApplicationContext());
 		
 		// TODO: leggere dalle shared preferences le credenziali.
-		MyHttpClient.setBasicAuth("zorro@zorro.it", "zorro");
+		
+		//MyHttpClient.setBasicAuth("zorro@zorro.it", "zorro");
 
 		Intent intent = getIntent();
 		String msg = intent.getStringExtra(SplashScreen.EXTRA_MESSAGE);
@@ -120,7 +121,7 @@ public class MainActivity extends Activity {
 
 		//TODO inviare ai vari frammenti la posizione
 		//String locationProvider = LocationManager.NETWORK_PROVIDER;
-		String locationProvider = LocationManager.GPS_PROVIDER;
+		String locationProvider = LocationManager.NETWORK_PROVIDER;
 		currentBestLocation = locationManager.getLastKnownLocation(locationProvider);
 
 		// ad esempio, se per 5 volte non trovo una posizione migliore allora interrompo.
@@ -312,6 +313,7 @@ public class MainActivity extends Activity {
 			fragment = new LeMieInserzioniFragment();
 			break;
 		case 4: 			// le_tue_liste
+			fragment = new ListFragment();
 			break;
 		case 5: 			// i_migliori_affari
 			break;

@@ -1,29 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
- 
-    <ImageView
-        android:id="@+id/dialog_hint_imageView_image"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="15dp" >
+
+    <TextView
+        android:id="@+id/list_dialog_item_tv_descrizione"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="5dp" />
- 
+        android:layout_above="@+id/list_dialog_item_tv_prezzo"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/list_dialog_item_iv_foto"
+        android:layout_marginLeft="8dp"
+        android:layout_toRightOf="@+id/list_dialog_item_iv_foto"
+        android:text="Large Text"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
     <TextView
-        android:id="@+id/dialog_hint_text"
-        android:layout_width="fill_parent"
+        android:id="@+id/list_dialog_item_tv_data_fine"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#FFF" 
-        android:layout_toRightOf="@+id/dialog_hint_imageView_image"/>/>
- 
-     <Button
-        android:id="@+id/dialog_hint_dialogButtonOK"
-        android:layout_width="100px"
+        android:layout_alignBaseline="@+id/list_dialog_item_tv_scade_il"
+        android:layout_alignBottom="@+id/list_dialog_item_tv_scade_il"
+        android:layout_toRightOf="@+id/list_dialog_item_tv_scade_il"
+        android:text="Small Text"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <ImageView
+        android:id="@+id/list_dialog_item_iv_foto"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/no" />
+
+    <TextView
+        android:id="@+id/list_dialog_item_tv_scade_il"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=" Ok "
-        android:layout_marginTop="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_below="@+id/dialog_hint_imageView_image"
-        />
- 
+        android:layout_alignBottom="@+id/list_dialog_item_iv_foto"
+        android:layout_alignLeft="@+id/list_dialog_item_tv_descrizione"
+        android:text="Scade il"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/list_dialog_item_tv_prezzo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/list_dialog_item_tv_data_fine"
+        android:layout_alignBottom="@+id/list_dialog_item_tv_data_fine"
+        android:layout_alignRight="@+id/list_dialog_item_tv_descrizione"
+        android:text="Medium Text"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/list_dialog_item_tv_supermercato"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/list_dialog_item_iv_foto"
+        android:layout_below="@+id/list_dialog_item_tv_prezzo"
+        android:layout_marginLeft="28dp"
+        android:layout_toLeftOf="@+id/list_dialog_item_tv_prezzo"
+        android:text="Supermercato" />
+
+    <Button
+        android:id="@+id/list_dialog_item_b_aggiungi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/list_dialog_item_tv_descrizione"
+        android:layout_alignBottom="@+id/list_dialog_item_tv_descrizione"
+        android:layout_alignParentRight="true"
+        android:text="Aggiungi" />
+
 </RelativeLayout>
