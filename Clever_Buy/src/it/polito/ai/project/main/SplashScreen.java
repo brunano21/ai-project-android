@@ -161,13 +161,9 @@ public class SplashScreen extends Activity {
 		_linearLayout_home_registration_login.addView(_et_username);
 		_linearLayout_home_registration_login.addView(_tv_password);
 		_linearLayout_home_registration_login.addView(_et_password);
-		_linearLayout_home_registration_login.addView(_tv_conferma_password);
-		_linearLayout_home_registration_login.addView(_et_conferma_password);
-		_linearLayout_home_registration_login.addView(_tv_mail);
-		_linearLayout_home_registration_login.addView(_et_mail);
-		_linearLayout_home_registration_login.addView(_buttonRegistration);
+		_linearLayout_home_registration_login.addView(_buttonLogin);
 		_linearLayout_home_registration_login.addView(_buttonSalta);
-		_linearLayout_home_registration_login.addView(_tv_login);
+		_linearLayout_home_registration_login.addView(_tv_registration);
 		_linearLayout_home_registration_login.addView(_tv_error_message);
 
 		addListnerOnTexts();
@@ -206,7 +202,7 @@ public class SplashScreen extends Activity {
 		_tv_registration.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				_linearLayout_home_registration_login.removeAllViews();
-				_linearLayout_home_registration_login.addView(_cb_auto_login);
+				//_linearLayout_home_registration_login.addView(_cb_auto_login);
 				_linearLayout_home_registration_login.addView(_tv_username);
 				_linearLayout_home_registration_login.addView(_et_username);
 				_linearLayout_home_registration_login.addView(_tv_password);
@@ -279,10 +275,7 @@ public class SplashScreen extends Activity {
 
 			@Override
 			public void onClick(View v) {
-
 				funzioneLogin(_et_username.getText().toString(), _et_password.getText().toString());
-
-				// settare la shared preference
 			}
 		});
 
@@ -342,8 +335,6 @@ public class SplashScreen extends Activity {
 
 	protected void funzioneLogin(String username, String password) 
 	{
-		Toast.makeText(getApplicationContext(), "funzioneLogin("+username+","+username+")", Toast.LENGTH_LONG).show();
-		
 		// Validate if username, password is filled             
 		if(username.trim().length() > 0 && password.trim().length() > 0)
 		{
@@ -356,15 +347,12 @@ public class SplashScreen extends Activity {
 					// _et_tmp.setText(response);
 					if(_cb_auto_login!=null)
 						if(_cb_auto_login.isChecked())//checkbox per dire che volio riloggarmi con queste credenziali anche la prossima volta
-							// TODO - fare il logout nella schermata home
 						{
 							// Creating user login session
 							// Statically storing name="Android Example"
 							// and email="androidexample84@gmail.com"
 							session.createUserLoginSession(_et_username.getText().toString(), _et_password.getText().toString(), _cb_auto_login.isChecked());
 						}
-					// TODO controllare?, dovrei testare se mi sono logfgato bene
-					
 					salta();
 				}
 				public void onFailure(Throwable error, String content) {

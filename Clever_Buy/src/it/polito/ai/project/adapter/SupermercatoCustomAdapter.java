@@ -41,7 +41,10 @@ public class SupermercatoCustomAdapter extends ArrayAdapter<String> {
 	}
 
 	public View getCustomView(int position, View convertView, ViewGroup parent) {
-		View row = inflater.inflate(R.layout.supermercato_custom_spinner, parent, false);
+		
+		View row = convertView;
+		if(row == null)
+			row = inflater.inflate(R.layout.supermercato_custom_spinner, parent, false);
 
 		tempValues = null;
 		tempValues = (Supermercato) data.get(position);

@@ -7,7 +7,9 @@ import it.polito.ai.project.adapter.ItemAllListSpinnerAdapter;
 import it.polito.ai.project.main.ItemHintListFragment;
 import it.polito.ai.project.main.ItemListFragment;
 import it.polito.ai.project.main.ItemSpinnerAllList;
+import it.polito.ai.project.main.MainActivity;
 import it.polito.ai.project.main.MyHttpClient;
+import it.polito.ai.project.main.UserSessionManager;
 
 import java.util.ArrayList;
 
@@ -23,10 +25,12 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -83,16 +87,16 @@ public class ListFragment extends Fragment {
 
 		_img_add_new_list = (ImageButton) rootView.findViewById(R.id.img_add_new_list);
 		_img_delete_current_list = (ImageButton) rootView.findViewById(R.id.img_delete_current_list);
-		
+
 		_img_add_new_list.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				aggiungiNuovaLista_User();
 			}
 		});
-		
-		
-		
+
+
+
 		_img_delete_current_list.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -114,7 +118,7 @@ public class ListFragment extends Fragment {
 						itemArrayList.clear();
 						itemAdapter.notifyDataSetChanged();
 						// elimina lista da spinner
-						itemAllListSpinner_ArrayList.remove(item);
+						boolean trovato = itemAllListSpinner_ArrayList.remove(item);
 						itemAllListSpinner_ArrayAdapter.notifyDataSetChanged();
 					}
 					@Override
@@ -124,8 +128,8 @@ public class ListFragment extends Fragment {
 				});
 			}
 		});
-		
-		
+
+
 		_listView = (ListView) rootView.findViewById(R.id.itemListView_ListFragment);
 
 
@@ -210,8 +214,6 @@ public class ListFragment extends Fragment {
 						id_elemento, 
 						_edit_item_name.getText().toString(), 
 						_edit_item_quantity.getText().toString());
-
-
 			}
 		});
 
@@ -229,15 +231,13 @@ public class ListFragment extends Fragment {
 				}
 				itemAdapter.notifyDataSetChanged();
 
-				// custom dialog
-				showDialogHint();
 
 			}
 		});
 
 
 	}
-
+	/*
 	void showDialogHint() {
 		// DialogFragment.show() will take care of adding the fragment
 		// in a transaction.  We also want to remove any currently showing
@@ -252,7 +252,7 @@ public class ListFragment extends Fragment {
 		// Create and show the dialog.
 		DialogHint newFragment = DialogHint.newInstance();
 		newFragment.show(ft, "dialog");
-	}
+	}*/
 
 
 	protected void aggiornaSpinnerAllList() 
@@ -266,6 +266,8 @@ public class ListFragment extends Fragment {
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 				// aggiorna la lista dei prodotti contenuti nella lista della spesa appena selezionata.
 				//ItemSpinnerAllList tmp = (ItemSpinnerAllList) view.getTag();
+				itemArrayList.clear();
+				itemAdapter.notifyDataSetChanged();
 				ItemSpinnerAllList tmp = (ItemSpinnerAllList) parent.getItemAtPosition(position);
 				aggiornaItemList( tmp.getId() );
 			}
@@ -351,22 +353,61 @@ public class ListFragment extends Fragment {
 	 * aggiunge una todolist prendendola dal server
 	 */
 	private void aggiungiNuovaLista(int id, String nome) {
-
 		ItemSpinnerAllList item = new ItemSpinnerAllList(id, nome);
 		itemAllListSpinner_ArrayList.add(item );
 		itemAllListSpinner_ArrayAdapter.notifyDataSetChanged();
+	/*	UserSessionManager session = new UserSessionManager(_context);
+		int id_lista_desideri = session.getId_Lista_Desideri();
+
+		for(int iMarco = 0; iMarco < _spinner_allList.getChildCount(); iMarco++)
+		{
+			ItemSpinnerAllList tmp = ((ItemSpinnerAllList)_spinner_allList.getChildAt(iMarco).getTag());
+			if(id_lista_desideri == tmp.getId() )
+			{
+				_spinner_allList.setSelection(iMarco);
+			}
+		}*/
 	}
-	
+
 	/*
 	 * associato al bottone + che aggiunge nuova todolist, avvia una dialog box
 	 */
 	private void aggiungiNuovaLista_User(){
-		// TODO dialog per acquisire il nome della nuova todolist
-		
-		String nome = DateTime.now().toString();
-		int id = DateTime.now().toString().hashCode();
-		inviaNuovaLista_User(id, nome);
-		
+
+		LayoutInflater li = LayoutInflater.from(_context);
+		View promptsView = li.inflate(R.layout.fragment_list_prompts_inserimento_nuova_lista,null);
+
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(_context);
+
+		// set prompts.xml to alertdialog builder
+		alertDialogBuilder.setView(promptsView);
+
+		final EditText userInput = (EditText) promptsView.findViewById(R.id.editTextDialogUserInput);
+
+		// set dialog message
+		alertDialogBuilder
+		.setCancelable(false)
+		.setPositiveButton("OK",
+				new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog,int id) {
+				// get user input and set it to result
+				// edit text
+				inviaNuovaLista_User(DateTime.now().toString().hashCode(), userInput.getText().toString());
+			}
+		})
+		.setNegativeButton("Cancel",
+				new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog,int id) {
+				dialog.cancel();
+			}
+		});
+
+		// create alert dialog
+		AlertDialog alertDialog = alertDialogBuilder.create();
+
+		// show it
+		alertDialog.show();
+
 	}
 
 	/*
@@ -374,14 +415,12 @@ public class ListFragment extends Fragment {
 	 */
 	protected void aggiungiNuovoProdottoAllaLista(int id_lista_desideri, int id_elemento, String descrizione, String quantita) {
 
-		inviaNuovoProdottoAlServer(id_lista_desideri, id_elemento, descrizione, quantita);
-
-		aggiungiProdottoAllaLista(id_lista_desideri, id_elemento, descrizione, quantita, false, null); 
-
+		inviaNuovoProdottoAlServer( aggiungiProdottoAllaLista(id_lista_desideri, id_elemento, descrizione, quantita, false, null) );
+		itemAdapter.notifyDataSetChanged(); // per aggiornare l'eventuale lampadina accesa per il suggerimento che setto nella funzione sopra.
 	}
 
 
-	protected void aggiungiProdottoAllaLista(int id_lista_desideri, int id_elemento, String descrizione, String quantita, boolean acquistato, ItemHintListFragment inserzione) {
+	protected ItemListFragment aggiungiProdottoAllaLista(int id_lista_desideri, int id_elemento, String descrizione, String quantita, boolean acquistato, ItemHintListFragment inserzione) {
 		//		aggoingi elementi nella lista
 		ItemListFragment item = new ItemListFragment(id_lista_desideri, id_elemento, descrizione, quantita, acquistato, inserzione);
 		itemArrayList.add(item);
@@ -389,9 +428,10 @@ public class ListFragment extends Fragment {
 
 		_edit_item_name.setText("");
 		_edit_item_quantity.setText("");
+		return item;
 	}
 
-	
+
 
 	private void inviaNuovaLista_User(final int id, final String nome) {
 		RequestParams param = new RequestParams();
@@ -412,10 +452,16 @@ public class ListFragment extends Fragment {
 
 	}
 
-	void inviaNuovoProdottoAlServer(int id_lista_desideri, int id_elemento, String descrizione, String quantita){
+	void inviaNuovoProdottoAlServer(final ItemListFragment in){
+		int id_lista_desideri = in.getId_lista_desideri() ;
+		int id_elemento = in.getId_elemento() ;
+		String descrizione = in.getDescrizione() ;
+		String quantita = in.getQuantita() ;
 		String NULL = null;
 		RequestParams param = new RequestParams();
 		param.put("cmd","nuovo_elemento");
+		param.put("latitudine",Double.toString(MainActivity.getLocation().getLatitude()));
+		param.put("longitudine",Double.toString(MainActivity.getLocation().getLongitude()));
 		param.put("id_lista_desideri",String.valueOf(id_lista_desideri));
 		param.put("id_elemento",String.valueOf(id_elemento));
 		param.put("descrizione",descrizione);
@@ -428,7 +474,7 @@ public class ListFragment extends Fragment {
 			public void onSuccess(JSONArray response) {
 				for (int i = 0; i < response.length(); i++) 
 					try {
-						ItemHintListFragment hint = null;
+						/*	ItemHintListFragment hint = null;
 						DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
 						int item_id = response.getJSONObject(i).getJSONObject("inserzione").getInt("item_id");
 						boolean selezionato = true;
@@ -438,10 +484,12 @@ public class ListFragment extends Fragment {
 						String prezzo = response.getJSONObject(i).getString("");
 						String foto = response.getJSONObject(i).getString("");
 						hint = new ItemHintListFragment(item_id, selezionato, descrizione, data_fine, supermercato, prezzo, foto);
-						// TODO queste info le devi memorizzare da qualche parte per visualizzarlo negli hint
-					} catch (JSONException e) {
+						 */// TODO queste info le devi memorizzare da qualche parte per visualizzarlo negli hint
+						in.setHint_is_present(true);
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
+
 			}
 			@Override
 			public void onFailure(Throwable error, String content) {

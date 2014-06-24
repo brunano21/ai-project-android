@@ -61,27 +61,31 @@ public class ItemHintAdapterListFragment  extends ArrayAdapter<ItemHintListFragm
 		holder.prezzo.setText(holder.item.getPrezzo() );
 		holder.supermercato.setText(holder.item.getSupermercato() );
 		holder.seleziona = item.isSelezionato();
-				
-		if(!"".equals(holder.item.getFoto()))
-		{
-			byte[] decodedString = Base64.decode(holder.item.getFoto(), Base64.DEFAULT);
-			Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length); 
-			holder.foto.setImageBitmap(decodedByte);
-		}
+			
+		//TODO foto
+	//	if(!"".equals(holder.item.getFoto()))
+	//	{
+	//		byte[] decodedString = Base64.decode(holder.item.getFoto(), Base64.DEFAULT);
+	//		Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length); 
+	//		holder.foto.setImageBitmap(decodedByte);
+	//	}
 		
 		
 
+		holder.buttonAggiungi.setTag(holder.item);
 		v.setTag(holder);
+
 
 		holder.buttonAggiungi.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
+				ItemHintListFragment itemToSelect = (ItemHintListFragment)v.getTag();
 				
 			}
 		});
 		
-		
+	
      
 		
 

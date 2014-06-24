@@ -79,6 +79,8 @@ public class ItemListFragment {
 
 	public void setInserzione(ItemHintListFragment inserzione) {
 		this.inserzione = inserzione;
+		if(inserzione!=null)
+			this.descrizione = inserzione.getDescrizione();
 		
 		if(inserzione==null)
 			this.hint_is_present=false;

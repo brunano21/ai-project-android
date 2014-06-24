@@ -1,6 +1,8 @@
 package it.polito.ai.project.adapter;
 
 import it.polito.ai.project.R;
+import it.polito.ai.project.fragment.DialogHint;
+import it.polito.ai.project.fragment.DialogHint.myOnClickListener;
 import it.polito.ai.project.main.ItemHintListFragment;
 import it.polito.ai.project.main.ItemListFragment;
 import it.polito.ai.project.main.MyHttpClient;
@@ -18,6 +20,8 @@ import org.json.JSONException;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Paint;
 import android.util.Log;
@@ -41,6 +45,9 @@ public class ItemAdapterListFragment extends ArrayAdapter<ItemListFragment> {
 
 	private Map<Integer, ImageButton> mapOfHint;
 
+	public myOnClickListener myListener;
+	 
+	
 	public ItemAdapterListFragment(Context context, int resourceId, List<ItemListFragment> items) {
 		super(context, resourceId, items);
 		resource = resourceId;
@@ -49,10 +56,10 @@ public class ItemAdapterListFragment extends ArrayAdapter<ItemListFragment> {
 	}
 
 	@Override
-	public View getView(int position, View v, ViewGroup parent) {
+	public View getView(final int position, View v, ViewGroup parent) {
 
 		ViewHolder holder = null;
-
+		
 		final ItemListFragment item = getItem(position);
 
 		v = inflater.inflate(resource, parent, false);
@@ -77,7 +84,7 @@ public class ItemAdapterListFragment extends ArrayAdapter<ItemListFragment> {
 				//ItemListFragment itemToCut = (ItemListFragment) getTag();
 				//itemToCut.setAcquistato(isChecked);
 				item.setAcquistato(isChecked);
-
+				inviaAcquistatoServer( item );
 				notifyDataSetChanged();
 			}
 		});
@@ -133,14 +140,24 @@ public class ItemAdapterListFragment extends ArrayAdapter<ItemListFragment> {
 			}
 		});
 
-
 		holder.hint.setTag(holder.item);
 		holder.hint.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// TODO  - COD_005_todo - 
-				Toast.makeText(getContext(), " - COD_005_todo - se cliccato vai alla schermata dei suggerimenti - TODO", Toast.LENGTH_SHORT).show();
-
+				// create new onclicklistener interface //
+		        myListener = new myOnClickListener( ) {
+		            @Override
+		            public void onButtonClick( ItemHintListFragment item ) {
+		                Toast.makeText(getContext(),
+		                        "I am here " +  item.getDescrizione() +" "+item.getItem_id(),
+		                        Toast.LENGTH_LONG).show();
+		                items.get(position).setInserzione(item);
+		                notifyDataSetChanged();
+		            }
+		        };
+				// custom dialog
+				DialogHint newFragment = new DialogHint(getContext(), myListener, item.getDescrizione() );
+				newFragment.show();
 			}
 		});
 		holder.hint.setImageResource(item.isHint_is_present() ? R.drawable.ic_help_hint_sun : R.drawable.ic_help_hint );
@@ -148,6 +165,44 @@ public class ItemAdapterListFragment extends ArrayAdapter<ItemListFragment> {
 
 		return v;
 	}
+
+
+	/*void showDialogHint() {
+		// DialogFragment.show() will take care of adding the fragment
+		// in a transaction.  We also want to remove any currently showing
+		// dialog, so make our own transaction and take care of that here.
+		FragmentTransaction ft = getFragmentManager().beginTransaction();
+		Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+		if (prev != null) {
+			ft.remove(prev);
+		}
+		ft.addToBackStack(null);
+
+		// Create and show the dialog.
+		DialogHint newFragment = DialogHint.newInstance();
+		newFragment.show(ft, "dialog");
+	}*/
+	
+	protected void inviaAcquistatoServer(ItemListFragment item) {
+		RequestParams param = new RequestParams();
+		param.put("cmd","modificaFlagAcquistatoElemento");
+		param.put("id_lista_desideri",Integer.toString(item.getId_lista_desideri()));
+		param.put("id_elemento",Integer.toString(item.getId_elemento()));
+		param.put("acquistato",Boolean.toString(item.isAcquistato()));
+		MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
+			
+			@Override
+			public void onSuccess(JSONArray response) {
+				
+			}
+			@Override
+			public void onFailure(Throwable error, String content) {
+				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			}
+		});
+		
+	}
+
 
 	private static class ViewHolder {
 		ItemListFragment item;

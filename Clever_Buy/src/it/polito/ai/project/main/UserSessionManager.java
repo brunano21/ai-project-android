@@ -32,6 +32,8 @@ public class UserSessionManager {
 
     // Email address (make variable public to access from outside)
     public static final String KEY_PASSWORD = "password";
+    
+    public static final String KEY_ID_LISTA_DESIDERI = "id_lista_desideri";
 
      
     // Constructor
@@ -77,7 +79,7 @@ public class UserSessionManager {
     }
      
      
-     
+
     /**
      * Get stored session data
      * */
@@ -129,4 +131,13 @@ public class UserSessionManager {
         editor.putBoolean(IS_USER_LOGIN, isChecked);
         editor.commit();
 	}
+	
+	public void setId_Lista_Desideri(int id_lista_desideri) {
+        editor.putInt(KEY_ID_LISTA_DESIDERI, id_lista_desideri);
+        editor.commit();
+	}
+	
+	public int getId_Lista_Desideri(){
+        return pref.getInt(KEY_ID_LISTA_DESIDERI, -1);
+    }
 }

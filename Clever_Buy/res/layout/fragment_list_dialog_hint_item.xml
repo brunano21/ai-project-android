@@ -67,9 +67,9 @@
         android:id="@+id/list_dialog_item_b_aggiungi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/list_dialog_item_tv_descrizione"
-        android:layout_alignBottom="@+id/list_dialog_item_tv_descrizione"
-        android:layout_alignParentRight="true"
+        android:layout_alignRight="@+id/list_dialog_item_tv_prezzo"
+        android:layout_below="@+id/list_dialog_item_tv_prezzo"
+        android:onClick="onClick_list_dialog_item_b_aggiungi"
         android:text="Aggiungi" />
 
 </RelativeLayout>

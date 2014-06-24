@@ -25,11 +25,25 @@ public class ItemAllListSpinnerAdapter  extends ArrayAdapter<ItemSpinnerAllList>
 	
 	
 
+	
+
 	@Override
-	public View getView(int position, View v, ViewGroup parent) {
+	public View getDropDownView(int position, View convertView,ViewGroup parent) {
+		return getCustomView(position, convertView, parent);
+	}
+
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		return getCustomView(position, convertView, parent);
+	}
+
+
+	public View getCustomView(int position, View v, ViewGroup parent) {
+			
 		ViewHolder holder = null;
 		final ItemSpinnerAllList item = getItem(position);
-		v = inflater.inflate(resource, parent, false);
+		if(v==null)
+			v = inflater.inflate(resource, parent, false);
 
 		holder = new ViewHolder();
 		holder.item = items.get(position);
