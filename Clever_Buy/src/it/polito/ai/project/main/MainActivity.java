@@ -250,8 +250,7 @@ public class MainActivity extends Activity {
 			return true;
 		case R.id.action_logout:
 			// effettuare il logout, eliminando i dati dalla shared preferences and avviare la splashscreen
-			// TODO discutine con Bruno. Secondo me non devo togliere nulla dalla share pref.
-			//      logout deve solo comunicare al server che si vuole disconettere.
+			session.setCheckLoginAble( false );
 			Intent intent = new Intent(this, SplashScreen.class);
 			finish();
 			startActivity(intent);

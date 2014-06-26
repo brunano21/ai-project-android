@@ -7,21 +7,13 @@ import it.polito.ai.project.main.ItemHintListFragment;
 import it.polito.ai.project.main.ItemListFragment;
 import it.polito.ai.project.main.MyHttpClient;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
-import org.json.JSONException;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Paint;
 import android.util.Log;
@@ -43,7 +35,6 @@ public class ItemAdapterListFragment extends ArrayAdapter<ItemListFragment> {
 	private LayoutInflater inflater;
 	private List<ItemListFragment> items;
 
-	private Map<Integer, ImageButton> mapOfHint;
 
 	public myOnClickListener myListener;
 	 
@@ -151,7 +142,7 @@ public class ItemAdapterListFragment extends ArrayAdapter<ItemListFragment> {
 		                Toast.makeText(getContext(),
 		                        "I am here " +  item.getDescrizione() +" "+item.getItem_id(),
 		                        Toast.LENGTH_LONG).show();
-		                items.get(position).setInserzione(item);
+		                items.get(position).setInserzione(item,true);
 		                notifyDataSetChanged();
 		            }
 		        };

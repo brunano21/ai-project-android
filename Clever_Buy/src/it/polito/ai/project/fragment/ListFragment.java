@@ -220,8 +220,7 @@ public class ListFragment extends Fragment {
 		_button_hint.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				Toast.makeText(getActivity().getBaseContext(), " - COD_006_todo - test per acendere la luce - dopo elimina", Toast.LENGTH_LONG).show();
-				// TODO COD_006_todo
+				
 				for(int i=0; i<itemArrayList.size(); i++)
 				{
 					// qui per ogni elemento devo chiedere al server se ci sono suggerimenti
@@ -467,7 +466,7 @@ public class ListFragment extends Fragment {
 		param.put("descrizione",descrizione);
 		param.put("quantita","".equals(quantita)?"1":quantita);
 		param.put("id_inserzione",NULL);
-		// TODO metti le coordinate GPS
+
 		MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
 
 			@Override

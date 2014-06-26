@@ -1,17 +1,24 @@
 package it.polito.ai.project.main;
 
+import org.json.JSONArray;
+
+import android.util.Log;
+
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
 public class ItemListFragment {
 
-	
-	
+
+
 	private int id_lista_desideri;
 	private int id_elemento;
 	private String descrizione;
 	private String quantita;
 	private boolean acquistato;
-	
+
 	private ItemHintListFragment inserzione;
-	
+
 	// l'attributo seguente è true solo se inserzione è != 0
 	private boolean hint_is_present;
 
@@ -23,12 +30,12 @@ public class ItemListFragment {
 		this.descrizione = descrizione;
 		this.quantita = quantita;
 		this.acquistato = acquistato;
-		
+
 		this.setInserzione(inserzione);
 	}
 
-	
-	
+
+
 	public int getId_lista_desideri() {
 		return id_lista_desideri;
 	}
@@ -79,15 +86,73 @@ public class ItemListFragment {
 
 	public void setInserzione(ItemHintListFragment inserzione) {
 		this.inserzione = inserzione;
-		if(inserzione!=null)
+		if(inserzione!=null){
 			this.descrizione = inserzione.getDescrizione();
-		
+
+		}
 		if(inserzione==null)
 			this.hint_is_present=false;
 		else
 			this.hint_is_present=true;
 	}
 
+
+
+	public void setInserzione(ItemHintListFragment inserzione, boolean sendToServer) {
+		setInserzione(inserzione);
+		if(sendToServer)
+		{
+			sendToServer();
+		}
+	}
+
+	public void sendToServer()
+	{
+		sendModificaDescrizione();
+
+		sendModificaId_inserzione();
+
+	}
+
+	public void sendModificaDescrizione()
+	{
+		RequestParams param = new RequestParams();
+		param.put("cmd","modificaDescrizioneElemento");
+		param.put("id_lista_desideri",Integer.toString(this.id_lista_desideri));
+		param.put("id_elemento",Integer.toString(this.id_elemento));
+		param.put("descrizione",this.inserzione.getDescrizione() );
+		MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
+			@Override
+			public void onSuccess(JSONArray response) {
+				;
+			}
+			@Override
+			public void onFailure(Throwable error, String content) {
+				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			}
+		});
+	}
+
+	public void sendModificaId_inserzione()
+	{
+
+		RequestParams param = new RequestParams();
+		param.put("cmd","modificaDescrizioneElemento");
+		param.put("id_lista_desideri",Integer.toString(this.id_lista_desideri));
+		param.put("id_elemento",Integer.toString(this.id_elemento));
+		param.put("id_inserzione",Integer.toString(this.inserzione.getItem_id()));
+
+		MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
+			@Override
+			public void onSuccess(JSONArray response) {
+				;
+			}
+			@Override
+			public void onFailure(Throwable error, String content) {
+				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			}
+		});
+	}
 	public boolean isHint_is_present() {
 		return hint_is_present;
 	}
@@ -95,8 +160,8 @@ public class ItemListFragment {
 	public void setHint_is_present(boolean hint_is_present) {
 		this.hint_is_present = hint_is_present;
 	}
-	
-	
-	
-	
+
+
+
+
 }

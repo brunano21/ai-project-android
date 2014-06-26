@@ -18,7 +18,6 @@ public class HomeFragment extends Fragment {
 	UserSessionManager session;
 	
 	private View root;
-	private CheckBox _cb_auto_login;
 		
 		
 	public HomeFragment(){}
@@ -32,23 +31,11 @@ public class HomeFragment extends Fragment {
 		// Session class instance
 		session = new UserSessionManager(container.getContext());
 		
-		_cb_auto_login = (CheckBox) root.findViewById(R.id.checkBox_auto_login);
 		
 		
 		
 		
 		
-		
-		
-		_cb_auto_login.setChecked(session.checkLoginAble());
-		_cb_auto_login.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				// TODO Auto-generated method stub
-				session.setCheckLoginAble( isChecked );
-			}
-		});
 
 
 
