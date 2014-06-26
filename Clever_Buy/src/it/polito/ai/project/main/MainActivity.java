@@ -318,7 +318,7 @@ public class MainActivity extends Activity {
 			}
 			break;
 		default:
-			System.out.println("Richiesto frammento in posizione: " + position + " --> SHIT!");
+			System.out.println("Richiesto frammento in posizione: " + position);
 		}
 
 		if (fragment != null) {
