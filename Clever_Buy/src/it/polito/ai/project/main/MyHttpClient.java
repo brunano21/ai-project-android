@@ -4,7 +4,8 @@ import com.loopj.android.http.*;
 
 public class MyHttpClient {
 
-	private static final String BASE_URL = "http://87.10.96.38:8080/supermarket/android";
+	private static final String BASE_URL = "http://192.168.1.21:8080/supermarket/android";
+	//private static final String BASE_URL = "http://87.10.96.38:8080/supermarket/android";
 
 	private static AsyncHttpClient client = new AsyncHttpClient();
 	

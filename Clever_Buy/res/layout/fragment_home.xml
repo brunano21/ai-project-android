@@ -1,35 +1,346 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
 
-    <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="28dp"
-        android:src="@drawable/ic_home" />
+        android:orientation="vertical"
+        android:padding="10dp" >
 
-    <TextView
-        android:id="@+id/txtLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/imageView1"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="22dp"
-        android:text="Home View"
-        android:textSize="16dp" />
+        <TextView
+            android:id="@+id/home_tv_bentornato"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="20dp"
+            android:text="Bentornato,"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <CheckBox
-        android:id="@+id/checkBox_auto_login"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/txtLabel"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="24dp"
-        android:text="@string/string_auto_login" />
+        <TextView
+            android:id="@+id/home_tv_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/home_tv_bentornato"
+            android:layout_marginTop="5dp"
+            android:text="Large Text"
+            android:textAllCaps="true"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="40sp" />
 
-</RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/home_relativeLayout_dati"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_alignRight="@+id/home_tv_username"
+            android:layout_below="@+id/home_tv_username"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/border"
+            android:padding="10dp" >
+
+            <TextView
+                android:id="@+id/home_tv_reputazione_testo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:text="Reputazione:"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/home_tv_reputazione_valore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/home_tv_reputazione_testo"
+                android:layout_alignBottom="@+id/home_tv_reputazione_testo"
+                android:layout_alignParentRight="true"
+                android:text="100%"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/linearLayout1"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:gravity="left"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/home_tv_crediti_pendenti_testo"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="15dp"
+                    android:text="Crediti Pendenti"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textStyle="italic" />
+
+                <TextView
+                    android:id="@+id/home_tv_crediti_pendenti_valore"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="0"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayout2"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:gravity="right"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/home_tv_crediti_acquisiti_testo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Crediti Acquisiti"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textStyle="italic" />
+
+                <TextView
+                    android:id="@+id/home_tv_crediti_acquisiti_valore"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="0"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/home_relativeLayout_inserzione"
+            android:layout_width="match_parent"
+            android:layout_height="155dp"
+            android:layout_alignLeft="@+id/home_relativeLayout_dati"
+            android:layout_below="@+id/home_relativeLayout_dati"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/border"
+            android:padding="10dp" >
+
+            <TextView
+                android:id="@+id/home_tv_inserzioni_testo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:text="Inserzioni"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TableLayout
+                android:id="@+id/tableLayout1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/home_tv_inserzioni_testo"
+                android:layout_centerHorizontal="true"
+                android:gravity="center_horizontal"
+                android:stretchColumns="*" >
+
+                <TableRow
+                    android:id="@+id/tableRow1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1" >
+
+                    <TextView
+                        android:id="@+id/home_tv_numero_inserzioni_positive_testo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:text="OK"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/green" />
+
+                    <TextView
+                        android:id="@+id/home_tv_numero_inserzioni_totali_testo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Totali"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                    <TextView
+                        android:id="@+id/home_tv_numero_inserzioni_negative_testo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:text="NO"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/red" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/tableRow2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" >
+
+                    <TextView
+                        android:id="@+id/home_tv_numero_inserzioni_positive_valore"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:text="8"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/green"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/home_tv_numero_inserzioni_totali_valore"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="15"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/home_tv_numero_inserzioni_negative_valore"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:text="7"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/red"
+                        android:textStyle="bold" />
+                </TableRow>
+            </TableLayout>
+
+            <TextView
+                android:id="@+id/home_tv_inserzioni_in_corso_testo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tableLayout1"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:text="Inserzioni in corso"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/home_tv_inserzioni_in_corso_valore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/home_tv_inserzioni_in_corso_testo"
+                android:layout_centerHorizontal="true"
+                android:text="0"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/yellow"
+                android:textStyle="italic" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/home_relativeLayout_valutazione"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/home_relativeLayout_inserzione"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/border" >
+
+            <TextView
+                android:id="@+id/home_tv_valutazioni_testo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:text="Valutazioni"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TableLayout
+                android:id="@+id/tableLayout2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/home_tv_valutazioni_testo"
+                android:layout_centerHorizontal="true"
+                android:gravity="center_horizontal"
+                android:stretchColumns="*" >
+
+                <TableRow
+                    android:id="@+id/tableRow1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1" >
+
+                    <TextView
+                        android:id="@+id/home_tv_numero_valutazioni_positive_testo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:text="+1"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/green" />
+
+                    <TextView
+                        android:id="@+id/home_tv_numero_valutazioni_totali_testo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Totali"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                    <TextView
+                        android:id="@+id/home_tv_numero_valutazioni_negative_testo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:text="-1"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/red" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/tableRow2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" >
+
+                    <TextView
+                        android:id="@+id/home_tv_numero_valutazioni_positive_valore"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:text="8"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/green"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/home_tv_numero_valutazioni_totali_valore"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="15"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/home_tv_numero_valutazioni_negative_valore"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:text="7"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/red"
+                        android:textStyle="bold" />
+                </TableRow>
+            </TableLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+
+</ScrollView>

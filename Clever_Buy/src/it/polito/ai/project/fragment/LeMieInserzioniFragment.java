@@ -163,7 +163,8 @@ public class LeMieInserzioniFragment extends Fragment{
 		}
 
 		IsLoading = false;
-		listView.removeFooterView(footerView);
+		if(listView.getFooterViewsCount() != 0)
+			listView.removeFooterView(footerView);
 		miaInserzioneArrayAdapter.notifyDataSetChanged();
 		progressDialog.dismiss();
 		
@@ -220,7 +221,8 @@ public class LeMieInserzioniFragment extends Fragment{
 					if (!IsLoading && MoreDataAvailable) {
 						if (totalItemCount >= idMiaInserzioneList.size()) {
 							MoreDataAvailable = false;
-							listView.removeFooterView(footerView);
+							if(listView.getFooterViewsCount() != 0)
+								listView.removeFooterView(footerView);
 							miaInserzioneArrayAdapter.notifyDataSetChanged();
 						} else if (totalItemCount <= firstVisibleItem + visibleItemCount) {
 							IsLoading = true;

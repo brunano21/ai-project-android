@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
@@ -18,40 +19,36 @@ public class HomeFragment extends Fragment {
 	UserSessionManager session;
 	
 	private View root;
-	private CheckBox _cb_auto_login;
 		
-		
-	public HomeFragment(){}
-
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,	Bundle savedInstanceState) {
 
 		root = inflater.inflate(R.layout.fragment_home, container, false);
-
-		// Session class instance
-		session = new UserSessionManager(container.getContext());
+		UserSessionManager session = new UserSessionManager(getActivity());
 		
-		_cb_auto_login = (CheckBox) root.findViewById(R.id.checkBox_auto_login);
+		TextView tmp = (TextView) root.findViewById(R.id.home_tv_username);
+		tmp.setText(session.getUserData(UserSessionManager.KEY_USERNAME) + "!!");
+		tmp = (TextView) root.findViewById(R.id.home_tv_reputazione_valore);
+		tmp.setText(session.getUserData(UserSessionManager.KEY_REPUTAZIONE) + "%");
+		tmp = (TextView) root.findViewById(R.id.home_tv_crediti_pendenti_valore);
+		tmp.setText(session.getUserData(UserSessionManager.KEY_CREDITI_PENDENTI));
+		tmp = (TextView) root.findViewById(R.id.home_tv_crediti_acquisiti_valore);
+		tmp.setText(session.getUserData(UserSessionManager.KEY_CREDITI_ACQUISITI));
+		tmp = (TextView) root.findViewById(R.id.home_tv_numero_inserzioni_positive_valore);
+		tmp.setText(session.getUserData(UserSessionManager.KEY_NUMERO_INSERZIONI_POSITIVE));
+		tmp = (TextView) root.findViewById(R.id.home_tv_numero_inserzioni_totali_valore);
+		tmp.setText(session.getUserData(UserSessionManager.KEY_NUMERO_INSERZIONI_TOTALI));
+		tmp = (TextView) root.findViewById(R.id.home_tv_numero_inserzioni_negative_valore);
+		tmp.setText(String.valueOf(Integer.valueOf(session.getUserData(UserSessionManager.KEY_NUMERO_INSERZIONI_TOTALI)) - Integer.valueOf(session.getUserData(UserSessionManager.KEY_NUMERO_INSERZIONI_POSITIVE))));
+		tmp = (TextView) root.findViewById(R.id.home_tv_inserzioni_in_corso_valore);
+		tmp.setText(session.getUserData(UserSessionManager.KEY_NUMERO_INSERZIONI_CORRENTI));
+		tmp = (TextView) root.findViewById(R.id.home_tv_numero_valutazioni_positive_valore);
+		tmp.setText(session.getUserData(UserSessionManager.KEY_NUMERO_VALUTAZIONI_TOTALI));
+		tmp = (TextView) root.findViewById(R.id.home_tv_numero_valutazioni_totali_valore);
+		tmp.setText(session.getUserData(UserSessionManager.KEY_NUMERO_VALUTAZIONI_TOTALI));
+		tmp = (TextView) root.findViewById(R.id.home_tv_numero_valutazioni_negative_valore);
+		tmp.setText(String.valueOf(Integer.valueOf(session.getUserData(UserSessionManager.KEY_NUMERO_VALUTAZIONI_TOTALI)) - Integer.valueOf(session.getUserData(UserSessionManager.KEY_NUMERO_VALUTAZIONI_POSITIVE))));
 		
-		
-		
-		
-		
-		
-		
-		_cb_auto_login.setChecked(session.checkLoginAble());
-		_cb_auto_login.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				// TODO Auto-generated method stub
-				session.setCheckLoginAble( isChecked );
-			}
-		});
-
-
-
 		return root;
 	}
 }

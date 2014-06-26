@@ -22,7 +22,7 @@ public class UserSessionManager {
     int PRIVATE_MODE = 0;
      
     // Sharedpref file name
-    private static final String PREFER_NAME = "AndroidExamplePref";
+    private static final String PREFER_NAME = "AndroidPref";
      
     // All Shared Preferences Keys
     private static final String IS_USER_LOGIN = "IsUserLoggedIn";
@@ -33,7 +33,19 @@ public class UserSessionManager {
     // Email address (make variable public to access from outside)
     public static final String KEY_PASSWORD = "password";
 
-     
+    
+    public static final String KEY_USERNAME = "username";
+    public static final String KEY_REPUTAZIONE = "reputazione";
+    public static final String KEY_CREDITI_PENDENTI = "crediti_pendenti";
+    public static final String KEY_CREDITI_ACQUISITI = "crediti_acquisiti";
+    public static final String KEY_NUMERO_INFRAZIONI = "numero_infrazioni";
+    public static final String KEY_NUMERO_INSERZIONI_TOTALI = "numero_inserzioni_totali";
+    public static final String KEY_NUMERO_INSERZIONI_POSITIVE = "numero_inserzioni_positive";
+    public static final String KEY_NUMERO_VALUTAZIONI_TOTALI = "numero_valutazioni_totali";
+    public static final String KEY_NUMERO_VALUTAZIONI_POSITIVE = "numero_valutazioni_positive";
+    public static final String KEY_NUMERO_INSERZIONI_CORRENTI = "numero_inserzioni_correnti";
+    
+    
     // Constructor
     public UserSessionManager(Context context){
         this._context = context;
@@ -63,17 +75,9 @@ public class UserSessionManager {
      * */
     public boolean checkLoginAble(){
         // Check login status
-        if(this.isUserLoggedIn()){
-            // chiamo la funzione per fare automaticamente il login leggendo le credenziali dalla shared preference            
+        if(this.isUserLoggedIn())
             return true;
-        }
-        else
-        {
-        	// user is not logged
-        	// ritorno false e carico la splash screen
-            
-        	return false;
-        }
+    	return false;
     }
      
      
@@ -81,7 +85,7 @@ public class UserSessionManager {
     /**
      * Get stored session data
      * */
-    public HashMap<String, String> getUserDetails(){
+    public HashMap<String, String> getUserDetails() {
          
         //Use hashmap to store user credentials
         HashMap<String, String> user = new HashMap<String, String>();
@@ -129,4 +133,16 @@ public class UserSessionManager {
         editor.putBoolean(IS_USER_LOGIN, isChecked);
         editor.commit();
 	}
+	
+	public void setUserData(String key, String value) {
+		editor.putString(key, value);
+		Boolean ret = editor.commit();
+		if(!ret)
+			System.out.println("ERRORE:" + key + " - " + value);
+	}
+	
+	public String getUserData(String key) {
+		return pref.getString(key, null);
+	}
+		
 }

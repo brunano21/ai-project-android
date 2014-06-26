@@ -4,6 +4,7 @@ import it.polito.ai.project.R;
 import it.polito.ai.project.fragment.DialogDettagliValutazioneInserzione.MyDialogInterface;
 import it.polito.ai.project.main.MainActivity;
 import it.polito.ai.project.main.MyHttpClient;
+import it.polito.ai.project.main.UserSessionManager;
 import it.polito.ai.project.model.InserzioneDaValutare;
 
 import java.util.ArrayList;
@@ -220,7 +221,6 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 							MoreDataAvailable = false;
 							if(listView.getFooterViewsCount() != 0)
 								listView.removeFooterView(footerView);
-
 							valutazioneArrayAdapter.notifyDataSetChanged();
 						} else if (totalItemCount <= firstVisibleItem + visibleItemCount) {
 							IsLoading = true;
@@ -248,7 +248,6 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 
 
 	private void inviaValutazione(int idInserzioneValutata, int posizione, int risultato) {
-		System.out.println("ID_INSERZIONE " + idInserzioneValutata);
 		RequestParams params = new RequestParams();
 		params.put("idInserzione", String.valueOf(idInserzioneValutata));
 		params.put("risultato", String.valueOf(risultato));
@@ -257,9 +256,9 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 		MyHttpClient.post("/valutazione/aggiungiValutazione", params, new JsonHttpResponseHandler() {
 			@Override
 			public void onSuccess(JSONArray response) {
-				Toast.makeText(getActivity().getApplicationContext(),"Valutazione ricevuta. Grazie!", Toast.LENGTH_LONG).show();
+				Toast.makeText(getActivity().getApplicationContext(), "Valutazione ricevuta. Grazie!", Toast.LENGTH_LONG).show();
 				try {
-					settaInserzioneValutata(response.getInt(1));
+					settaInserzioneValutata(response.getInt(1), response.getString(2));
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
@@ -273,8 +272,13 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 		});
 	}
 
-	private void settaInserzioneValutata(int posizione){
+	private void settaInserzioneValutata(int posizione, String result){
 		animateDismissAdapter.animateDismiss(posizione);
+		UserSessionManager session = new UserSessionManager(getActivity());
+		session.setUserData(UserSessionManager.KEY_CREDITI_PENDENTI, session.getUserData(UserSessionManager.KEY_CREDITI_PENDENTI) + 2);
+		session.setUserData(UserSessionManager.KEY_NUMERO_VALUTAZIONI_TOTALI, session.getUserData(UserSessionManager.KEY_NUMERO_VALUTAZIONI_TOTALI) + 1);
+		if(result.equals("+1"))
+			session.setUserData(UserSessionManager.KEY_NUMERO_VALUTAZIONI_POSITIVE, session.getUserData(UserSessionManager.KEY_NUMERO_VALUTAZIONI_POSITIVE) + 1);
 	}
 
 	/*-----------------------------------  INNER CLASSES  -----------------------------------------------*/
@@ -313,7 +317,7 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 
 			descrizione.setText(valutazione.getDescrizione());
 			data_fine.setText(DateTimeFormat.forPattern("dd/MM/yyyy").print(valutazione.getDataFine()));
-			prezzo.setText(Float.toString(valutazione.getPrezzo()));
+			prezzo.setText(Float.toString(valutazione.getPrezzo()) + " €");
 
 			byte[] decodedString = Base64.decode(valutazione.getFoto(), Base64.DEFAULT);
 			Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length); 
