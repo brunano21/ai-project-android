@@ -79,12 +79,6 @@ public class MainActivity extends Activity {
 		// Session class instance
 		session = new UserSessionManager(getApplicationContext());
 		
-		Intent intent = getIntent();
-		String msg = intent.getStringExtra(SplashScreen.EXTRA_MESSAGE);
-		Log.v("MSG", msg);
-		//Intent intent = new Intent(this, MainService.class);
-		//startService(intent);
-
 		fragmentArray = new SparseArray<Fragment>();
 
 

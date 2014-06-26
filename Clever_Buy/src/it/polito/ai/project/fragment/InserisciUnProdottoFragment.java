@@ -4,6 +4,7 @@ import it.polito.ai.project.R;
 import it.polito.ai.project.adapter.SupermercatoCustomAdapter;
 import it.polito.ai.project.main.MainActivity;
 import it.polito.ai.project.main.MyHttpClient;
+import it.polito.ai.project.main.UserSessionManager;
 import it.polito.ai.project.model.Supermercato;
 
 import java.io.ByteArrayOutputStream;
@@ -313,6 +314,11 @@ public class InserisciUnProdottoFragment extends Fragment {
 							JSONObject jsonObj = response.getJSONObject(0);
 							if(jsonObj.getBoolean("modificaInserzione") == false) {
 								resetVista();
+								
+								/* AGGIORNAMENTO CREDITI */
+								UserSessionManager session = new UserSessionManager(getActivity());
+								session.setUserData(UserSessionManager.KEY_CREDITI_PENDENTI, session.getUserData(UserSessionManager.KEY_CREDITI_PENDENTI) + 10);
+								
 								AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 								builder.setTitle("Inserimento");
 								builder.setMessage("Inserimento dell'inserzione avvenuta con successo!");

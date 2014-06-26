@@ -39,32 +39,14 @@ public class SplashScreen extends Activity {
 	// User Session Manager Class
 	UserSessionManager session;
 
-
 	public final static String EXTRA_MESSAGE = "MESSAGE";
-
-
-
-	Toast _toast;
 	LinearLayout _linearLayout_home_registration_login;
 
 	CheckBox _cb_auto_login;
 
-	TextView _tv_username;
-	TextView _tv_password;
-	TextView _tv_conferma_password;
-	TextView _tv_mail;
-	TextView _tv_registration;
-	TextView _tv_login;
-	TextView _tv_error_message;
-
-	EditText _et_username;
-	EditText _et_password;
-	EditText _et_conferma_password;
-	EditText _et_mail;
-
-	Button	_buttonLogin;
-	Button	_buttonRegistration;
-	Button	_buttonSalta;
+	TextView _tv_username, _tv_password, _tv_conferma_password, _tv_mail, _tv_registration, _tv_login, _tv_error_message;
+	EditText _et_username, _et_password, _et_conferma_password, _et_mail;
+	Button	_buttonLogin, _buttonRegistration, _buttonSalta;
 
 
 
@@ -74,16 +56,13 @@ public class SplashScreen extends Activity {
 
 		// Session class instance
 		session = new UserSessionManager(getApplicationContext());
-		Toast.makeText(getApplicationContext(), 
-				"User Login Status: " + session.isUserLoggedIn(), 
-				Toast.LENGTH_LONG).show();
+		Toast.makeText(getApplicationContext(), "User Login Status: " + session.isUserLoggedIn(), Toast.LENGTH_LONG).show();
 
 		// Check user login (this is the important point)
 		// If User is not logged in , This will redirect user to LoginActivity 
 		// and finish current activity from activity stack.
-		if(session.checkLoginAble())
-		{
-			
+		if(session.checkLoginAble()) {
+
 			// true -> provo a fare il login, e se va bene dentro il login ho la funzione salta() per andare alla home
 
 			// get user data from session
@@ -92,13 +71,11 @@ public class SplashScreen extends Activity {
 			// get name
 			String username = user.get(UserSessionManager.KEY_NAME);
 
-			// get email
+			// get password
 			String password = user.get(UserSessionManager.KEY_PASSWORD );
-			
+
 			funzioneLogin(username, password);
-		}
-		else
-		{
+		} else {
 			// non fa niente, presento la finestra di registrazione / login
 		}
 
@@ -279,9 +256,7 @@ public class SplashScreen extends Activity {
 			}
 		});
 
-
 		_buttonRegistration.setOnClickListener(new View.OnClickListener() {
-
 			@Override
 			public void onClick(View v)  {
 
@@ -305,109 +280,86 @@ public class SplashScreen extends Activity {
 						_tv_error_message.setText("lol " + jsonObj.toString());
 						//onSuccess verifica solo che ho avuto una connessione http, devo testare anche il valore ritornato nel JSON
 						// TODO su
-						Toast.makeText(getApplicationContext(), 
-								"Controlla la mail per abilitare il tuo account",
-								Toast.LENGTH_LONG).show();
+						Toast.makeText(getApplicationContext(), "Controlla la mail per abilitare il tuo account", Toast.LENGTH_LONG).show();
 					}
-
-
 
 					@Override
 					public void onFailure(Throwable error, String content) {
 						Log.v(EXTRA_MESSAGE , "onFailure error : " + error.toString() + "content : " + content);
-						// username / password doesn't match&
-						Toast.makeText(getApplicationContext(), 
-								"onFailure()",
-								Toast.LENGTH_LONG).show();
+						// username / password doesn't match
+						Toast.makeText(getApplicationContext(), "onFailure()", Toast.LENGTH_LONG).show();
 					}
 
 				});
 			}
-
-
 		});
 
 
 	} // fine addListnerOnButton()
 
 
+	protected void funzioneLogin(String username, String password) {
 
-
-	protected void funzioneLogin(String username, String password) 
-	{
 		// Validate if username, password is filled             
-		if(username.trim().length() > 0 && password.trim().length() > 0)
-		{
+		if(username.trim().length() > 0 && password.trim().length() > 0) {
 			MyHttpClient.setBasicAuth(username, password);
 
-			MyHttpClient.post("/login", null, new AsyncHttpResponseHandler(){
+			MyHttpClient.post("/login", null, new JsonHttpResponseHandler(){
 				@Override
-				public void onSuccess(String response) {
-					// EditText _et_tmp = (EditText) findViewById(R.id.ss_et_register_username);
-					// _et_tmp.setText(response);
-					if(_cb_auto_login!=null)
-						if(_cb_auto_login.isChecked())//checkbox per dire che volio riloggarmi con queste credenziali anche la prossima volta
-						{
-							// Creating user login session
-							// Statically storing name="Android Example"
-							// and email="androidexample84@gmail.com"
-							session.createUserLoginSession(_et_username.getText().toString(), _et_password.getText().toString(), _cb_auto_login.isChecked());
-						}
+				public void onSuccess(JSONArray response) {
+					System.out.println("LOGIN -->>>");
+					if(_cb_auto_login != null && _cb_auto_login.isChecked()) {
+						//checkbox per dire che volio riloggarmi con queste credenziali anche la prossima volta
+						session.createUserLoginSession(_et_username.getText().toString(), _et_password.getText().toString(), _cb_auto_login.isChecked());
+					}
+					try {
+						JSONObject jsonObject = response.getJSONObject(0);
+						session.setUserData(UserSessionManager.KEY_USERNAME, jsonObject.getString("username")); 
+						session.setUserData(UserSessionManager.KEY_REPUTAZIONE, jsonObject.getString("reputazione")); 
+						session.setUserData(UserSessionManager.KEY_CREDITI_PENDENTI, jsonObject.getString("crediti_pendenti")); 
+						session.setUserData(UserSessionManager.KEY_CREDITI_ACQUISITI, jsonObject.getString("crediti_acquisiti")); 
+						session.setUserData(UserSessionManager.KEY_NUMERO_INFRAZIONI, jsonObject.getString("numero_infrazioni")); 
+						session.setUserData(UserSessionManager.KEY_NUMERO_INSERZIONI_TOTALI, jsonObject.getString("numero_inserzioni_totali")); 
+						session.setUserData(UserSessionManager.KEY_NUMERO_INSERZIONI_POSITIVE, jsonObject.getString("numero_inserzioni_positive")); 
+						session.setUserData(UserSessionManager.KEY_NUMERO_VALUTAZIONI_TOTALI, jsonObject.getString("numero_valutazioni_totali")); 
+						session.setUserData(UserSessionManager.KEY_NUMERO_VALUTAZIONI_POSITIVE, jsonObject.getString("numero_valutazioni_positive")); 
+						session.setUserData(UserSessionManager.KEY_NUMERO_INSERZIONI_CORRENTI, jsonObject.getString("numero_inserzioni_correnti")); 
+					} catch (JSONException e) {
+						e.printStackTrace();
+					} 
+
 					salta();
 				}
+				@Override
 				public void onFailure(Throwable error, String content) {
 					Log.v(EXTRA_MESSAGE , "onFailure error : " + error.toString() + "content : " + content);
-					// username / password doesn't match&
-					Toast.makeText(getApplicationContext(), "Username/Password is incorrect", Toast.LENGTH_LONG).show();
-					//_tv_error_message.setText("Bad credentials");
+					Toast.makeText(getApplicationContext(), "Username e/o Password non corretti!", Toast.LENGTH_LONG).show();
 				}
 			});
-		}
-		else
+		} 
+		else 
 		{
 			// user didn't entered username or password
-			Toast.makeText(getApplicationContext(),     "Please enter username and password",  Toast.LENGTH_LONG).show();
+			Toast.makeText(getApplicationContext(), "Please enter username and password",  Toast.LENGTH_LONG).show();
 		}
 	}
-
-
-
-
-	private void addListnerOnCheckBox() 
-	{
+	
+	private void addListnerOnCheckBox() {
 		// TODO Auto-generated method stub
 		_cb_auto_login.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				// TODO Auto-generated method stub
 				_tv_error_message.setText(isChecked?"true":"false");
 			}
 		});
 	}
 
 
-
-	public void registrati() {
-
-		/*
-		client.post("http://192.168.1.2:8080/supermarket/register", params, new AsyncHttpResponseHandler(){
-			@Override
-		    public void onSuccess(String response) {
-		        Log.v("POST", response);
-		    }
-		});*/
-	}
-
-
-
 	public void salta(){
 		Log.v("SALTA", "saltaaaa");
 		Intent intent = new Intent(this, MainActivity.class);
-		String message = "porccoooo";
-		intent.putExtra(EXTRA_MESSAGE, message);
 		startActivity(intent);
-		finish(); // TODO, come mai non funge?
 	}
 
 

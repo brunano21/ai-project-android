@@ -133,9 +133,9 @@ public class InScadenzaFragment extends Fragment implements MyDialogInterface{
 			return;
 
 		StringBuilder sb = new StringBuilder();
-		for(Integer s : idProssimaInserzioneList) {
+		for(Integer s : idProssimaInserzioneList) 
 			sb.append(s).append(",");
-		}
+		
 		RequestParams params = new RequestParams();
 		params.put("idInserzioneList",  sb.toString().substring(0, sb.toString().length()-1));
 		MyHttpClient.get("/inscadenza/getInserzioneById", params, new JsonHttpResponseHandler() {
@@ -179,7 +179,8 @@ public class InScadenzaFragment extends Fragment implements MyDialogInterface{
 		}
 
 		IsLoading = false;
-		listView.removeFooterView(footerView);
+		if(listView.getFooterViewsCount() != 0)
+			listView.removeFooterView(footerView);
 		inserzioniInScadenzaArrayAdapter.notifyDataSetChanged();
 		progressDialog.dismiss();
 
@@ -222,7 +223,8 @@ public class InScadenzaFragment extends Fragment implements MyDialogInterface{
 					if (!IsLoading && MoreDataAvailable) {
 						if (totalItemCount >= idInserzioniInScandenzaList.size()) {
 							MoreDataAvailable = false;
-							listView.removeFooterView(footerView);
+							if(listView.getFooterViewsCount() != 0)
+								listView.removeFooterView(footerView);
 							inserzioniInScadenzaArrayAdapter.notifyDataSetChanged();
 						} else if (totalItemCount <= firstVisibleItem + visibleItemCount) {
 							IsLoading = true;
