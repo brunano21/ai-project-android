@@ -5,7 +5,6 @@ import it.polito.ai.project.adapter.NavDrawerListAdapter;
 import it.polito.ai.project.fragment.AboutFragment;
 import it.polito.ai.project.fragment.AquireBarCodeFragment;
 import it.polito.ai.project.fragment.HomeFragment;
-import it.polito.ai.project.fragment.HomeRegistrationLoginFragment;
 import it.polito.ai.project.fragment.InScadenzaFragment;
 import it.polito.ai.project.fragment.InserisciUnProdottoFragment;
 import it.polito.ai.project.fragment.LeMieInserzioniFragment;

@@ -14,6 +14,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.apache.http.Header;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.format.DateTimeFormat;
@@ -173,13 +174,13 @@ public class InserisciUnProdottoFragment extends Fragment {
 		MyHttpClient.get("/inserzione/getCategorieSottocategorie", null, new JsonHttpResponseHandler() {
 
 			@Override
-			public void onSuccess(JSONArray response) {
+			public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 				setSpinnerCategorieSottocategorie(response);
 			}
 
 			@Override
-			public void onFailure(Throwable error, String content) {
-				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+				Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
 			}
 		});
 	}
@@ -307,18 +308,18 @@ public class InserisciUnProdottoFragment extends Fragment {
 				/* INVIO DATI! */
 				MyHttpClient.post("/inserzione/aggiungi", params , new JsonHttpResponseHandler(){
 					@Override
-					public void onSuccess(JSONArray response) {
+					public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 						hideOverlayPanel();
 
 						try {
 							JSONObject jsonObj = response.getJSONObject(0);
 							if(jsonObj.getBoolean("modificaInserzione") == false) {
 								resetVista();
-								
+
 								/* AGGIORNAMENTO CREDITI */
 								UserSessionManager session = new UserSessionManager(getActivity());
 								session.setUserData(UserSessionManager.KEY_CREDITI_PENDENTI, session.getUserData(UserSessionManager.KEY_CREDITI_PENDENTI) + 10);
-								
+
 								AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 								builder.setTitle("Inserimento");
 								builder.setMessage("Inserimento dell'inserzione avvenuta con successo!");
@@ -356,10 +357,10 @@ public class InserisciUnProdottoFragment extends Fragment {
 					}
 
 					@Override
-					public void onFailure(Throwable error, String content) {
+					public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+						Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
 						hideOverlayPanel();
 						Toast.makeText(getActivity(), "Uffa, si è verificato un errore con il server. Riprova più tardi!", Toast.LENGTH_LONG).show();
-						Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
 					}
 				});
 			}
@@ -403,7 +404,8 @@ public class InserisciUnProdottoFragment extends Fragment {
 					// faccio partire una richiesta verso il server per avere tutti gli argomenti disponibili.
 					if(spin_argomento.getChildCount() == 0)
 						MyHttpClient.get("/inserzione/getArgomenti", null, new JsonHttpResponseHandler() {
-							public void onSuccess(JSONArray response) {
+							@Override
+							public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 								Log.v("DEBUG", "onSuccess : " + response.toString());
 								ArrayList<String> argomentiArrayList = new ArrayList<String>();
 								for (int i = 0; i < response.length(); i++)
@@ -423,8 +425,8 @@ public class InserisciUnProdottoFragment extends Fragment {
 							}
 
 							@Override
-							public void onFailure(Throwable error, String content) {
-								Log.v("DEBUG" , "onFailure : " + error.toString() + "content : " + content);
+							public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+								Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
 							}
 						});
 
@@ -490,14 +492,14 @@ public class InserisciUnProdottoFragment extends Fragment {
 	private void controllaBarcode(String barcode) {
 		MyHttpClient.get("/inserzione/checkbarcode/" + barcode, null, new JsonHttpResponseHandler(){
 			@Override
-			public void onSuccess(JSONArray response) {
+			public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 				Log.v("DEBUG", "onSuccess : " + response.toString());
 				aggiornaUi(response);
 			}
 
 			@Override
-			public void onFailure(Throwable error, String content) {
-				Log.v("DEBUG" , "onFailure : " + error.toString() + "content : " + content);
+			public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+				Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
 			}
 		});
 	}
@@ -583,7 +585,7 @@ public class InserisciUnProdottoFragment extends Fragment {
 		params.add("lng", Double.toString(lng));
 		MyHttpClient.get("/inserzione/getSupermercati", params, new JsonHttpResponseHandler(){
 			@Override
-			public void onSuccess(JSONArray response) {
+			public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 				JSONObject jsonObj = null;
 
 				try {
@@ -606,8 +608,8 @@ public class InserisciUnProdottoFragment extends Fragment {
 			}
 
 			@Override
-			public void onFailure(Throwable error, String content) {
-				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+				Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
 			}
 		});
 	}
@@ -655,13 +657,13 @@ public class InserisciUnProdottoFragment extends Fragment {
 		params.put("idInserzione", String.valueOf(idInserzione));
 		MyHttpClient.get("/inserzione/modifica/getInserzioneById", params, new JsonHttpResponseHandler() {
 			@Override
-			public void onSuccess(JSONArray response) {
+			public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 				setDatiInserzione(response);
 			}
 
 			@Override
-			public void onFailure(Throwable error, String content) {
-				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+				Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
 			}
 		});
 	}

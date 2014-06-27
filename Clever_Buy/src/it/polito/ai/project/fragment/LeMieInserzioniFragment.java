@@ -8,11 +8,16 @@ import it.polito.ai.project.model.MiaInserzione;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.Header;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 import org.json.JSONException;
+
+
+
+
 
 
 
@@ -24,9 +29,11 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +43,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -83,7 +91,7 @@ public class LeMieInserzioniFragment extends Fragment{
 	private void getIdInserzioni() {
 		MyHttpClient.get("/lemieinserzioni/getIdInserzioni", null, new JsonHttpResponseHandler(){
 			@Override
-			public void onSuccess(JSONArray response) {
+			public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 				if(response.length() != 0) {
 					for(int i = 0; i<response.length(); i++)
 						try {
@@ -95,15 +103,23 @@ public class LeMieInserzioniFragment extends Fragment{
 					getInserzioniById(0);
 				}
 				else {
-					// TODO: mostrare qualcosa a video, differente da toast
-					// TODO: nascondere anche il processDialog
-					Toast.makeText(getActivity(), "Non hai ancora inserito alcuna inserzione.", Toast.LENGTH_SHORT).show();
+					TextView tv = new TextView(getActivity());
+					tv.setText("Spiacenti, ma non hai ancora inserito alcuna inserzione.");
+					tv.setTextSize(2, 22);
+					tv.setTypeface(null, Typeface.ITALIC);
+					tv.setGravity(Gravity.CENTER);
+					RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+					params.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
+					params.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);
+					((RelativeLayout) rootView).addView(tv, params);
+					listView.setVisibility(View.GONE);
+					progressDialog.dismiss();
 				}
 			}
 
 			@Override
-			public void onFailure(Throwable error, String content) {
-				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+				Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
 				Toast.makeText(getActivity(), "Ops, c'è stato un problema con il server.", Toast.LENGTH_SHORT).show();
 			}
 		});
@@ -126,13 +142,13 @@ public class LeMieInserzioniFragment extends Fragment{
 		MyHttpClient.get("/lemieinserzioni/getInserzioneById", params, new JsonHttpResponseHandler() {
 
 			@Override
-			public void onSuccess(JSONArray response) {
+			public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 				popolaMiaInserzioneList(response);
 			}
 
 			@Override
-			public void onFailure(Throwable error, String content) {
-				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+				Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
 				Toast.makeText(getActivity(), "Ops, c'è stato un problema con il server.", Toast.LENGTH_SHORT).show();
 			}
 
@@ -167,11 +183,11 @@ public class LeMieInserzioniFragment extends Fragment{
 			listView.removeFooterView(footerView);
 		miaInserzioneArrayAdapter.notifyDataSetChanged();
 		progressDialog.dismiss();
-		
+
 	}
 
 	private void registerListenersOnListView() {
-		
+
 		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 			@Override
@@ -179,21 +195,21 @@ public class LeMieInserzioniFragment extends Fragment{
 				final MiaInserzione inserzione = miaInserzioneList.get(position);
 				DateTime today = new  DateTime();
 				//if(today.withTimeAtStartOfDay().isBefore(inserzione.getDataFine().withTimeAtStartOfDay()));
-				
+
 				if(Integer.valueOf(inserzione.getValutazioniPositive()) == 0 && Integer.valueOf(inserzione.getValutazioniNegative()) == 0 && !(DateTime.now().withTimeAtStartOfDay().isAfter(inserzione.getDataFine().withTimeAtStartOfDay()))) {
 					// inserzione modificabile
 					AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 					builder.setIcon(android.R.drawable.ic_dialog_info);
 					builder.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-					           public void onClick(DialogInterface dialog, int id) {
-					               ((MainActivity) getActivity()).modificaInserzioneById(inserzione.getIdInserzione());
-					           }
-					       });
+						public void onClick(DialogInterface dialog, int id) {
+							((MainActivity) getActivity()).modificaInserzioneById(inserzione.getIdInserzione());
+						}
+					});
 					builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-					           public void onClick(DialogInterface dialog, int id) {
-					               // User cancelled the dialog
-					           }
-					       });
+						public void onClick(DialogInterface dialog, int id) {
+							// User cancelled the dialog
+						}
+					});
 					builder.setTitle("Modificare?");
 					builder.setMessage("Vuoi modificare la tua inserzione?");
 					builder.setCancelable(false);

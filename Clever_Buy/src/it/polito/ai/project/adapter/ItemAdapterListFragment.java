@@ -9,6 +9,7 @@ import it.polito.ai.project.main.MyHttpClient;
 
 import java.util.List;
 
+import org.apache.http.Header;
 import org.json.JSONArray;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -120,12 +121,12 @@ public class ItemAdapterListFragment extends ArrayAdapter<ItemListFragment> {
 				MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
 					
 					@Override
-					public void onSuccess(JSONArray response) {
+					public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 						
 					}
 					@Override
-					public void onFailure(Throwable error, String content) {
-						Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+					public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+						Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
 					}
 				});
 			}
@@ -183,12 +184,12 @@ public class ItemAdapterListFragment extends ArrayAdapter<ItemListFragment> {
 		MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
 			
 			@Override
-			public void onSuccess(JSONArray response) {
+			public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 				
 			}
 			@Override
-			public void onFailure(Throwable error, String content) {
-				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+				Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
 			}
 		});
 		

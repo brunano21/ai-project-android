@@ -10,6 +10,7 @@ import it.polito.ai.project.model.InserzioneDaValutare;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.Header;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
@@ -20,9 +21,11 @@ import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -89,7 +92,7 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 
 		MyHttpClient.get("/valutazione/getIdInserzioni", params, new JsonHttpResponseHandler(){
 			@Override
-			public void onSuccess(JSONArray response) {
+			public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 				if(response.length() != 0) {
 					for(int i = 0; i<response.length(); i++)
 						try {
@@ -101,15 +104,24 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 					getInserzioniById(0);
 				}
 				else {
-					// TODO: mostrare qualcosa a video, differente da toast
-					// TODO: nascondere anche il processDialog
-					Toast.makeText(getActivity(), "Nessuna inserzione da valutare", Toast.LENGTH_SHORT).show();
+					TextView tv = new TextView(getActivity());
+					tv.setText("Spiacenti, ma non è stata trovata alcuna inserzione in scadenza nei supermercati vicini a te.");
+					tv.setTypeface(null, Typeface.ITALIC);
+					tv.setTextSize(2, 22);
+					tv.setGravity(Gravity.CENTER);
+					RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+					params.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
+					params.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);
+					((RelativeLayout) rootView).addView(tv, params);
+					listView.setVisibility(View.GONE);
+					progressDialog.dismiss();
+
 				}
 			}
 
 			@Override
-			public void onFailure(Throwable error, String content) {
-				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+				Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
 				Toast.makeText(getActivity(), "Ops, c'è stato un problema con il server.", Toast.LENGTH_SHORT).show();
 			}
 		});
@@ -137,13 +149,13 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 		MyHttpClient.get("/valutazione/getInserzioneById", params, new JsonHttpResponseHandler() {
 
 			@Override
-			public void onSuccess(JSONArray response) {
+			public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 				popolaValutazioneList(response);
 			}
 
 			@Override
-			public void onFailure(Throwable error, String content) {
-				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+				Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
 				Toast.makeText(getActivity(), "Ops, c'è stato un problema con il server.", Toast.LENGTH_SHORT).show();
 			}
 
@@ -255,7 +267,7 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 
 		MyHttpClient.post("/valutazione/aggiungiValutazione", params, new JsonHttpResponseHandler() {
 			@Override
-			public void onSuccess(JSONArray response) {
+			public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 				Toast.makeText(getActivity().getApplicationContext(), "Valutazione ricevuta. Grazie!", Toast.LENGTH_LONG).show();
 				try {
 					settaInserzioneValutata(response.getInt(1), response.getString(2));
@@ -265,8 +277,8 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 			}
 
 			@Override
-			public void onFailure(Throwable error, String content) {
-				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+				Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
 				Toast.makeText(getActivity(), "Ops, c'è stato un problema con il server.", Toast.LENGTH_SHORT).show();
 			}
 		});

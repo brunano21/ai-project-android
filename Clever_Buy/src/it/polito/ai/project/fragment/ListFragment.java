@@ -13,6 +13,7 @@ import it.polito.ai.project.main.UserSessionManager;
 
 import java.util.ArrayList;
 
+import org.apache.http.Header;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -113,7 +114,7 @@ public class ListFragment extends Fragment {
 				MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
 
 					@Override
-					public void onSuccess(JSONArray response) {
+					public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 						// elimino tutti gli oggetti
 						itemArrayList.clear();
 						itemAdapter.notifyDataSetChanged();
@@ -122,8 +123,8 @@ public class ListFragment extends Fragment {
 						itemAllListSpinner_ArrayAdapter.notifyDataSetChanged();
 					}
 					@Override
-					public void onFailure(Throwable error, String content) {
-						Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+					public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+						Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
 					}
 				});
 			}
@@ -278,7 +279,7 @@ public class ListFragment extends Fragment {
 		RequestParams params = new RequestParams();
 		MyHttpClient.get("/todolist/getTodoListIDs", params, new JsonHttpResponseHandler(){
 			@Override
-			public void onSuccess(JSONArray response) {
+			public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 				if(response.length() != 0) {
 					for(int i = 0; i<response.length(); i++)
 						try {
@@ -292,8 +293,8 @@ public class ListFragment extends Fragment {
 				}
 			}
 			@Override
-			public void onFailure(Throwable error, String content) {
-				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+				Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
 				Toast.makeText(getActivity(), "Ops, c'è stato un problema con il server.", Toast.LENGTH_SHORT).show();
 			}
 		});
@@ -312,7 +313,7 @@ public class ListFragment extends Fragment {
 		MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
 
 			@Override
-			public void onSuccess(JSONArray response) {
+			public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 				for (int i = 0; i < response.length(); i++) 
 					try {
 						ItemHintListFragment hint = null;
@@ -340,8 +341,8 @@ public class ListFragment extends Fragment {
 					}
 			}
 			@Override
-			public void onFailure(Throwable error, String content) {
-				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+				Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
 			}
 		});
 
@@ -440,7 +441,7 @@ public class ListFragment extends Fragment {
 		MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
 
 			@Override
-			public void onSuccess(JSONArray response) {
+			public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 				try {
 					aggiungiNuovaLista(response.getInt(0), response.getString(1));
 				} catch (JSONException e) {
@@ -448,8 +449,8 @@ public class ListFragment extends Fragment {
 				}
 			}
 			@Override
-			public void onFailure(Throwable error, String content) {
-				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+				Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
 			}
 		});
 
@@ -474,7 +475,7 @@ public class ListFragment extends Fragment {
 		MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
 
 			@Override
-			public void onSuccess(JSONArray response) {
+			public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 				for (int i = 0; i < response.length(); i++) 
 					try {
 						/*	ItemHintListFragment hint = null;
@@ -495,8 +496,8 @@ public class ListFragment extends Fragment {
 
 			}
 			@Override
-			public void onFailure(Throwable error, String content) {
-				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+				Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
 			}
 		});
 

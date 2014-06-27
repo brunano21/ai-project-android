@@ -1,25 +1,26 @@
 package it.polito.ai.project.main;
 
+import java.net.ConnectException;
 import java.util.HashMap;
-
-import it.polito.ai.project.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.apache.http.Header;
+import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.http.conn.HttpHostConnectException;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -29,10 +30,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.PersistentCookieStore;
 import com.loopj.android.http.RequestParams;
 
 public class SplashScreen extends Activity {
@@ -49,12 +47,14 @@ public class SplashScreen extends Activity {
 	private EditText _et_username, _et_password, _et_conferma_password, _et_mail;
 	private Button	_buttonLogin, _buttonRegistration, _buttonSalta;
 
+	
+	private Context _context;
 	private ProgressDialog progressDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		_context = this;
 		session = new UserSessionManager(getApplicationContext());
 
 		// Check user logged
@@ -62,15 +62,9 @@ public class SplashScreen extends Activity {
 		if(session.checkLoginAble()) {
 			progressDialog = ProgressDialog.show(this, "Loading", "Login in corso...", false);
 
-			// true -> provo a fare il login, e se va bene dentro il login ho la funzione salta() per andare alla home
-
 			// get user data from session
 			HashMap<String, String> user = session.getUserDetails();
-
-			// get name
 			String username = user.get(UserSessionManager.KEY_NAME);
-
-			// get password
 			String password = user.get(UserSessionManager.KEY_PASSWORD );
 
 			funzioneLogin(username, password);
@@ -193,16 +187,13 @@ public class SplashScreen extends Activity {
 					//suggerire nell'editbox che la conferma della password non è corretta
 					_et_conferma_password.setHint("errore in password ripetuta");
 				}
-				if(		!"".equals(_et_username.getText().toString()) &&  
-						!"".equals(_et_password.getText().toString()) &&  
-						!"".equals(_et_mail.getText().toString())  		)
+				if(!"".equals(_et_username.getText().toString()) && !"".equals(_et_password.getText().toString()) && !"".equals(_et_mail.getText().toString()))
 					_buttonRegistration.setEnabled(true);
 				else
 					_buttonRegistration.setEnabled(false);
 
 
-				if(		!"".equals(_et_username.getText().toString()) &&  
-						!"".equals(_et_password.getText().toString()) )
+				if(!"".equals(_et_username.getText().toString()) && !"".equals(_et_password.getText().toString()))
 					_buttonLogin.setEnabled(true);
 				else
 					_buttonLogin.setEnabled(false);
@@ -238,6 +229,7 @@ public class SplashScreen extends Activity {
 
 			@Override
 			public void onClick(View v) {
+				progressDialog = ProgressDialog.show(_context, "Loading", "Login in corso...", false);
 				funzioneLogin(_et_username.getText().toString(), _et_password.getText().toString());
 			}
 		});
@@ -245,6 +237,7 @@ public class SplashScreen extends Activity {
 		_buttonRegistration.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v)  {
+				//progressDialog.show(_context, "Loading", "Registrazione in corso...", false);
 
 				RequestParams params = new RequestParams();
 				params.put("userName", _et_username.getText().toString());
@@ -252,9 +245,9 @@ public class SplashScreen extends Activity {
 				params.put("confirmPassword", _et_conferma_password.getText().toString());
 				params.put("email", _et_mail.getText().toString());
 
-				MyHttpClient.post("/register", params,  new JsonHttpResponseHandler() {
+				MyHttpClient.post("/register", params, new JsonHttpResponseHandler() {
 					@Override
-					public void onSuccess(JSONArray response) {
+					public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 
 						JSONObject jsonObj = null;
 						try {
@@ -263,16 +256,14 @@ public class SplashScreen extends Activity {
 
 							e.printStackTrace();
 						}
-						_tv_error_message.setText("lol " + jsonObj.toString());
-						//onSuccess verifica solo che ho avuto una connessione http, devo testare anche il valore ritornato nel JSON
-						// TODO su
-						Toast.makeText(getApplicationContext(), "Controlla la mail per abilitare il tuo account", Toast.LENGTH_LONG).show();
+						//progressDialog.dismiss();
+						Toast.makeText(_context, "Controlla la tua casella di posta per abilitare il tuo account", Toast.LENGTH_LONG).show();
 					}
 
 					@Override
-					public void onFailure(Throwable error, String content) {
-						Log.v(EXTRA_MESSAGE , "onFailure error : " + error.toString() + "content : " + content);
-						// username / password doesn't match
+					public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+						Log.v(EXTRA_MESSAGE , "onFailure error : " + throwable.getMessage() + "content : " + responseString);
+						//progressDialog.dismiss();
 						Toast.makeText(getApplicationContext(), "onFailure()", Toast.LENGTH_LONG).show();
 					}
 
@@ -292,7 +283,7 @@ public class SplashScreen extends Activity {
 
 			MyHttpClient.post("/login", null, new JsonHttpResponseHandler(){
 				@Override
-				public void onSuccess(JSONArray response) {
+				public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 					if(_cb_auto_login != null && _cb_auto_login.isChecked()) {
 						session.createUserLoginSession(_et_username.getText().toString(), _et_password.getText().toString(), _cb_auto_login.isChecked());
 					}
@@ -311,15 +302,33 @@ public class SplashScreen extends Activity {
 					} catch (JSONException e) {
 						e.printStackTrace();
 					} 
-
 					salta();
 				}
+				
 				@Override
-				public void onFailure(Throwable error, String content) {
+				public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 					progressDialog.dismiss();
-					Log.v(EXTRA_MESSAGE , "onFailure error : " + error.toString() + "content : " + content);
-					Toast.makeText(getApplicationContext(), "Username e/o Password non corretti!", Toast.LENGTH_LONG).show();
+					Toast.makeText(getApplicationContext(), "Username e/o Password non corretti! " + statusCode, Toast.LENGTH_LONG).show();
+					//for(int i = 0; i < headers.length; i++)
+						//System.out.println(headers[i]);
+					System.out.println(responseString);
+					System.out.println(throwable.getMessage());
 				}
+
+				
+				/*
+				@Override
+				public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+					super.onFailure(statusCode, headers, throwable, errorResponse);
+					System.out.println(errorResponse);
+					System.out.println(statusCode);
+					System.out.println(throwable.toString());
+					System.out.println(throwable.getLocalizedMessage());
+					if (throwable.getCause() instanceof ConnectException ) { 
+						Toast.makeText(getApplicationContext(), "Impossibile contattare il server. Riprova più tardi! " + statusCode, Toast.LENGTH_LONG).show();
+				    }
+				}*/
+
 			});
 		} 
 		else 
