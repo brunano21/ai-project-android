@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.http.Header;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -28,9 +29,11 @@ import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -95,7 +98,7 @@ public class InScadenzaFragment extends Fragment implements MyDialogInterface{
 
 		MyHttpClient.get("/inscadenza/getIdInserzioni", params, new JsonHttpResponseHandler(){
 			@Override
-			public void onSuccess(JSONArray response) {
+			public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 				if(response.length() != 0) {
 					for(int i = 0; i<response.length(); i++)
 						try {
@@ -106,15 +109,23 @@ public class InScadenzaFragment extends Fragment implements MyDialogInterface{
 					getInserzioniById(0);
 				}
 				else {
-					// TODO: mostrare qualcosa a video, differente da toast
-					// TODO: nascondere anche il processDialog
-					Toast.makeText(getActivity(), "Nessuna inserzione da valutare", Toast.LENGTH_SHORT).show();
+					TextView tv = new TextView(getActivity());
+					tv.setText("Spiacenti, ma non è stata trovata alcuna inserzione in scadenza nei supermercati vicini a te.");
+					tv.setTextSize(2, 22);
+					tv.setTypeface(null, Typeface.ITALIC);
+					tv.setGravity(Gravity.CENTER);
+					RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+					params.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
+					params.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);
+					((RelativeLayout) rootView).addView(tv, params);
+					listView.setVisibility(View.GONE);
+					progressDialog.dismiss();
 				}
 			}
 
 			@Override
-			public void onFailure(Throwable error, String content) {
-				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+				Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
 				Toast.makeText(getActivity(), "Ops, c'è stato un problema con il server.", Toast.LENGTH_SHORT).show();
 			}
 		});
@@ -140,13 +151,13 @@ public class InScadenzaFragment extends Fragment implements MyDialogInterface{
 		params.put("idInserzioneList",  sb.toString().substring(0, sb.toString().length()-1));
 		MyHttpClient.get("/inscadenza/getInserzioneById", params, new JsonHttpResponseHandler() {
 			@Override
-			public void onSuccess(JSONArray response) {
+			public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 				popolaInserzioniInScadenzaList(response);
 			}
 
 			@Override
-			public void onFailure(Throwable error, String content) {
-				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+				Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
 				Toast.makeText(getActivity(), "Ops, c'è stato un problema con il server.", Toast.LENGTH_SHORT).show();
 			}
 
@@ -247,7 +258,7 @@ public class InScadenzaFragment extends Fragment implements MyDialogInterface{
 
 		MyHttpClient.post("/inscadenza/aggiungiElemento", params, new JsonHttpResponseHandler() {
 			@Override
-			public void onSuccess(JSONArray response) {
+			public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 				try {
 					Toast.makeText(getActivity().getApplicationContext(), "Elemento aggiunto con successo!", Toast.LENGTH_LONG).show();
 					settaInserzioneComeAggiunta(response.getJSONObject(0).getInt("posizione"));
@@ -257,8 +268,8 @@ public class InScadenzaFragment extends Fragment implements MyDialogInterface{
 			}
 
 			@Override
-			public void onFailure(Throwable error, String content) {
-				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+				Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
 			}
 		});
 	}

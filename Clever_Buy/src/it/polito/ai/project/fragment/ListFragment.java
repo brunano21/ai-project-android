@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.http.Header;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -115,7 +116,7 @@ public class ListFragment extends Fragment {
 				MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
 
 					@Override
-					public void onSuccess(JSONArray response) {
+					public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 						// elimino tutti gli oggetti
 						itemArrayList.clear();
 						itemAdapter.notifyDataSetChanged();
@@ -124,8 +125,8 @@ public class ListFragment extends Fragment {
 						itemAllListSpinner_ArrayAdapter.notifyDataSetChanged();
 					}
 					@Override
-					public void onFailure(Throwable error, String content) {
-						Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+					public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+						Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
 					}
 				});
 			}
@@ -279,7 +280,7 @@ public class ListFragment extends Fragment {
 		RequestParams params = new RequestParams();
 		MyHttpClient.get("/todolist/getTodoListIDs", params, new JsonHttpResponseHandler(){
 			@Override
-			public void onSuccess(JSONArray response) {
+			public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 				if(response.length() != 0) {
 					for(int i = 0; i<response.length(); i++)
 						try {
@@ -306,8 +307,8 @@ public class ListFragment extends Fragment {
 				}
 			}
 			@Override
-			public void onFailure(Throwable error, String content) {
-				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+				Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
 				Toast.makeText(getActivity(), "Ops, c'è stato un problema con il server.", Toast.LENGTH_SHORT).show();
 			}
 		});
@@ -326,7 +327,7 @@ public class ListFragment extends Fragment {
 		MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
 
 			@Override
-			public void onSuccess(JSONArray response) {
+			public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 				for (int i = 0; i < response.length(); i++) 
 					try {
 						ItemHintListFragment hint = null;
@@ -354,8 +355,8 @@ public class ListFragment extends Fragment {
 					}
 			}
 			@Override
-			public void onFailure(Throwable error, String content) {
-				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+				Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
 			}
 		});
 
@@ -393,7 +394,7 @@ public class ListFragment extends Fragment {
 
 		// set dialog message
 		alertDialogBuilder
-		.setCancelable(false)
+		.setCancelable(true)
 		.setPositiveButton("OK",
 				new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog,int id) {
@@ -452,7 +453,7 @@ public class ListFragment extends Fragment {
 		MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
 
 			@Override
-			public void onSuccess(JSONArray response) {
+			public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 				try {
 					aggiungiNuovaLista(response.getInt(0), response.getString(1));
 				} catch (JSONException e) {
@@ -460,8 +461,8 @@ public class ListFragment extends Fragment {
 				}
 			}
 			@Override
-			public void onFailure(Throwable error, String content) {
-				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+				Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
 			}
 		});
 
@@ -484,12 +485,29 @@ public class ListFragment extends Fragment {
 		param.put("id_inserzione",NULL);
 		MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
 			@Override
-			public void onSuccess(JSONArray response) {
+			public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+				for (int i = 0; i < response.length(); i++) 
+					try {
+						/*	ItemHintListFragment hint = null;
+						DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
+						int item_id = response.getJSONObject(i).getJSONObject("inserzione").getInt("item_id");
+						boolean selezionato = true;
+						String descrizione = response.getJSONObject(i).getString("descrizione");
+						DateTime data_fine = formatter.parseDateTime(response.getJSONObject(i).getString("data_fine"));
+						String supermercato = response.getJSONObject(i).getString("supermercato");
+						String prezzo = response.getJSONObject(i).getString("");
+						String foto = response.getJSONObject(i).getString("");
+						hint = new ItemHintListFragment(item_id, selezionato, descrizione, data_fine, supermercato, prezzo, foto);
+						 */// TODO queste info le devi memorizzare da qualche parte per visualizzarlo negli hint
+						in.setHint_is_present(true);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 
 			}
 			@Override
-			public void onFailure(Throwable error, String content) {
-				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+				Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
 			}
 		});
 
@@ -525,7 +543,7 @@ public class ListFragment extends Fragment {
 		MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
 
 			@Override
-			public void onSuccess(JSONArray response) {
+			public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 				for (int i = 0; i < response.length() && i<1 ; i++) 
 					try {
 						// avro un array con un unico id_elemento solo se ho suggerimenti
@@ -543,8 +561,8 @@ public class ListFragment extends Fragment {
 				itemAdapter.notifyDataSetChanged();
 			}
 			@Override
-			public void onFailure(Throwable error, String content) {
-				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+				Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
 			}
 		});
 

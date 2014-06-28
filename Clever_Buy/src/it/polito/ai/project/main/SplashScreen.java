@@ -1,25 +1,24 @@
 package it.polito.ai.project.main;
 
 import java.util.HashMap;
+import java.util.Map;
 
-import it.polito.ai.project.R;
-
+import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -29,10 +28,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.PersistentCookieStore;
 import com.loopj.android.http.RequestParams;
 
 public class SplashScreen extends Activity {
@@ -49,12 +45,14 @@ public class SplashScreen extends Activity {
 	private EditText _et_username, _et_password, _et_conferma_password, _et_mail;
 	private Button	_buttonLogin, _buttonRegistration, _buttonSalta;
 
+	
+	private Context _context;
 	private ProgressDialog progressDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		_context = this;
 		session = new UserSessionManager(getApplicationContext());
 
 		// Check user logged
@@ -62,15 +60,9 @@ public class SplashScreen extends Activity {
 		if(session.checkLoginAble()) {
 			progressDialog = ProgressDialog.show(this, "Loading", "Login in corso...", false);
 
-			// true -> provo a fare il login, e se va bene dentro il login ho la funzione salta() per andare alla home
-
 			// get user data from session
 			HashMap<String, String> user = session.getUserDetails();
-
-			// get name
 			String username = user.get(UserSessionManager.KEY_NAME);
-
-			// get password
 			String password = user.get(UserSessionManager.KEY_PASSWORD );
 
 			funzioneLogin(username, password);
@@ -101,9 +93,6 @@ public class SplashScreen extends Activity {
 			_buttonRegistration = new Button(this.getApplicationContext());
 			_buttonSalta = new Button(this.getApplicationContext());
 
-			_cb_auto_login.setText("Auto Log");
-
-
 			_cb_auto_login.setText("Ricordami");
 			_tv_username.setText("Username");
 			_tv_password.setText("Password");
@@ -128,15 +117,15 @@ public class SplashScreen extends Activity {
 			_buttonSalta.setText("Salta");
 
 
-			_linearLayout_home_registration_login.addView(_cb_auto_login);
-			_linearLayout_home_registration_login.addView(_tv_username);
-			_linearLayout_home_registration_login.addView(_et_username);
+			_linearLayout_home_registration_login.addView(_tv_mail);
+			_linearLayout_home_registration_login.addView(_et_mail);
 			_linearLayout_home_registration_login.addView(_tv_password);
 			_linearLayout_home_registration_login.addView(_et_password);
 			_linearLayout_home_registration_login.addView(_buttonLogin);
 			_linearLayout_home_registration_login.addView(_buttonSalta);
 			_linearLayout_home_registration_login.addView(_tv_registration);
 			_linearLayout_home_registration_login.addView(_tv_error_message);
+			_linearLayout_home_registration_login.addView(_cb_auto_login);
 
 			addListnerOnTexts();
 
@@ -162,7 +151,6 @@ public class SplashScreen extends Activity {
 				_linearLayout_home_registration_login.addView(_buttonLogin);
 				_linearLayout_home_registration_login.addView(_buttonSalta);
 				_linearLayout_home_registration_login.addView(_tv_registration);
-				//_linearLayout_home_registration_login.addView(_tv_error_message);
 				_linearLayout_home_registration_login.addView(_cb_auto_login);
 
 
@@ -172,7 +160,6 @@ public class SplashScreen extends Activity {
 		_tv_registration.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				_linearLayout_home_registration_login.removeAllViews();
-				//_linearLayout_home_registration_login.addView(_cb_auto_login);
 				_linearLayout_home_registration_login.addView(_tv_username);
 				_linearLayout_home_registration_login.addView(_et_username);
 				_linearLayout_home_registration_login.addView(_tv_password);
@@ -184,30 +171,19 @@ public class SplashScreen extends Activity {
 				_linearLayout_home_registration_login.addView(_buttonRegistration);
 				_linearLayout_home_registration_login.addView(_buttonSalta);
 				_linearLayout_home_registration_login.addView(_tv_login);
-				//	_linearLayout_home_registration_login.addView(_tv_error_message);
 			}
 		});
 
 		TextWatcher onSearchFieldTextChanged = new TextWatcher(){
 			public void afterTextChanged(Editable s) {
-				//your business logic after text is changed
-				//TODO
-				//if(!_et_conferma_password.getText().toString().equals(_et_password.getText().toString()))
-				//{
-				// spostato in cliclListener registrazione
-				//suggerire nell'editbox che la conferma della password non è corretta
-				//_et_conferma_password.setHint("errore in password ripetuta");
-				//}
-				if(		!"".equals(_et_username.getText().toString()) &&  
-						!"".equals(_et_password.getText().toString()) &&  
-						!"".equals(_et_mail.getText().toString())  		)
+
+				if(!"".equals(_et_mail.getText().toString()) && !"".equals(_et_password.getText().toString()) && !"".equals(_et_mail.getText().toString()))
 					_buttonRegistration.setEnabled(true);
 				else
 					_buttonRegistration.setEnabled(false);
 
+				if(!"".equals(_et_mail.getText().toString()) && !"".equals(_et_password.getText().toString()))
 
-				if(		!"".equals(_et_mail.getText().toString()) &&  
-						!"".equals(_et_password.getText().toString()) )
 					_buttonLogin.setEnabled(true);
 				else
 					_buttonLogin.setEnabled(false);
@@ -243,19 +219,21 @@ public class SplashScreen extends Activity {
 
 			@Override
 			public void onClick(View v) {
+				progressDialog = ProgressDialog.show(_context, "Loading", "Login in corso...", false);
 				funzioneLogin(_et_mail.getText().toString(), _et_password.getText().toString());
+
 			}
 		});
 
 		_buttonRegistration.setOnClickListener( new View.OnClickListener() {
 			@Override
 			public void onClick(View v)  {
-
-				if(!_et_conferma_password.getText().toString().equals(_et_password.getText().toString()))
-				{
+				if(!_et_conferma_password.getText().toString().equals(_et_password.getText().toString())) {
 					Toast.makeText(getApplicationContext(), "Le password inserite non coincidono.", Toast.LENGTH_LONG).show();
 					return;
 				}
+				progressDialog = ProgressDialog.show(_context, "Loading", "Registrazione in corso...", false);
+
 
 				RequestParams params = new RequestParams();
 				params.put("userName", _et_username.getText().toString());
@@ -263,28 +241,39 @@ public class SplashScreen extends Activity {
 				params.put("confirmPassword", _et_conferma_password.getText().toString());
 				params.put("email", _et_mail.getText().toString());
 
-				MyHttpClient.post("/register", params,  new JsonHttpResponseHandler() {
+				MyHttpClient.post("/register", params, new JsonHttpResponseHandler() {
 					@Override
-					public void onSuccess(JSONArray response) {
-
+					public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+						
 						JSONObject jsonObj = null;
 						try {
 							jsonObj = response.getJSONObject(0);
+							if(jsonObj.getBoolean("registration_result")) {
+								// registazione avvenuta con successo
+								progressDialog.dismiss();
+								Toast.makeText(_context, "Controlla la tua casella di posta per abilitare il tuo account", Toast.LENGTH_LONG).show();
+							} else {
+								// registrazione fallita
+								JSONObject a = new JSONObject(jsonObj.getString("errors"));
+								String errorString = "ERRORE\n";
+								for (int i = 0; i < a.names().length(); i++)
+									errorString += a.names().getString(i).toUpperCase() + ": " + a.getString(a.names().getString(i)) + "\n";
+								errorString.substring(0, errorString.length()-2);
+								progressDialog.dismiss();
+								Toast.makeText(_context, errorString, Toast.LENGTH_LONG).show();
+							}
+								
 						} catch (JSONException e) {
 
 							e.printStackTrace();
 						}
-						_tv_error_message.setText("lol " + jsonObj.toString());
-						//onSuccess verifica solo che ho avuto una connessione http, devo testare anche il valore ritornato nel JSON
-						// TODO su
-						Toast.makeText(getApplicationContext(), "Controlla la mail per abilitare il tuo account", Toast.LENGTH_LONG).show();
 					}
 
 					@Override
-					public void onFailure(Throwable error, String content) {
-						Log.v(EXTRA_MESSAGE , "onFailure error : " + error.toString() + "content : " + content);
-						// username / password doesn't match
-						Toast.makeText(getApplicationContext(), "onFailure()", Toast.LENGTH_LONG).show();
+					public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+						Log.v(EXTRA_MESSAGE , "onFailure error : " + throwable.getMessage() + "content : " + responseString);
+						progressDialog.dismiss();
+						Toast.makeText(_context, "Si è verificato un errore con il server", Toast.LENGTH_LONG).show();
 					}
 
 				});
@@ -300,13 +289,12 @@ public class SplashScreen extends Activity {
 		// Validate if username, password is filled             
 		if(username.trim().length() > 0 && password.trim().length() > 0) {
 			MyHttpClient.setBasicAuth(username, password);
-
 			MyHttpClient.post("/login", null, new JsonHttpResponseHandler(){
 				@Override
-				public void onSuccess(JSONArray response) {
+				public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 					if(_cb_auto_login != null && _cb_auto_login.isChecked()) 
 						session.createUserLoginSession(_et_username.getText().toString(), _et_password.getText().toString(), _cb_auto_login.isChecked());
-					
+
 					try {
 						JSONObject jsonObject = response.getJSONObject(0);
 						session.setUserData(UserSessionManager.KEY_USERNAME, jsonObject.getString("username")); 
@@ -322,15 +310,31 @@ public class SplashScreen extends Activity {
 					} catch (JSONException e) {
 						e.printStackTrace();
 					} 
-
 					salta();
 				}
+				
 				@Override
-				public void onFailure(Throwable error, String content) {
+				public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 					progressDialog.dismiss();
-					Log.v(EXTRA_MESSAGE , "onFailure error : " + error.toString() + "content : " + content);
-					Toast.makeText(getApplicationContext(), "Username e/o Password non corretti!", Toast.LENGTH_LONG).show();
+					Toast.makeText(getApplicationContext(), "Username e/o Password non corretti! " + statusCode, Toast.LENGTH_LONG).show();
+					System.out.println(responseString);
+					System.out.println(throwable.getMessage());
 				}
+
+				
+				/*
+				@Override
+				public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+					super.onFailure(statusCode, headers, throwable, errorResponse);
+					System.out.println(errorResponse);
+					System.out.println(statusCode);
+					System.out.println(throwable.toString());
+					System.out.println(throwable.getLocalizedMessage());
+					if (throwable.getCause() instanceof ConnectException ) { 
+						Toast.makeText(getApplicationContext(), "Impossibile contattare il server. Riprova più tardi! " + statusCode, Toast.LENGTH_LONG).show();
+				    }
+				}*/
+
 			});
 		} 
 		else 

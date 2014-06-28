@@ -8,10 +8,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.apache.http.Header;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.json.JSONArray;
 import org.json.JSONException;
+
+
 
 
 
@@ -135,7 +138,7 @@ public class DialogDettagliInserzioneInScadenza extends DialogFragment {
 
 		MyHttpClient.get("/inscadenza/getTodoLists", null, new JsonHttpResponseHandler(){
 			@Override
-			public void onSuccess(JSONArray response) {
+			public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 				todoListHashMap = new HashMap<String, Integer>();
 				ArrayList<String> todoListArrayList = new ArrayList<String>();
 				
@@ -156,8 +159,8 @@ public class DialogDettagliInserzioneInScadenza extends DialogFragment {
 			}
 
 			@Override
-			public void onFailure(Throwable error, String content) {
-				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+				Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
 			}
 
 		});
