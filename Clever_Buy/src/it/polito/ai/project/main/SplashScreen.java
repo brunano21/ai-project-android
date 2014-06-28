@@ -1,14 +1,12 @@
 package it.polito.ai.project.main;
 
-import java.net.ConnectException;
 import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.apache.http.Header;
-import org.apache.http.conn.ConnectTimeoutException;
-import org.apache.http.conn.HttpHostConnectException;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -237,7 +235,7 @@ public class SplashScreen extends Activity {
 		_buttonRegistration.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v)  {
-				//progressDialog.show(_context, "Loading", "Registrazione in corso...", false);
+				progressDialog = ProgressDialog.show(_context, "Loading", "Registrazione in corso...", false);
 
 				RequestParams params = new RequestParams();
 				params.put("userName", _et_username.getText().toString());
@@ -248,23 +246,36 @@ public class SplashScreen extends Activity {
 				MyHttpClient.post("/register", params, new JsonHttpResponseHandler() {
 					@Override
 					public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-
+						
 						JSONObject jsonObj = null;
 						try {
 							jsonObj = response.getJSONObject(0);
+							if(jsonObj.getBoolean("registration_result")) {
+								// registazione avvenuta con successo
+								progressDialog.dismiss();
+								Toast.makeText(_context, "Controlla la tua casella di posta per abilitare il tuo account", Toast.LENGTH_LONG).show();
+							} else {
+								// registrazione fallita
+								JSONObject a = new JSONObject(jsonObj.getString("errors"));
+								String errorString = "ERRORE\n";
+								for (int i = 0; i < a.names().length(); i++)
+									errorString += a.names().getString(i).toUpperCase() + ": " + a.getString(a.names().getString(i)) + "\n";
+								errorString.substring(0, errorString.length()-2);
+								progressDialog.dismiss();
+								Toast.makeText(_context, errorString, Toast.LENGTH_LONG).show();
+							}
+								
 						} catch (JSONException e) {
 
 							e.printStackTrace();
 						}
-						//progressDialog.dismiss();
-						Toast.makeText(_context, "Controlla la tua casella di posta per abilitare il tuo account", Toast.LENGTH_LONG).show();
 					}
 
 					@Override
 					public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 						Log.v(EXTRA_MESSAGE , "onFailure error : " + throwable.getMessage() + "content : " + responseString);
-						//progressDialog.dismiss();
-						Toast.makeText(getApplicationContext(), "onFailure()", Toast.LENGTH_LONG).show();
+						progressDialog.dismiss();
+						Toast.makeText(_context, "Si è verificato un errore con il server", Toast.LENGTH_LONG).show();
 					}
 
 				});
@@ -284,9 +295,9 @@ public class SplashScreen extends Activity {
 			MyHttpClient.post("/login", null, new JsonHttpResponseHandler(){
 				@Override
 				public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-					if(_cb_auto_login != null && _cb_auto_login.isChecked()) {
+					if(_cb_auto_login != null && _cb_auto_login.isChecked()) 
 						session.createUserLoginSession(_et_username.getText().toString(), _et_password.getText().toString(), _cb_auto_login.isChecked());
-					}
+					
 					try {
 						JSONObject jsonObject = response.getJSONObject(0);
 						session.setUserData(UserSessionManager.KEY_USERNAME, jsonObject.getString("username")); 
@@ -309,8 +320,6 @@ public class SplashScreen extends Activity {
 				public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 					progressDialog.dismiss();
 					Toast.makeText(getApplicationContext(), "Username e/o Password non corretti! " + statusCode, Toast.LENGTH_LONG).show();
-					//for(int i = 0; i < headers.length; i++)
-						//System.out.println(headers[i]);
 					System.out.println(responseString);
 					System.out.println(throwable.getMessage());
 				}
