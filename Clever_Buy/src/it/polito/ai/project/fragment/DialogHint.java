@@ -39,6 +39,7 @@ public class DialogHint  extends Dialog  {
 
 	public myOnClickListener myListener;
 	
+	private String id_elemento;
 	private String descrizione;
 	
 	public DialogHint(Context context, myOnClickListener myclick, String descrizione) {
@@ -80,9 +81,11 @@ public class DialogHint  extends Dialog  {
 	private List<ItemHintListFragment> getHintsFromServer(String longitudine, String latitudine, String descrizione) {
 		hint_itemArrayList = new ArrayList<ItemHintListFragment>();
 		RequestParams param = new RequestParams();
+		String NULL = null;
 		param.put("cmd","ottieni_suggerimenti");
 		param.put("latitudine",latitudine);
 		param.put("longitudine",longitudine);
+		param.put("id_elemnto",NULL);
 		param.put("descrizione",descrizione);
 		MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
 
@@ -90,6 +93,8 @@ public class DialogHint  extends Dialog  {
 			public void onSuccess(JSONArray response) {
 				for (int i = 0; i < response.length(); i++) 
 					try {
+						if(response.getJSONObject(i).has("id_elemento"))
+							continue;
 						ItemHintListFragment hint = null;
 						DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
 						int id_inserzione = response.getJSONObject(i).getInt("id_inserzione");
@@ -114,6 +119,8 @@ public class DialogHint  extends Dialog  {
 
 		return hint_itemArrayList;
 	}
+	
+	
 	
 	
 	class ItemHintAdapterListFragment  extends ArrayAdapter<ItemHintListFragment> {

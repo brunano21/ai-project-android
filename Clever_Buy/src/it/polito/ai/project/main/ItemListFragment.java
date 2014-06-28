@@ -86,14 +86,10 @@ public class ItemListFragment {
 
 	public void setInserzione(ItemHintListFragment inserzione) {
 		this.inserzione = inserzione;
-		if(inserzione!=null){
+		if(inserzione!=null)
+		{
 			this.descrizione = inserzione.getDescrizione();
-
 		}
-		if(inserzione==null)
-			this.hint_is_present=false;
-		else
-			this.hint_is_present=true;
 	}
 
 
@@ -109,17 +105,15 @@ public class ItemListFragment {
 	public void sendToServer()
 	{
 		sendModificaDescrizione();
-
 		sendModificaId_inserzione();
-
 	}
 
 	public void sendModificaDescrizione()
 	{
 		RequestParams param = new RequestParams();
 		param.put("cmd","modificaDescrizioneElemento");
-		param.put("id_lista_desideri",Integer.toString(this.id_lista_desideri));
-		param.put("id_elemento",Integer.toString(this.id_elemento));
+		param.put("id_lista_desideri",String.valueOf(this.id_lista_desideri));
+		param.put("id_elemento",String.valueOf(this.id_elemento));
 		param.put("descrizione",this.inserzione.getDescrizione() );
 		MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
 			@Override
@@ -141,6 +135,7 @@ public class ItemListFragment {
 		param.put("id_lista_desideri",Integer.toString(this.id_lista_desideri));
 		param.put("id_elemento",Integer.toString(this.id_elemento));
 		param.put("id_inserzione",Integer.toString(this.inserzione.getItem_id()));
+		param.put("descrizione",this.descrizione);
 
 		MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
 			@Override

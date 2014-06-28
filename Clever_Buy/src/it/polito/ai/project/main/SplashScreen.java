@@ -109,20 +109,19 @@ public class SplashScreen extends Activity {
 		_buttonSalta = new Button(this.getApplicationContext());
 
 
-		_cb_auto_login.setText("Auto Log");
-
+		_cb_auto_login.setText("Ricordami");
 		_tv_username.setText("Username");
 		_tv_password.setText("Password");
-		_tv_conferma_password.setText("Confirm Password");
+		_tv_conferma_password.setText("Conferma Password");
 		_tv_mail.setText("Mail");
-		_tv_registration.setText("New? Register here...");
-		_tv_login.setText("Login here...");
+		_tv_registration.setText("Nuovo? Registrati qui...");
+		_tv_login.setText("Accedi qui...");
 
 
-		_et_username.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
-		_et_password.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
-		_et_conferma_password.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
-		_et_mail.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+		_et_username.setInputType( InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS |  InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+		_et_password.setInputType( InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+		_et_conferma_password.setInputType( InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+		_et_mail.setInputType( InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
 
 		_buttonLogin.setText("Login"); // se modifichi quello che scrivi qui, modifca anche nel On ClickListener
 		_buttonLogin.setEnabled(false);
@@ -133,15 +132,15 @@ public class SplashScreen extends Activity {
 		_buttonSalta.setText("Salta");
 
 
-		_linearLayout_home_registration_login.addView(_cb_auto_login);
-		_linearLayout_home_registration_login.addView(_tv_username);
-		_linearLayout_home_registration_login.addView(_et_username);
+		_linearLayout_home_registration_login.addView(_tv_mail);
+		_linearLayout_home_registration_login.addView(_et_mail);
 		_linearLayout_home_registration_login.addView(_tv_password);
 		_linearLayout_home_registration_login.addView(_et_password);
 		_linearLayout_home_registration_login.addView(_buttonLogin);
 		_linearLayout_home_registration_login.addView(_buttonSalta);
 		_linearLayout_home_registration_login.addView(_tv_registration);
 		_linearLayout_home_registration_login.addView(_tv_error_message);
+		_linearLayout_home_registration_login.addView(_cb_auto_login);
 
 		addListnerOnTexts();
 
@@ -163,15 +162,16 @@ public class SplashScreen extends Activity {
 			public void onClick(View v) {
 				// se tocchi qui vai alla pagina login
 				_linearLayout_home_registration_login.removeAllViews();
-				_linearLayout_home_registration_login.addView(_cb_auto_login);
-				_linearLayout_home_registration_login.addView(_tv_username);
-				_linearLayout_home_registration_login.addView(_et_username);
+				_linearLayout_home_registration_login.addView(_tv_mail);
+				_linearLayout_home_registration_login.addView(_et_mail);
 				_linearLayout_home_registration_login.addView(_tv_password);
 				_linearLayout_home_registration_login.addView(_et_password);
 				_linearLayout_home_registration_login.addView(_buttonLogin);
 				_linearLayout_home_registration_login.addView(_buttonSalta);
 				_linearLayout_home_registration_login.addView(_tv_registration);
-				_linearLayout_home_registration_login.addView(_tv_error_message);
+				//_linearLayout_home_registration_login.addView(_tv_error_message);
+				_linearLayout_home_registration_login.addView(_cb_auto_login);
+
 
 			}
 		});
@@ -191,7 +191,7 @@ public class SplashScreen extends Activity {
 				_linearLayout_home_registration_login.addView(_buttonRegistration);
 				_linearLayout_home_registration_login.addView(_buttonSalta);
 				_linearLayout_home_registration_login.addView(_tv_login);
-				_linearLayout_home_registration_login.addView(_tv_error_message);
+				//	_linearLayout_home_registration_login.addView(_tv_error_message);
 			}
 		});
 
@@ -201,12 +201,13 @@ public class SplashScreen extends Activity {
 		TextWatcher onSearchFieldTextChanged = new TextWatcher(){
 			public void afterTextChanged(Editable s) {
 				//your business logic after text is changed
-
-				if(!_et_conferma_password.getText().toString().equals(_et_password.getText().toString()))
-				{
-					//suggerire nell'editbox che la conferma della password non è corretta
-					_et_conferma_password.setHint("errore in password ripetuta");
-				}
+				//TODO
+				//if(!_et_conferma_password.getText().toString().equals(_et_password.getText().toString()))
+				//{
+				// spostato in cliclListener registrazione
+				//suggerire nell'editbox che la conferma della password non è corretta
+				//_et_conferma_password.setHint("errore in password ripetuta");
+				//}
 				if(		!"".equals(_et_username.getText().toString()) &&  
 						!"".equals(_et_password.getText().toString()) &&  
 						!"".equals(_et_mail.getText().toString())  		)
@@ -215,7 +216,7 @@ public class SplashScreen extends Activity {
 					_buttonRegistration.setEnabled(false);
 
 
-				if(		!"".equals(_et_username.getText().toString()) &&  
+				if(		!"".equals(_et_mail.getText().toString()) &&  
 						!"".equals(_et_password.getText().toString()) )
 					_buttonLogin.setEnabled(true);
 				else
@@ -252,13 +253,19 @@ public class SplashScreen extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				funzioneLogin(_et_username.getText().toString(), _et_password.getText().toString());
+				funzioneLogin(_et_mail.getText().toString(), _et_password.getText().toString());
 			}
 		});
 
-		_buttonRegistration.setOnClickListener(new View.OnClickListener() {
+		_buttonRegistration.setOnClickListener( new View.OnClickListener() {
 			@Override
 			public void onClick(View v)  {
+
+				if(!_et_conferma_password.getText().toString().equals(_et_password.getText().toString()))
+				{
+					Toast.makeText(getApplicationContext(), "Le password inserite non coincidono.", Toast.LENGTH_LONG).show();
+					return;
+				}
 
 				RequestParams params = new RequestParams();
 				params.put("userName", _et_username.getText().toString());
@@ -291,9 +298,9 @@ public class SplashScreen extends Activity {
 					}
 
 				});
+
 			}
 		});
-
 
 	} // fine addListnerOnButton()
 
@@ -310,7 +317,7 @@ public class SplashScreen extends Activity {
 					System.out.println("LOGIN -->>>");
 					if(_cb_auto_login != null && _cb_auto_login.isChecked()) {
 						//checkbox per dire che volio riloggarmi con queste credenziali anche la prossima volta
-						session.createUserLoginSession(_et_username.getText().toString(), _et_password.getText().toString(), _cb_auto_login.isChecked());
+						session.createUserLoginSession(_et_mail.getText().toString(), _et_password.getText().toString(), _cb_auto_login.isChecked());
 					}
 					try {
 						JSONObject jsonObject = response.getJSONObject(0);
@@ -343,7 +350,7 @@ public class SplashScreen extends Activity {
 			Toast.makeText(getApplicationContext(), "Please enter username and password",  Toast.LENGTH_LONG).show();
 		}
 	}
-	
+
 	private void addListnerOnCheckBox() {
 		// TODO Auto-generated method stub
 		_cb_auto_login.setOnCheckedChangeListener(new OnCheckedChangeListener() {

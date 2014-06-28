@@ -12,6 +12,8 @@ import it.polito.ai.project.main.MyHttpClient;
 import it.polito.ai.project.main.UserSessionManager;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -109,7 +111,7 @@ public class ListFragment extends Fragment {
 			private void eliminaLista(final ItemSpinnerAllList item ) {
 				RequestParams param = new RequestParams();
 				param.put("cmd","eliminaListaDesideri");
-				param.put("id_lista_desideri",Integer.toString(item.getId()));
+				param.put("id_lista_desideri",String.valueOf(item.getId()));
 				MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
 
 					@Override
@@ -142,7 +144,7 @@ public class ListFragment extends Fragment {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				//TODO apri Dialog Dettagli 
+
 			}
 		});
 
@@ -160,10 +162,6 @@ public class ListFragment extends Fragment {
 		//commentato perchè carico mnualemente io i linear layout
 		return rootView;
 	}
-
-
-
-
 
 
 	private void addListnerOnTexts() {
@@ -220,7 +218,7 @@ public class ListFragment extends Fragment {
 		_button_hint.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				
+
 				for(int i=0; i<itemArrayList.size(); i++)
 				{
 					// qui per ogni elemento devo chiedere al server se ci sono suggerimenti
@@ -269,6 +267,9 @@ public class ListFragment extends Fragment {
 				itemAdapter.notifyDataSetChanged();
 				ItemSpinnerAllList tmp = (ItemSpinnerAllList) parent.getItemAtPosition(position);
 				aggiornaItemList( tmp.getId() );
+
+				UserSessionManager session = new UserSessionManager(_context);
+				session.setId_Lista_Desideri(tmp.getId());
 			}
 
 			@Override
@@ -286,6 +287,19 @@ public class ListFragment extends Fragment {
 						} catch (JSONException e) {
 							e.printStackTrace();
 						}
+
+					// TODO - seleziona ultima lista visualizzata 
+					UserSessionManager session = new UserSessionManager(_context);
+					int id_lista_desideri = session.getId_Lista_Desideri();
+					int x = _spinner_allList.getChildCount();
+					for(int iMarco = 0; iMarco < _spinner_allList.getChildCount(); iMarco++)
+					{
+						ItemSpinnerAllList tmp = ((ItemSpinnerAllList)_spinner_allList.getChildAt(iMarco).getTag());
+						if(id_lista_desideri == tmp.getId() )
+						{
+							_spinner_allList.setSelection(iMarco);
+						}
+					}
 				}
 				else {
 					Toast.makeText(getActivity(), "Nessuna Todo List presente sul server. Clicca sul bottone + per crearne una nuova", Toast.LENGTH_LONG).show();
@@ -308,7 +322,7 @@ public class ListFragment extends Fragment {
 	protected void aggiornaItemList(final int idLista) {
 		RequestParams param = new RequestParams();
 		param.put("cmd","todoListItems");
-		param.put("id_lista_desideri",Integer.toString(idLista));
+		param.put("id_lista_desideri",String.valueOf(idLista));
 		MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
 
 			@Override
@@ -355,17 +369,7 @@ public class ListFragment extends Fragment {
 		ItemSpinnerAllList item = new ItemSpinnerAllList(id, nome);
 		itemAllListSpinner_ArrayList.add(item );
 		itemAllListSpinner_ArrayAdapter.notifyDataSetChanged();
-	/*	UserSessionManager session = new UserSessionManager(_context);
-		int id_lista_desideri = session.getId_Lista_Desideri();
 
-		for(int iMarco = 0; iMarco < _spinner_allList.getChildCount(); iMarco++)
-		{
-			ItemSpinnerAllList tmp = ((ItemSpinnerAllList)_spinner_allList.getChildAt(iMarco).getTag());
-			if(id_lista_desideri == tmp.getId() )
-			{
-				_spinner_allList.setSelection(iMarco);
-			}
-		}*/
 	}
 
 	/*
@@ -412,7 +416,8 @@ public class ListFragment extends Fragment {
 	/*
 	 * aggiungo un nuovo prodotto alla lista e mando questa info al server
 	 */
-	protected void aggiungiNuovoProdottoAllaLista(int id_lista_desideri, int id_elemento, String descrizione, String quantita) {
+	protected void aggiungiNuovoProdottoAllaLista(int id_lista_desideri, int id_elemento, String descrizione, String quantita) 
+	{
 
 		inviaNuovoProdottoAlServer( aggiungiProdottoAllaLista(id_lista_desideri, id_elemento, descrizione, quantita, false, null) );
 		itemAdapter.notifyDataSetChanged(); // per aggiornare l'eventuale lampadina accesa per il suggerimento che setto nella funzione sopra.
@@ -425,6 +430,9 @@ public class ListFragment extends Fragment {
 		itemArrayList.add(item);
 		itemAdapter.notifyDataSetChanged();
 
+		if(item.getInserzione() == null)
+			testHintsFromServer(Double.toString(MainActivity.getLocation().getLatitude()),Double.toString(MainActivity.getLocation().getLongitude()), String.valueOf(item.getId_elemento()), item.getDescrizione());
+
 		_edit_item_name.setText("");
 		_edit_item_quantity.setText("");
 		return item;
@@ -432,10 +440,11 @@ public class ListFragment extends Fragment {
 
 
 
+
 	private void inviaNuovaLista_User(final int id, final String nome) {
 		RequestParams param = new RequestParams();
 		param.put("cmd","nuovaListaDesideri");
-		param.put("id_lista_desideri",Integer.toString(id));
+		param.put("id_lista_desideri",String.valueOf(id));
 		param.put("nome",nome);
 		MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
 
@@ -466,28 +475,9 @@ public class ListFragment extends Fragment {
 		param.put("descrizione",descrizione);
 		param.put("quantita","".equals(quantita)?"1":quantita);
 		param.put("id_inserzione",NULL);
-
 		MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
-
 			@Override
 			public void onSuccess(JSONArray response) {
-				for (int i = 0; i < response.length(); i++) 
-					try {
-						/*	ItemHintListFragment hint = null;
-						DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
-						int item_id = response.getJSONObject(i).getJSONObject("inserzione").getInt("item_id");
-						boolean selezionato = true;
-						String descrizione = response.getJSONObject(i).getString("descrizione");
-						DateTime data_fine = formatter.parseDateTime(response.getJSONObject(i).getString("data_fine"));
-						String supermercato = response.getJSONObject(i).getString("supermercato");
-						String prezzo = response.getJSONObject(i).getString("");
-						String foto = response.getJSONObject(i).getString("");
-						hint = new ItemHintListFragment(item_id, selezionato, descrizione, data_fine, supermercato, prezzo, foto);
-						 */// TODO queste info le devi memorizzare da qualche parte per visualizzarlo negli hint
-						in.setHint_is_present(true);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
 
 			}
 			@Override
@@ -498,6 +488,61 @@ public class ListFragment extends Fragment {
 
 	}
 
+
+
+
+
+	protected void accendiLampadina(int id_elemento) {
+		Iterator<ItemListFragment> iter = itemArrayList.iterator();
+		while( iter.hasNext() )
+		{
+			ItemListFragment tmp = iter.next();
+			if( tmp.getId_elemento() == id_elemento )
+			{
+				tmp.setHint_is_present(true);
+				itemAdapter.notifyDataSetChanged();
+				break;
+			}
+		}
+	}
+
+
+	private List<ItemHintListFragment> testHintsFromServer(String longitudine, String latitudine, String id_elemento, String descrizione) {
+		ArrayList<ItemHintListFragment> hint_itemArrayList = new ArrayList<ItemHintListFragment>();
+		RequestParams param = new RequestParams();
+		param.put("cmd","ottieni_suggerimenti");
+		param.put("latitudine",latitudine);
+		param.put("longitudine",longitudine);
+		param.put("id_elemento",id_elemento);
+		param.put("descrizione",descrizione);
+		MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
+
+			@Override
+			public void onSuccess(JSONArray response) {
+				for (int i = 0; i < response.length() && i<1 ; i++) 
+					try {
+						// avro un array con un unico id_elemento solo se ho suggerimenti
+						if( response.getJSONObject(0).has("id_elemento") )
+						{
+							int id_elemento = Integer.valueOf( response.getJSONObject(i).getString("id_elemento") );
+							accendiLampadina(id_elemento);
+							break;
+						}
+					} catch (Exception e) 
+					{
+						e.printStackTrace();
+					}
+
+				itemAdapter.notifyDataSetChanged();
+			}
+			@Override
+			public void onFailure(Throwable error, String content) {
+				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			}
+		});
+
+		return hint_itemArrayList;
+	}
 
 
 

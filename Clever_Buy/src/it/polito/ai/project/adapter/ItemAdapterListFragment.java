@@ -3,10 +3,13 @@ package it.polito.ai.project.adapter;
 import it.polito.ai.project.R;
 import it.polito.ai.project.fragment.DialogHint;
 import it.polito.ai.project.fragment.DialogHint.myOnClickListener;
+import it.polito.ai.project.fragment.DialogHintSingolo;
+import it.polito.ai.project.fragment.DialogHintSingolo.mySingoloOnClickListener;
 import it.polito.ai.project.main.ItemHintListFragment;
 import it.polito.ai.project.main.ItemListFragment;
 import it.polito.ai.project.main.MyHttpClient;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -27,7 +30,6 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 public class ItemAdapterListFragment extends ArrayAdapter<ItemListFragment> {
@@ -60,23 +62,21 @@ public class ItemAdapterListFragment extends ArrayAdapter<ItemListFragment> {
 		holder.acquistato = (CheckBox) v.findViewById(R.id.checkBox_item_acquistato);
 		holder.nameTextView = (TextView) v.findViewById(R.id.text_item_name);
 		holder.quantityTextView = (TextView) v.findViewById(R.id.text_item_quantity);
+		holder.supermercatoTextView = (TextView) v.findViewById(R.id.text_item_supermercato);
 		holder.deleteItem = (ImageButton) v.findViewById(R.id.img_item_remove);
 		holder.hint = (ImageButton) v.findViewById(R.id.img_item_hint);
 
 		holder.deleteItem.setTag(holder.item);
 
 		v.setTag(holder);
-
+		
+		holder.acquistato.setChecked( item.isAcquistato() );
 		holder.acquistato.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				// TODO   - COD_008_todo - invia al server l'info di oggetto acquistato
-
-				//ItemListFragment itemToCut = (ItemListFragment) getTag();
-				//itemToCut.setAcquistato(isChecked);
 				item.setAcquistato(isChecked);
-				inviaAcquistatoServer( item );
 				notifyDataSetChanged();
+				inviaAcquistatoServer( item );
 			}
 		});
 		if(item.isAcquistato())
@@ -85,6 +85,7 @@ public class ItemAdapterListFragment extends ArrayAdapter<ItemListFragment> {
 			{
 				holder.nameTextView.setPaintFlags(holder.nameTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 				holder.quantityTextView.setPaintFlags(holder.quantityTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+				holder.supermercatoTextView.setPaintFlags(holder.supermercatoTextView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 			}
 		}
 		else
@@ -96,7 +97,7 @@ public class ItemAdapterListFragment extends ArrayAdapter<ItemListFragment> {
 			}
 		}
 
-		holder.acquistato.setChecked( item.isAcquistato() );
+		
 		holder.nameTextView.setText(item.getDescrizione());
 		holder.quantityTextView.setText( String.valueOf(item.getQuantita()) );
 		holder.deleteItem.setTag(holder.item);
@@ -107,7 +108,7 @@ public class ItemAdapterListFragment extends ArrayAdapter<ItemListFragment> {
 				//Toast.makeText(getContext(), "delete "+itemToRemove.getDescrizione(), Toast.LENGTH_SHORT).show();
 				
 				eliminaElemento( itemToRemove.getId_lista_desideri() ,itemToRemove.getId_elemento());
-				
+				//TODO inva info al server
 				remove(itemToRemove);
 				notifyDataSetChanged();
 			}
@@ -115,8 +116,8 @@ public class ItemAdapterListFragment extends ArrayAdapter<ItemListFragment> {
 			private void eliminaElemento(int id_lista_desideri, int id_elemento) {
 				RequestParams param = new RequestParams();
 				param.put("cmd","eliminaElemento");
-				param.put("id_lista_desideri",Integer.toString(id_lista_desideri));
-				param.put("id_elemento",Integer.toString(id_elemento));
+				param.put("id_lista_desideri",String.valueOf(id_lista_desideri));
+				param.put("id_elemento",String.valueOf(id_elemento));
 				MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
 					
 					@Override
@@ -138,21 +139,49 @@ public class ItemAdapterListFragment extends ArrayAdapter<ItemListFragment> {
 				// create new onclicklistener interface //
 		        myListener = new myOnClickListener( ) {
 		            @Override
-		            public void onButtonClick( ItemHintListFragment item ) {
-		                Toast.makeText(getContext(),
-		                        "I am here " +  item.getDescrizione() +" "+item.getItem_id(),
-		                        Toast.LENGTH_LONG).show();
-		                items.get(position).setInserzione(item,true);
+		            public void onButtonClick( ItemHintListFragment item_hint ) {
+		                items.get(position).setInserzione(item_hint,true);
 		                notifyDataSetChanged();
+		                setHintDescrizioneToServer(String.valueOf(item.getId_lista_desideri()), String.valueOf(item.getId_elemento()), String.valueOf(item.getInserzione().getItem_id()) );
 		            }
 		        };
-				// custom dialog
-				DialogHint newFragment = new DialogHint(getContext(), myListener, item.getDescrizione() );
-				newFragment.show();
+		        if(item.getInserzione()!=null)
+				{	
+					mySingoloOnClickListener mySingoloListner = new mySingoloOnClickListener() {
+						
+						@Override
+						public void onButtonClick(ItemHintListFragment item) {
+							//TODO -> se volessi modificare l'inserzione devo fare un passo in dietro:
+							//        - nel server non deve essere modificata descrizione elemento. La stampo a video io, mettendo la precedenza alla descrizione che viene da Inserzione.
+							//		  - solo così posso riusare la descrizione base per trovare altri oggetti nel DB
+							
+						}
+					};
+					
+					DialogHintSingolo singoloDialog = new DialogHintSingolo(getContext(), mySingoloListner , item.getInserzione());//TODO nuovo fottuto dialog per vedere l'inserzione associata che permetta di eliminarla o modificarla
+					singoloDialog.show();
+				}	
+		        else
+		        if( item.isHint_is_present() )
+		        {	
+		        	// custom dialog per aprire i suggerimenti
+		        	DialogHint newFragment = new DialogHint(getContext(), myListener, item.getDescrizione() );
+		        	newFragment.show();
+		        } 
+		        
 			}
 		});
-		holder.hint.setImageResource(item.isHint_is_present() ? R.drawable.ic_help_hint_sun : R.drawable.ic_help_hint );
-
+		
+		if(holder.item.getInserzione()!=null)
+		{
+			holder.hint.setImageResource(R.drawable.ic_carrello);
+			holder.supermercatoTextView.setVisibility(View.VISIBLE);
+			holder.supermercatoTextView.setText(holder.item.getInserzione().getSupermercato() );
+		}
+		else
+		{
+			holder.hint.setImageResource(item.isHint_is_present() ? R.drawable.ic_help_hint_sun : R.drawable.ic_help_hint );
+		}
 
 		return v;
 	}
@@ -177,9 +206,9 @@ public class ItemAdapterListFragment extends ArrayAdapter<ItemListFragment> {
 	protected void inviaAcquistatoServer(ItemListFragment item) {
 		RequestParams param = new RequestParams();
 		param.put("cmd","modificaFlagAcquistatoElemento");
-		param.put("id_lista_desideri",Integer.toString(item.getId_lista_desideri()));
-		param.put("id_elemento",Integer.toString(item.getId_elemento()));
-		param.put("acquistato",Boolean.toString(item.isAcquistato()));
+		param.put("id_lista_desideri",String.valueOf(item.getId_lista_desideri()));
+		param.put("id_elemento",String.valueOf(item.getId_elemento()));
+		param.put("acquistato",String.valueOf(item.isAcquistato()));
 		MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
 			
 			@Override
@@ -200,7 +229,25 @@ public class ItemAdapterListFragment extends ArrayAdapter<ItemListFragment> {
 		CheckBox acquistato;
 		TextView nameTextView;
 		TextView quantityTextView;
+		TextView supermercatoTextView;
 		ImageButton hint;
 		ImageButton deleteItem;
+	}
+
+	private void setHintDescrizioneToServer(String id_lista_desideri, String id_elemento, String id_inserzione) {
+		RequestParams param = new RequestParams();
+		param.put("cmd","aggiungiIDInserzione");
+		param.put("id_lista_desideri",id_lista_desideri);
+		param.put("id_elemento",id_elemento);
+		param.put("id_inserzione",id_inserzione);
+		MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
+			@Override
+			public void onSuccess(JSONArray response) {
+			}
+			@Override
+			public void onFailure(Throwable error, String content) {
+				Log.v("ERROR" , "onFailure error : " + error.toString() + "content : " + content);
+			}
+		});
 	}
 }
