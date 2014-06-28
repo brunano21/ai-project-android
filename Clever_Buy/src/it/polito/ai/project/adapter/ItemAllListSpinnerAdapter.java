@@ -41,7 +41,6 @@ public class ItemAllListSpinnerAdapter  extends ArrayAdapter<ItemSpinnerAllList>
 	public View getCustomView(int position, View v, ViewGroup parent) {
 			
 		ViewHolder holder = null;
-		final ItemSpinnerAllList item = getItem(position);
 		if(v==null)
 			v = inflater.inflate(resource, parent, false);
 

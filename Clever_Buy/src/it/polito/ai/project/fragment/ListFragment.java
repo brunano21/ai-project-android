@@ -66,11 +66,11 @@ public class ListFragment extends Fragment {
 
 	private ArrayList<ItemSpinnerAllList> itemAllListSpinner_ArrayList;
 	private ItemAllListSpinnerAdapter itemAllListSpinner_ArrayAdapter;
+
 	private ArrayList<ItemListFragment> itemArrayList;
 	private ItemAdapterListFragment itemAdapter;
-	private Context _context;
 
-	public ListFragment(){}
+	private Context _context;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -256,7 +256,7 @@ public class ListFragment extends Fragment {
 	{
 		itemAllListSpinner_ArrayList = new ArrayList<ItemSpinnerAllList>();
 		itemAllListSpinner_ArrayAdapter = new ItemAllListSpinnerAdapter(getActivity(), R.layout.fragment_list_all_spinner_item, itemAllListSpinner_ArrayList);
-		//itemAllListSpinner_ArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		itemAllListSpinner_ArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		_spinner_allList.setAdapter(itemAllListSpinner_ArrayAdapter);
 		_spinner_allList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
 			@Override
@@ -367,8 +367,12 @@ public class ListFragment extends Fragment {
 	 */
 	private void aggiungiNuovaLista(int id, String nome) {
 		ItemSpinnerAllList item = new ItemSpinnerAllList(id, nome);
-		itemAllListSpinner_ArrayList.add(item );
+		itemAllListSpinner_ArrayList.add(item);
 		itemAllListSpinner_ArrayAdapter.notifyDataSetChanged();
+
+//		UserSessionManager session = new UserSessionManager(_context);
+//		int id_lista_desideri = session.getId_Lista_Desideri();
+
 
 	}
 
@@ -440,8 +444,7 @@ public class ListFragment extends Fragment {
 
 
 
-
-	private void inviaNuovaLista_User(final int id, final String nome) {
+	private void inviaNuovaLista_User(int id, String nome) {
 		RequestParams param = new RequestParams();
 		param.put("cmd","nuovaListaDesideri");
 		param.put("id_lista_desideri",String.valueOf(id));
@@ -450,7 +453,11 @@ public class ListFragment extends Fragment {
 
 			@Override
 			public void onSuccess(JSONArray response) {
-				aggiungiNuovaLista(id,nome);
+				try {
+					aggiungiNuovaLista(response.getInt(0), response.getString(1));
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
 			}
 			@Override
 			public void onFailure(Throwable error, String content) {

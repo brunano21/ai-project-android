@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -37,31 +38,29 @@ import com.loopj.android.http.RequestParams;
 public class SplashScreen extends Activity {
 
 	// User Session Manager Class
-	UserSessionManager session;
+	private UserSessionManager session;
 
 	public final static String EXTRA_MESSAGE = "MESSAGE";
-	LinearLayout _linearLayout_home_registration_login;
+	private LinearLayout _linearLayout_home_registration_login;
 
-	CheckBox _cb_auto_login;
+	private CheckBox _cb_auto_login;
 
-	TextView _tv_username, _tv_password, _tv_conferma_password, _tv_mail, _tv_registration, _tv_login, _tv_error_message;
-	EditText _et_username, _et_password, _et_conferma_password, _et_mail;
-	Button	_buttonLogin, _buttonRegistration, _buttonSalta;
+	private TextView _tv_username, _tv_password, _tv_conferma_password, _tv_mail, _tv_registration, _tv_login, _tv_error_message;
+	private EditText _et_username, _et_password, _et_conferma_password, _et_mail;
+	private Button	_buttonLogin, _buttonRegistration, _buttonSalta;
 
-
+	private ProgressDialog progressDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// Session class instance
 		session = new UserSessionManager(getApplicationContext());
-		Toast.makeText(getApplicationContext(), "User Login Status: " + session.isUserLoggedIn(), Toast.LENGTH_LONG).show();
 
-		// Check user login (this is the important point)
-		// If User is not logged in , This will redirect user to LoginActivity 
-		// and finish current activity from activity stack.
+		// Check user logged
+		//If User is not logged in, this will redirect user to MainActivity and finish current activity from activity stack.
 		if(session.checkLoginAble()) {
+			progressDialog = ProgressDialog.show(this, "Loading", "Login in corso...", false);
 
 			// true -> provo a fare il login, e se va bene dentro il login ho la funzione salta() per andare alla home
 
@@ -75,88 +74,82 @@ public class SplashScreen extends Activity {
 			String password = user.get(UserSessionManager.KEY_PASSWORD );
 
 			funzioneLogin(username, password);
-		} else {
-			// non fa niente, presento la finestra di registrazione / login
+		} 
+		else {
+			_linearLayout_home_registration_login = new LinearLayout(this.getApplicationContext());
+			_linearLayout_home_registration_login.setOrientation(LinearLayout.VERTICAL);
+			_linearLayout_home_registration_login.setGravity(Gravity.CENTER_VERTICAL);
+
+			_linearLayout_home_registration_login.setPadding(15, 15, 15, 30);
+
+			_cb_auto_login = new CheckBox(this.getApplicationContext());
+
+			_tv_username = new TextView(this.getApplicationContext());
+			_tv_password = new TextView(this.getApplicationContext());
+			_tv_conferma_password = new TextView(this.getApplicationContext());
+			_tv_mail = new TextView(this.getApplicationContext());
+			_tv_registration = new TextView(this.getApplicationContext());
+			_tv_login = new TextView(this.getApplicationContext());
+			_tv_error_message = new TextView(this.getApplicationContext());
+
+			_et_username = new EditText(this.getApplicationContext());
+			_et_password = new EditText(this.getApplicationContext());
+			_et_conferma_password = new EditText(this.getApplicationContext());
+			_et_mail = new EditText(this.getApplicationContext());
+
+			_buttonLogin = new Button(this.getApplicationContext());
+			_buttonRegistration = new Button(this.getApplicationContext());
+			_buttonSalta = new Button(this.getApplicationContext());
+
+			_cb_auto_login.setText("Auto Log");
+
+
+			_cb_auto_login.setText("Ricordami");
+			_tv_username.setText("Username");
+			_tv_password.setText("Password");
+			_tv_conferma_password.setText("Conferma Password");
+			_tv_mail.setText("Mail");
+			_tv_registration.setText("Nuovo? Registrati qui...");
+			_tv_login.setText("Accedi qui...");
+
+
+
+			_et_username.setInputType( InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS |  InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+			_et_password.setInputType( InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+			_et_conferma_password.setInputType( InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+			_et_mail.setInputType( InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+
+			_buttonLogin.setText("Login"); // se modifichi quello che scrivi qui, modifca anche nel On ClickListener
+			_buttonLogin.setEnabled(false);
+
+			_buttonRegistration.setText("Registrati"); // se modifichi quello che scrivi qui, modifca anche nel On ClickListener
+			_buttonRegistration.setEnabled(false);
+
+			_buttonSalta.setText("Salta");
+
+
+			_linearLayout_home_registration_login.addView(_cb_auto_login);
+			_linearLayout_home_registration_login.addView(_tv_username);
+			_linearLayout_home_registration_login.addView(_et_username);
+			_linearLayout_home_registration_login.addView(_tv_password);
+			_linearLayout_home_registration_login.addView(_et_password);
+			_linearLayout_home_registration_login.addView(_buttonLogin);
+			_linearLayout_home_registration_login.addView(_buttonSalta);
+			_linearLayout_home_registration_login.addView(_tv_registration);
+			_linearLayout_home_registration_login.addView(_tv_error_message);
+
+			addListnerOnTexts();
+
+			addListnerOnButton();
+
+			addListnerOnCheckBox();
+
+			setContentView(_linearLayout_home_registration_login);
 		}
-
-
-
-
-		_linearLayout_home_registration_login = new LinearLayout(this.getApplicationContext());
-		_linearLayout_home_registration_login.setOrientation(LinearLayout.VERTICAL);
-		_linearLayout_home_registration_login.setGravity(Gravity.CENTER_VERTICAL);
-
-		_linearLayout_home_registration_login.setPadding(15, 15, 15, 30);
-
-		_cb_auto_login = new CheckBox(this.getApplicationContext());
-
-		_tv_username = new TextView(this.getApplicationContext());
-		_tv_password = new TextView(this.getApplicationContext());
-		_tv_conferma_password = new TextView(this.getApplicationContext());
-		_tv_mail = new TextView(this.getApplicationContext());
-		_tv_registration = new TextView(this.getApplicationContext());
-		_tv_login = new TextView(this.getApplicationContext());
-		_tv_error_message = new TextView(this.getApplicationContext());
-
-
-		_et_username = new EditText(this.getApplicationContext());
-		_et_password = new EditText(this.getApplicationContext());
-		_et_conferma_password = new EditText(this.getApplicationContext());
-		_et_mail = new EditText(this.getApplicationContext());
-
-		_buttonLogin = new Button(this.getApplicationContext());
-		_buttonRegistration = new Button(this.getApplicationContext());
-		_buttonSalta = new Button(this.getApplicationContext());
-
-
-		_cb_auto_login.setText("Ricordami");
-		_tv_username.setText("Username");
-		_tv_password.setText("Password");
-		_tv_conferma_password.setText("Conferma Password");
-		_tv_mail.setText("Mail");
-		_tv_registration.setText("Nuovo? Registrati qui...");
-		_tv_login.setText("Accedi qui...");
-
-
-		_et_username.setInputType( InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS |  InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
-		_et_password.setInputType( InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-		_et_conferma_password.setInputType( InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-		_et_mail.setInputType( InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-
-		_buttonLogin.setText("Login"); // se modifichi quello che scrivi qui, modifca anche nel On ClickListener
-		_buttonLogin.setEnabled(false);
-
-		_buttonRegistration.setText("Register New Account"); // se modifichi quello che scrivi qui, modifca anche nel On ClickListener
-		_buttonRegistration.setEnabled(false);
-
-		_buttonSalta.setText("Salta");
-
-
-		_linearLayout_home_registration_login.addView(_tv_mail);
-		_linearLayout_home_registration_login.addView(_et_mail);
-		_linearLayout_home_registration_login.addView(_tv_password);
-		_linearLayout_home_registration_login.addView(_et_password);
-		_linearLayout_home_registration_login.addView(_buttonLogin);
-		_linearLayout_home_registration_login.addView(_buttonSalta);
-		_linearLayout_home_registration_login.addView(_tv_registration);
-		_linearLayout_home_registration_login.addView(_tv_error_message);
-		_linearLayout_home_registration_login.addView(_cb_auto_login);
-
-		addListnerOnTexts();
-
-		addListnerOnButton();
-
-		addListnerOnCheckBox();
-
-		setContentView(_linearLayout_home_registration_login);
 	}
 
 
-
-
-
 	private void addListnerOnTexts() {
-
 
 		_tv_login.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
@@ -194,9 +187,6 @@ public class SplashScreen extends Activity {
 				//	_linearLayout_home_registration_login.addView(_tv_error_message);
 			}
 		});
-
-
-
 
 		TextWatcher onSearchFieldTextChanged = new TextWatcher(){
 			public void afterTextChanged(Editable s) {
@@ -314,11 +304,9 @@ public class SplashScreen extends Activity {
 			MyHttpClient.post("/login", null, new JsonHttpResponseHandler(){
 				@Override
 				public void onSuccess(JSONArray response) {
-					System.out.println("LOGIN -->>>");
-					if(_cb_auto_login != null && _cb_auto_login.isChecked()) {
-						//checkbox per dire che volio riloggarmi con queste credenziali anche la prossima volta
-						session.createUserLoginSession(_et_mail.getText().toString(), _et_password.getText().toString(), _cb_auto_login.isChecked());
-					}
+					if(_cb_auto_login != null && _cb_auto_login.isChecked()) 
+						session.createUserLoginSession(_et_username.getText().toString(), _et_password.getText().toString(), _cb_auto_login.isChecked());
+					
 					try {
 						JSONObject jsonObject = response.getJSONObject(0);
 						session.setUserData(UserSessionManager.KEY_USERNAME, jsonObject.getString("username")); 
@@ -339,6 +327,7 @@ public class SplashScreen extends Activity {
 				}
 				@Override
 				public void onFailure(Throwable error, String content) {
+					progressDialog.dismiss();
 					Log.v(EXTRA_MESSAGE , "onFailure error : " + error.toString() + "content : " + content);
 					Toast.makeText(getApplicationContext(), "Username e/o Password non corretti!", Toast.LENGTH_LONG).show();
 				}
@@ -352,7 +341,6 @@ public class SplashScreen extends Activity {
 	}
 
 	private void addListnerOnCheckBox() {
-		// TODO Auto-generated method stub
 		_cb_auto_login.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
@@ -363,8 +351,8 @@ public class SplashScreen extends Activity {
 	}
 
 
-	public void salta(){
-		Log.v("SALTA", "saltaaaa");
+	public void salta() {
+		progressDialog.dismiss();
 		Intent intent = new Intent(this, MainActivity.class);
 		startActivity(intent);
 	}
