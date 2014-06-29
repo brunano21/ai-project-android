@@ -242,20 +242,20 @@ public class InserisciUnProdottoFragment extends Fragment {
 
 
 				/* DATA INIZIO */
-				DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy");
-				String data_inizio_str = dp_data_inizio.getDayOfMonth() + "/" + (dp_data_inizio.getMonth() + 1) + "/" + dp_data_inizio.getYear();
+				DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
+				String data_inizio_str = dp_data_inizio.getYear() + "-" + (dp_data_inizio.getMonth() + 1) + "-" + dp_data_inizio.getDayOfMonth();
 				DateTime data_inizio = formatter.parseDateTime(data_inizio_str);
 
 				/* DATA FINE */
 				String data_fine_str = null;
 				DateTime data_fine = null;
 				if(switch_data_fine.isChecked()) {
-					data_fine_str = dp_data_fine.getDayOfMonth() + "/" + (dp_data_fine.getMonth() + 1) + "/" + dp_data_fine.getYear();
+					data_fine_str =  dp_data_fine.getYear() + "-" + (dp_data_fine.getMonth() + 1) + "-" + dp_data_fine.getDayOfMonth();
 					data_fine = formatter.parseDateTime(data_fine_str);
 				}
 				else{
 					data_fine = data_inizio.plusDays(14);
-					data_fine_str = DateTimeFormat.forPattern("dd/MM/yyyy").print(data_fine);
+					data_fine_str = DateTimeFormat.forPattern("yyyy-MM-dd").print(data_fine);
 				}
 
 				if(Days.daysBetween(data_inizio, data_fine).getDays() > 20) {
