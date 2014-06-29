@@ -56,25 +56,21 @@ public class ItemHintAdapterListFragment  extends ArrayAdapter<ItemHintListFragm
 		holder.foto = (ImageView) v.findViewById(R.id.list_dialog_item_iv_foto);
 		holder.buttonAggiungi = (Button) v.findViewById(R.id.list_dialog_item_b_aggiungi);
 		
-		holder.data_fine.setText( DateTimeFormat.forPattern("dd/MM/yyyy").print( holder.item.getData_fine()) );
+		holder.data_fine.setText( DateTimeFormat.forPattern("dd/MM/yyyy").print(holder.item.getData_fine()));
 		holder.descrizione.setText(holder.item.getDescrizione() );
-		holder.prezzo.setText(holder.item.getPrezzo() );
+		holder.prezzo.setText(holder.item.getPrezzo() + " €");
 		holder.supermercato.setText(holder.item.getSupermercato() );
 		holder.seleziona = item.isSelezionato();
 			
 		//TODO foto
-	//	if(!"".equals(holder.item.getFoto()))
-	//	{
-	//		byte[] decodedString = Base64.decode(holder.item.getFoto(), Base64.DEFAULT);
-	//		Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length); 
-	//		holder.foto.setImageBitmap(decodedByte);
-	//	}
+		if(!"".equals(holder.item.getFoto())) {
+			byte[] decodedString = Base64.decode(holder.item.getFoto(), Base64.DEFAULT);
+			Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length); 
+			holder.foto.setImageBitmap(decodedByte);
+		}
 		
-		
-
 		holder.buttonAggiungi.setTag(holder.item);
 		v.setTag(holder);
-
 
 		holder.buttonAggiungi.setOnClickListener(new OnClickListener() {
 			
@@ -85,10 +81,6 @@ public class ItemHintAdapterListFragment  extends ArrayAdapter<ItemHintListFragm
 			}
 		});
 		
-	
-     
-		
-
 		return v;
 	}
 

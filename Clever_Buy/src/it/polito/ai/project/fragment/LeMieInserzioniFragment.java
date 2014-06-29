@@ -164,8 +164,8 @@ public class LeMieInserzioniFragment extends Fragment{
 						response.getJSONObject(i).getString("categoria"),
 						response.getJSONObject(i).getString("sottocategoria"),
 						Float.valueOf(response.getJSONObject(i).getString("prezzo")),
-						DateTimeFormat.forPattern("yyyy/MM/dd").parseDateTime(response.getJSONObject(i).getString("data_inizio")),
-						DateTimeFormat.forPattern("yyyy/MM/dd").parseDateTime(response.getJSONObject(i).getString("data_fine")),
+						DateTimeFormat.forPattern("yyyy-MM-dd").parseDateTime(response.getJSONObject(i).getString("data_inizio")),
+						DateTimeFormat.forPattern("yyyy-MM-dd").parseDateTime(response.getJSONObject(i).getString("data_fine")),
 						response.getJSONObject(i).getString("descrizione"),
 						response.getJSONObject(i).getString("foto"),
 						response.getJSONObject(i).getString("valutazioni_positive"),
@@ -280,7 +280,7 @@ public class LeMieInserzioniFragment extends Fragment{
 
 			descrizione.setText(inserzione.getDescrizione());
 			cat_sotto_cat.setText(inserzione.getCategoria() + " > " + inserzione.getSottocategoria());
-			data_inizio.setText(DateTimeFormat.forPattern("dd-MM-yyyy").print(inserzione.getDataInizio()));
+			data_inizio.setText(DateTimeFormat.forPattern("dd/MM/yyyy").print(inserzione.getDataInizio()));
 
 			if(DateTime.now().withTimeAtStartOfDay().isAfter(inserzione.getDataFine().withTimeAtStartOfDay())) {
 				data_fine.setTextColor(getResources().getColor(R.color.red));
@@ -288,7 +288,7 @@ public class LeMieInserzioniFragment extends Fragment{
 			}
 			else {
 				data_fine.setTextColor(data_inizio.getTextColors().getDefaultColor());
-				data_fine.setText(DateTimeFormat.forPattern("dd-MM-yyyy").print(inserzione.getDataFine()));
+				data_fine.setText(DateTimeFormat.forPattern("dd/MM/yyyy").print(inserzione.getDataFine()));
 			}
 
 			prezzo.setText(Float.toString(inserzione.getPrezzo()) + " €");

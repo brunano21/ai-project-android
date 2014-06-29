@@ -22,6 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/listview_item_inserzione_da_valutare_tv_scade_il"
         android:layout_alignBottom="@+id/listview_item_inserzione_da_valutare_tv_scade_il"
+        android:layout_marginLeft="3dp"
         android:layout_toRightOf="@+id/listview_item_inserzione_da_valutare_tv_scade_il"
         android:text="Small Text"
         android:textAppearance="?android:attr/textAppearanceSmall" />

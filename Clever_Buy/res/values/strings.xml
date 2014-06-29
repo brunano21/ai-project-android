@@ -9,8 +9,8 @@
     <string name="drawer_open">Slider Menu Opened</string>
     <string name="drawer_close">Slider Menu Closed</string>
     <string name="selectedList">ListName01</string>
-    <string name="add_item_name_hint">insert product...</string>
-    <string name="add_item_quantity_hint">quantity</string>
+    <string name="add_item_name_hint">Nome prodotto</string>
+    <string name="add_item_quantity_hint">Q</string>
     
     
     <string name="id_label">The ID is</string>
@@ -76,5 +76,4 @@
     <string name="tv_description">Descrizione</string>
     <string name="tv_barcode">Codice a barre</string>
 
-    <string name="hello_world">Hello world!</string>
 </resources>

@@ -63,7 +63,7 @@ public class SplashScreen extends Activity {
 			// get user data from session
 			HashMap<String, String> user = session.getUserDetails();
 			String username = user.get(UserSessionManager.KEY_NAME);
-			String password = user.get(UserSessionManager.KEY_PASSWORD );
+			String password = user.get(UserSessionManager.KEY_PASSWORD);
 
 			funzioneLogin(username, password);
 		} 
@@ -287,13 +287,13 @@ public class SplashScreen extends Activity {
 	protected void funzioneLogin(String username, String password) {
 
 		// Validate if username, password is filled             
-		if(username.trim().length() > 0 && password.trim().length() > 0) {
+		//if(username.trim().length() > 0 && password.trim().length() > 0) {
 			MyHttpClient.setBasicAuth(username, password);
 			MyHttpClient.post("/login", null, new JsonHttpResponseHandler(){
 				@Override
 				public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 					if(_cb_auto_login != null && _cb_auto_login.isChecked()) 
-						session.createUserLoginSession(_et_username.getText().toString(), _et_password.getText().toString(), _cb_auto_login.isChecked());
+						session.createUserLoginSession(_et_mail.getText().toString(), _et_password.getText().toString(), _cb_auto_login.isChecked());
 
 					try {
 						JSONObject jsonObject = response.getJSONObject(0);
@@ -336,12 +336,12 @@ public class SplashScreen extends Activity {
 				}*/
 
 			});
-		} 
+		/*} 
 		else 
 		{
 			// user didn't entered username or password
-			Toast.makeText(getApplicationContext(), "Please enter username and password",  Toast.LENGTH_LONG).show();
-		}
+			Toast.makeText(getApplicationContext(), "Per favore inserisci username e password",  Toast.LENGTH_LONG).show();
+		}*/
 	}
 
 	private void addListnerOnCheckBox() {

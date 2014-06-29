@@ -1,69 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:padding="15dp" >
 
-    <ImageView
-        android:id="@+id/list_dialog_singolo_iv_foto"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="5dp"
-        android:src="@drawable/no" />
-
-    <TextView
-        android:id="@+id/list_dialog_singolo_tv_descrizione"
+    <RelativeLayout
+        android:id="@+id/relativeLayout1"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/list_dialog_singolo_iv_foto"
-        android:layout_toLeftOf="@+id/list_dialog_singolo_tv_prezzo"
-        android:text="Large Text"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:layout_height="wrap_content" >
 
-    <TextView
-        android:id="@+id/list_dialog_singolo_tv_prezzo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/list_dialog_singolo_tv_descrizione"
-        android:text="Medium Text"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        <ImageView
+            android:id="@+id/list_dialog_singolo_iv_foto"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:src="@drawable/no" />
 
-    <TextView
-        android:id="@+id/list_dialog_singolo_tv_data_fine"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/list_dialog_singolo_tv_descrizione"
-        android:layout_marginRight="26dp"
-        android:layout_toLeftOf="@+id/dialog_singolo_dialogButtonOK"
-        android:text="Small Text"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        <TextView
+            android:id="@+id/list_dialog_singolo_tv_prezzo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/list_dialog_singolo_tv_data_fine"
+            android:layout_alignParentRight="true"
+            android:text="Medium Text"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <TextView
-        android:id="@+id/list_dialog_singolo_tv_scade_il"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/dialog_singolo_dialogButtonOK"
-        android:layout_toLeftOf="@+id/list_dialog_singolo_tv_data_fine"
-        android:text="Scade il "
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        <TextView
+            android:id="@+id/list_dialog_singolo_tv_scade_il"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/list_dialog_singolo_iv_foto"
+            android:layout_below="@+id/list_dialog_singolo_iv_foto"
+            android:layout_marginTop="3dp"
+            android:text="Scade il "
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
-    <TextView
-        android:id="@+id/list_dialog_singolo_tv_supermercato"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/list_dialog_singolo_tv_scade_il"
-        android:layout_alignTop="@+id/dialog_singolo_dialogButtonOK"
-        android:text="Supermercato" />
+        <TextView
+            android:id="@+id/list_dialog_singolo_tv_descrizione"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/list_dialog_singolo_tv_prezzo"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/list_dialog_singolo_iv_foto"
+            android:text="Large Text"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/list_dialog_singolo_tv_supermercato"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/list_dialog_singolo_tv_prezzo"
+            android:layout_marginTop="5dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Supermercato" />
+
+        <TextView
+            android:id="@+id/list_dialog_singolo_tv_data_fine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/list_dialog_singolo_tv_scade_il"
+            android:layout_alignBottom="@+id/list_dialog_singolo_tv_scade_il"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/list_dialog_singolo_tv_scade_il"
+            android:text="Small Text"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    </RelativeLayout>
 
     <Button
         android:id="@+id/dialog_singolo_dialogButtonOK"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/list_dialog_singolo_tv_prezzo"
-        android:layout_below="@+id/list_dialog_singolo_tv_data_fine"
-        android:text="Ok" />
+        android:layout_alignLeft="@+id/relativeLayout1"
+        android:layout_alignRight="@+id/relativeLayout1"
+        android:layout_below="@+id/relativeLayout1"
+        android:layout_marginTop="15dp"
+        android:text="Chiudi" />
 
 </RelativeLayout>

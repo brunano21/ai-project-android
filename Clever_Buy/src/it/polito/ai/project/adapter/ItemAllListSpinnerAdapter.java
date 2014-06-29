@@ -23,10 +23,6 @@ public class ItemAllListSpinnerAdapter  extends ArrayAdapter<ItemSpinnerAllList>
 		this.items = items;
 	}
 	
-	
-
-	
-
 	@Override
 	public View getDropDownView(int position, View convertView,ViewGroup parent) {
 		return getCustomView(position, convertView, parent);
@@ -36,7 +32,6 @@ public class ItemAllListSpinnerAdapter  extends ArrayAdapter<ItemSpinnerAllList>
 	public View getView(int position, View convertView, ViewGroup parent) {
 		return getCustomView(position, convertView, parent);
 	}
-
 
 	public View getCustomView(int position, View v, ViewGroup parent) {
 			

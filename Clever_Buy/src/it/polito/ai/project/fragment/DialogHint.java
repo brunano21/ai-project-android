@@ -16,7 +16,10 @@ import org.json.JSONArray;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,7 +33,7 @@ import android.widget.TextView;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
-public class DialogHint  extends Dialog  {
+public class DialogHint extends Dialog {
 
 	private ArrayList<ItemHintListFragment> hint_itemArrayList;
 	private ItemHintAdapterListFragment hint_itemAdapter;
@@ -58,7 +61,7 @@ public class DialogHint  extends Dialog  {
 	public void onCreate(Bundle savedInstanceState) {
  		setContentView(R.layout.fragment_list_dialog_hint);
 		setTitle("Ricerca Clever");
-
+		
 		_dialogButton = (Button) findViewById(R.id.dialog_hint_dialogButtonOK);
 		// Watch for button clicks.
 		_dialogButton.setOnClickListener(new android.view.View.OnClickListener() {
@@ -73,12 +76,8 @@ public class DialogHint  extends Dialog  {
 
 		hint_itemAdapter = new ItemHintAdapterListFragment( getContext(), R.layout.fragment_list_dialog_hint_item, getHintsFromServer(Double.toString(MainActivity.getLocation().getLatitude()),Double.toString(MainActivity.getLocation().getLongitude()),descrizione));
 		_hint_listView.setAdapter(hint_itemAdapter);
-		
-		
-	
 	}
 
-	
 	private List<ItemHintListFragment> getHintsFromServer(String longitudine, String latitudine, String descrizione) {
 		hint_itemArrayList = new ArrayList<ItemHintListFragment>();
 		RequestParams param = new RequestParams();
@@ -158,23 +157,18 @@ public class DialogHint  extends Dialog  {
 			
 			holder.data_fine.setText( DateTimeFormat.forPattern("dd/MM/yyyy").print( holder.item.getData_fine()) );
 			holder.descrizione.setText(holder.item.getDescrizione() );
-			holder.prezzo.setText(holder.item.getPrezzo() );
+			holder.prezzo.setText(holder.item.getPrezzo() + " €");
 			holder.supermercato.setText(holder.item.getSupermercato() );
 			holder.seleziona = item.isSelezionato();
 				
-			//TODO foto
-		//	if(!"".equals(holder.item.getFoto()))
-		//	{
-		//		byte[] decodedString = Base64.decode(holder.item.getFoto(), Base64.DEFAULT);
-		//		Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length); 
-		//		holder.foto.setImageBitmap(decodedByte);
-		//	}
+			if(!"".equals(holder.item.getFoto())) {
+				byte[] decodedString = Base64.decode(holder.item.getFoto(), Base64.DEFAULT);
+				Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length); 
+				holder.foto.setImageBitmap(decodedByte);
+			}
 			
-			
-
 			holder.buttonAggiungi.setTag(holder.item);
 			v.setTag(holder);
-
 
 			holder.buttonAggiungi.setOnClickListener(new View.OnClickListener() {
 				@Override

@@ -61,7 +61,7 @@ public class ListFragment extends Fragment {
 	private View rootView;
 	private Spinner _spinner_allList;
 	private EditText _edit_item_name, _edit_item_quantity;
-	private Button  _button_addItem, _button_barcode, _button_hint;
+	private Button  _button_addItem;
 	private ImageButton _img_add_new_list, _img_delete_current_list;
 	private ListView _listView;
 
@@ -80,14 +80,9 @@ public class ListFragment extends Fragment {
 		rootView = inflater.inflate(R.layout.fragment_list, container, false);
 
 		_button_addItem = (Button) rootView.findViewById(R.id.button_addItem);
-		_button_barcode = (Button) rootView.findViewById(R.id.button_addItem_byBarCode);
-		_button_hint = (Button) rootView.findViewById(R.id.button_hint);
-
 		_spinner_allList = (Spinner) rootView.findViewById(R.id.spinner_allList);
-
 		_edit_item_name = (EditText) rootView.findViewById(R.id.edit_item_name);
 		_edit_item_quantity = (EditText) rootView.findViewById(R.id.edit_item_quantity);
-
 		_img_add_new_list = (ImageButton) rootView.findViewById(R.id.img_add_new_list);
 		_img_delete_current_list = (ImageButton) rootView.findViewById(R.id.img_delete_current_list);
 
@@ -105,14 +100,14 @@ public class ListFragment extends Fragment {
 			public void onClick(View v) {
 				int position = _spinner_allList.getSelectedItemPosition();
 				ItemSpinnerAllList tmp = (ItemSpinnerAllList) _spinner_allList.getSelectedItem();
-				int id = tmp.getId();
-				eliminaLista( tmp );
+				eliminaLista(tmp, position);
 			}
 
-			private void eliminaLista(final ItemSpinnerAllList item ) {
+			private void eliminaLista(ItemSpinnerAllList item, int posizione) {
 				RequestParams param = new RequestParams();
 				param.put("cmd","eliminaListaDesideri");
 				param.put("id_lista_desideri",String.valueOf(item.getId()));
+				param.put("posizione_item", String.valueOf(posizione));
 				MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
 
 					@Override
@@ -121,7 +116,11 @@ public class ListFragment extends Fragment {
 						itemArrayList.clear();
 						itemAdapter.notifyDataSetChanged();
 						// elimina lista da spinner
-						boolean trovato = itemAllListSpinner_ArrayList.remove(item);
+						try {
+							itemAllListSpinner_ArrayList.remove(response.getInt(0));
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
 						itemAllListSpinner_ArrayAdapter.notifyDataSetChanged();
 					}
 					@Override
@@ -188,18 +187,6 @@ public class ListFragment extends Fragment {
 
 	private void addListenerOnButtons() {
 
-		_button_barcode.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				try {
-					IntentIntegrator integrator = new IntentIntegrator(ListFragment.this);
-					integrator.initiateScan();
-				} catch (Exception e){
-					e.printStackTrace();
-				}
-			}
-		});
-
 		_button_addItem.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
@@ -215,25 +202,6 @@ public class ListFragment extends Fragment {
 						_edit_item_quantity.getText().toString());
 			}
 		});
-
-		_button_hint.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-
-				for(int i=0; i<itemArrayList.size(); i++)
-				{
-					// qui per ogni elemento devo chiedere al server se ci sono suggerimenti
-					if(i%2==0)
-						itemArrayList.get(i).setHint_is_present(true);			
-
-				}
-				itemAdapter.notifyDataSetChanged();
-
-
-			}
-		});
-
-
 	}
 	/*
 	void showDialogHint() {
@@ -253,8 +221,7 @@ public class ListFragment extends Fragment {
 	}*/
 
 
-	protected void aggiornaSpinnerAllList() 
-	{
+	protected void aggiornaSpinnerAllList() {
 		itemAllListSpinner_ArrayList = new ArrayList<ItemSpinnerAllList>();
 		itemAllListSpinner_ArrayAdapter = new ItemAllListSpinnerAdapter(getActivity(), R.layout.fragment_list_all_spinner_item, itemAllListSpinner_ArrayList);
 		itemAllListSpinner_ArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -269,8 +236,8 @@ public class ListFragment extends Fragment {
 				ItemSpinnerAllList tmp = (ItemSpinnerAllList) parent.getItemAtPosition(position);
 				aggiornaItemList( tmp.getId() );
 
-				UserSessionManager session = new UserSessionManager(_context);
-				session.setId_Lista_Desideri(tmp.getId());
+				//UserSessionManager session = new UserSessionManager(_context);
+				//session.setId_Lista_Desideri(tmp.getId());
 			}
 
 			@Override
@@ -290,17 +257,17 @@ public class ListFragment extends Fragment {
 						}
 
 					// TODO - seleziona ultima lista visualizzata 
-					UserSessionManager session = new UserSessionManager(_context);
-					int id_lista_desideri = session.getId_Lista_Desideri();
-					int x = _spinner_allList.getChildCount();
-					for(int iMarco = 0; iMarco < _spinner_allList.getChildCount(); iMarco++)
-					{
-						ItemSpinnerAllList tmp = ((ItemSpinnerAllList)_spinner_allList.getChildAt(iMarco).getTag());
-						if(id_lista_desideri == tmp.getId() )
-						{
-							_spinner_allList.setSelection(iMarco);
-						}
-					}
+//					UserSessionManager session = new UserSessionManager(_context);
+//					int id_lista_desideri = session.getId_Lista_Desideri();
+//					int x = _spinner_allList.getChildCount();
+//					for(int iMarco = 0; iMarco < _spinner_allList.getChildCount(); iMarco++)
+//					{
+//						ItemSpinnerAllList tmp = ((ItemSpinnerAllList)_spinner_allList.getChildAt(iMarco).getTag());
+//						if(id_lista_desideri == tmp.getId() )
+//						{
+//							_spinner_allList.setSelection(iMarco);
+//						}
+//					}
 				}
 				else {
 					Toast.makeText(getActivity(), "Nessuna Todo List presente sul server. Clicca sul bottone + per crearne una nuova", Toast.LENGTH_LONG).show();
@@ -370,11 +337,7 @@ public class ListFragment extends Fragment {
 		ItemSpinnerAllList item = new ItemSpinnerAllList(id, nome);
 		itemAllListSpinner_ArrayList.add(item);
 		itemAllListSpinner_ArrayAdapter.notifyDataSetChanged();
-
-//		UserSessionManager session = new UserSessionManager(_context);
-//		int id_lista_desideri = session.getId_Lista_Desideri();
-
-
+		_spinner_allList.setSelection(itemAllListSpinner_ArrayList.indexOf(item));
 	}
 
 	/*

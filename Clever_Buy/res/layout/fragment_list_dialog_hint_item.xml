@@ -22,6 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/list_dialog_item_tv_scade_il"
         android:layout_alignBottom="@+id/list_dialog_item_tv_scade_il"
+        android:layout_marginLeft="3dp"
         android:layout_toRightOf="@+id/list_dialog_item_tv_scade_il"
         android:text="Small Text"
         android:textAppearance="?android:attr/textAppearanceSmall" />
@@ -44,24 +45,26 @@
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
+        android:id="@+id/list_dialog_item_tv_supermercato"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/list_dialog_item_b_aggiungi"
+        android:layout_alignLeft="@+id/list_dialog_item_iv_foto"
+        android:layout_below="@+id/list_dialog_item_tv_prezzo"
+        android:layout_marginTop="3dp"
+        android:layout_toLeftOf="@+id/list_dialog_item_b_aggiungi"
+        android:text="Supermercato"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
         android:id="@+id/list_dialog_item_tv_prezzo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/list_dialog_item_tv_data_fine"
         android:layout_alignBottom="@+id/list_dialog_item_tv_data_fine"
-        android:layout_alignRight="@+id/list_dialog_item_tv_descrizione"
+        android:layout_alignParentRight="true"
         android:text="Medium Text"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/list_dialog_item_tv_supermercato"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/list_dialog_item_iv_foto"
-        android:layout_below="@+id/list_dialog_item_tv_prezzo"
-        android:layout_marginLeft="28dp"
-        android:layout_toLeftOf="@+id/list_dialog_item_tv_prezzo"
-        android:text="Supermercato" />
 
     <Button
         android:id="@+id/list_dialog_item_b_aggiungi"
@@ -70,6 +73,7 @@
         android:layout_alignRight="@+id/list_dialog_item_tv_prezzo"
         android:layout_below="@+id/list_dialog_item_tv_prezzo"
         android:onClick="onClick_list_dialog_item_b_aggiungi"
-        android:text="Aggiungi" />
+        android:text="Aggiungi"
+        android:textSize="14sp" />
 
 </RelativeLayout>

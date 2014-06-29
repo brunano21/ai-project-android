@@ -31,23 +31,16 @@ public class ItemListFragment {
 		this.descrizione = descrizione;
 		this.quantita = quantita;
 		this.acquistato = acquistato;
-
 		this.setInserzione(inserzione);
 	}
-
-
 
 	public int getId_lista_desideri() {
 		return id_lista_desideri;
 	}
 
-
-
 	public void setId_lista_desideri(int id_lista_desideri) {
 		this.id_lista_desideri = id_lista_desideri;
 	}
-
-
 
 	public int getId_elemento() {
 		return id_elemento;
@@ -87,10 +80,8 @@ public class ItemListFragment {
 
 	public void setInserzione(ItemHintListFragment inserzione) {
 		this.inserzione = inserzione;
-		if(inserzione!=null)
-		{
+		if(inserzione != null)		
 			this.descrizione = inserzione.getDescrizione();
-		}
 	}
 
 

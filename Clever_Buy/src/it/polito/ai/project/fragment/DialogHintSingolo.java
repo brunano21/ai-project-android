@@ -15,7 +15,10 @@ import org.json.JSONArray;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -68,22 +71,15 @@ public class DialogHintSingolo extends Dialog  {
 			
 			data_fine.setText( DateTimeFormat.forPattern("dd/MM/yyyy").print( item.getData_fine()) );
 			descrizione.setText(item.getDescrizione() );
-			prezzo.setText(item.getPrezzo() );
+			prezzo.setText(item.getPrezzo() + " €");
 			supermercato.setText(item.getSupermercato() );
 
-
-/*	 NON POSSO MODIFICARE IL SUGGERIMNTO DATO CHE HO MODIFICATO LA DESCRIZIONE ELEMENTO UTILE PER LA RICERCA SGGERIMENTI
- * 
-			modificaHint.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					//DialogHint dialog = new DialogHint(getContext(),myClick,item.des)
-					
-					//mySingoloListener.onButtonClick( item  );
-					dismiss();
-					}
-				});
-*/
+			if(!"".equals(item.getFoto())) {
+				byte[] decodedString = Base64.decode(item.getFoto(), Base64.DEFAULT);
+				Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length); 
+				foto.setImageBitmap(decodedByte);
+			}
+			
 			_dialogButton.setOnClickListener(new View.OnClickListener() {
 				
 				@Override

@@ -167,6 +167,7 @@ public class ValutaInserzioneFragment extends Fragment implements MyDialogInterf
 		for(int i = 0; i < response.length(); i++) {
 			try {
 				System.out.println("ID_INSERZIONE: " + response.getJSONObject(i).getInt("id"));
+				System.out.println("valutazione: data_inizio:" + response.getJSONObject(i).getString("data_inizio"));
 				valutazioneList.add(new InserzioneDaValutare(
 						Integer.valueOf(response.getJSONObject(i).getInt("id")), 
 						response.getJSONObject(i).getString("categoria"),
