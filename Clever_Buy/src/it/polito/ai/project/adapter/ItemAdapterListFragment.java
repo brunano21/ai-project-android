@@ -159,7 +159,7 @@ public class ItemAdapterListFragment extends ArrayAdapter<ItemListFragment> {
 						}
 					};
 					
-					DialogHintSingolo singoloDialog = new DialogHintSingolo(getContext(), mySingoloListner , item.getInserzione());//TODO nuovo fottuto dialog per vedere l'inserzione associata che permetta di eliminarla o modificarla
+					DialogHintSingolo singoloDialog = new DialogHintSingolo(getContext(), mySingoloListner , item.getInserzione());
 					singoloDialog.show();
 				}	
 		        else

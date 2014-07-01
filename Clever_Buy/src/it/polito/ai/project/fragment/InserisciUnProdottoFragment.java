@@ -34,6 +34,7 @@ import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -87,6 +88,7 @@ public class InserisciUnProdottoFragment extends Fragment {
 
 	private boolean modificaInserzione = false;
 	private Integer idInserzioneDaModificare;
+	private boolean controllo_foto_scattata;
 
 	@Override 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -123,12 +125,16 @@ public class InserisciUnProdottoFragment extends Fragment {
 		switch_data_fine = (Switch) rootView.findViewById(R.id.ip_switch_data_fine);
 		switch_ulteriori_dettagli = (Switch) rootView.findViewById(R.id.ip_switch_ulteriori_dettagli);
 
-
+		et_valore_argomento.setEnabled(false);
+		et_valore_argomento.setInputType( InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+		spin_argomento.setEnabled(false);
+		
 		categoriaSottocategoriaMap = new HashMap<String, ArrayList<String>>();
+		
 		addListeners();
 		nascondiAnnoDatePicker();
 		getCategorieSottocategorie();
-
+		getDettagli();
 
 		supermercatiArrayList = new ArrayList<Supermercato>();
 		getSupermercati(MainActivity.getLocation().getLatitude(), MainActivity.getLocation().getLongitude());
@@ -139,9 +145,13 @@ public class InserisciUnProdottoFragment extends Fragment {
 			getInserzioneById(bundle.getInt("idInserzione"));
 			progressDialog = ProgressDialog.show(getActivity(), "Download..", "Sto scaricando i dati relativi all'inserzione da modificare...");
 		}
+		
+		controllo_foto_scattata = false; 
 
 		return rootView;
 	}
+
+
 
 
 
@@ -183,6 +193,32 @@ public class InserisciUnProdottoFragment extends Fragment {
 				Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
 			}
 		});
+	}
+
+
+	private void getDettagli() {
+		if(spin_argomento.getChildCount() == 0)
+			MyHttpClient.get("/inserzione/getArgomenti", null, new JsonHttpResponseHandler() {
+				@Override
+				public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+					Log.v("DEBUG", "onSuccess : " + response.toString());
+					ArrayList<String> argomentiArrayList = new ArrayList<String>();
+					for (int i = 0; i < response.length(); i++)
+						try {
+							argomentiArrayList.add(response.getString(i));
+							ArrayAdapter<String> argomentiArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, argomentiArrayList);
+							argomentiArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+							spin_argomento.setAdapter(argomentiArrayAdapter);
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+				}
+
+				@Override
+				public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+					Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
+				}
+			});
 	}
 
 	private void addListeners() {
@@ -228,7 +264,7 @@ public class InserisciUnProdottoFragment extends Fragment {
 
 
 				/* FOTO */
-				if(iv_foto.getDrawable() == null) {
+				if(!controllo_foto_scattata) {
 					Toast.makeText(getActivity().getBaseContext(), "Foto del prodotto mancante", Toast.LENGTH_SHORT).show();
 					return;
 				}
@@ -318,7 +354,7 @@ public class InserisciUnProdottoFragment extends Fragment {
 
 								/* AGGIORNAMENTO CREDITI */
 								UserSessionManager session = new UserSessionManager(getActivity());
-								session.setUserData(UserSessionManager.KEY_CREDITI_PENDENTI, session.getUserData(UserSessionManager.KEY_CREDITI_PENDENTI) + 10);
+								session.setUserData(UserSessionManager.KEY_CREDITI_PENDENTI, String.valueOf(Integer.valueOf(session.getUserData(UserSessionManager.KEY_CREDITI_PENDENTI)) + 10) );
 
 								AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 								builder.setTitle("Inserimento");
@@ -401,41 +437,13 @@ public class InserisciUnProdottoFragment extends Fragment {
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				System.out.println("changed!");
 				if (isChecked) {
-					// faccio partire una richiesta verso il server per avere tutti gli argomenti disponibili.
-					if(spin_argomento.getChildCount() == 0)
-						MyHttpClient.get("/inserzione/getArgomenti", null, new JsonHttpResponseHandler() {
-							@Override
-							public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-								Log.v("DEBUG", "onSuccess : " + response.toString());
-								ArrayList<String> argomentiArrayList = new ArrayList<String>();
-								for (int i = 0; i < response.length(); i++)
-									try {
-										argomentiArrayList.add(response.getString(i));
-										ArrayAdapter<String> argomentiArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, argomentiArrayList);
-										argomentiArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-										spin_argomento.setAdapter(argomentiArrayAdapter);
-
-										spin_argomento.setEnabled(true);
-										spin_argomento.setClickable(true);
-										et_valore_argomento.setEnabled(true);
-										et_valore_argomento.setFocusable(true);
-									} catch (JSONException e) {
-										e.printStackTrace();
-									}
-							}
-
-							@Override
-							public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-								Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
-							}
-						});
-
+					spin_argomento.setEnabled(true);
+					et_valore_argomento.setEnabled(true);
+					et_valore_argomento.setFocusable(true);
 				}
 				else {
 					spin_argomento.setEnabled(false);
-					spin_argomento.setClickable(false);
 					et_valore_argomento.setEnabled(false);
-					et_valore_argomento.setFocusable(false);
 				}
 			}
 		});
@@ -484,6 +492,7 @@ public class InserisciUnProdottoFragment extends Fragment {
 			if(resultCode != Activity.RESULT_CANCELED) {
 				Bitmap bitmapFoto = (Bitmap) intent.getExtras().get("data");
 				iv_foto.setImageBitmap(bitmapFoto);
+				controllo_foto_scattata = true;
 			}
 			break;
 		} // switch
@@ -535,7 +544,6 @@ public class InserisciUnProdottoFragment extends Fragment {
 				// prodotto non trovato
 				Toast.makeText(getActivity().getBaseContext(), "Prodotto non trovato nei nostri database!", Toast.LENGTH_SHORT).show();
 
-				et_descrizione.setText(""); 
 				spin_categoria.setEnabled(true);
 				spin_categoria.setClickable(true);
 				spin_sottocategoria.setEnabled(true);
@@ -586,8 +594,6 @@ public class InserisciUnProdottoFragment extends Fragment {
 		MyHttpClient.get("/inserzione/getSupermercati", params, new JsonHttpResponseHandler(){
 			@Override
 			public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-				JSONObject jsonObj = null;
-
 				try {
 					for (int i = 0; i < response.length(); i++) 
 						supermercatiArrayList.add(new Supermercato(
@@ -627,7 +633,11 @@ public class InserisciUnProdottoFragment extends Fragment {
 		et_descrizione.setText("");
 		tv_barcode_number.setText("");
 		et_prezzo.setText("");
+		et_valore_argomento.setText("");
+		et_valore_argomento.setEnabled(false);
+		spin_argomento.setEnabled(false);
 
+		//todo false
 		spin_categoria.setSelection(0);
 		spin_categoria.setEnabled(true);
 		spin_categoria.setClickable(true);
@@ -650,6 +660,8 @@ public class InserisciUnProdottoFragment extends Fragment {
 		ScrollView sv = (ScrollView) rootView.findViewById(R.id.fragment_inserisci_un_prodotto_scrollview);
 		sv.fullScroll(View.FOCUS_UP);
 		et_descrizione.requestFocus();
+		
+		controllo_foto_scattata = false;
 	}
 
 	private void getInserzioneById(Integer idInserzione) {
@@ -709,6 +721,8 @@ public class InserisciUnProdottoFragment extends Fragment {
 
 			btn_inserisci.setText("Modifica!");
 			btn_reset.setText("Annulla");
+			
+			controllo_foto_scattata = true;
 
 			progressDialog.dismiss();
 

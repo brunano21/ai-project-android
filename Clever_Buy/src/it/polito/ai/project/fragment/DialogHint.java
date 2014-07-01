@@ -15,6 +15,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -29,6 +30,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -45,6 +47,8 @@ public class DialogHint extends Dialog {
 	
 	private String id_elemento;
 	private String descrizione;
+
+	private ProgressDialog progressDialog;
 	
 	public DialogHint(Context context, myOnClickListener myclick, String descrizione) {
         super(context);
@@ -79,6 +83,8 @@ public class DialogHint extends Dialog {
 	}
 
 	private List<ItemHintListFragment> getHintsFromServer(String longitudine, String latitudine, String descrizione) {
+		progressDialog = ProgressDialog.show(getContext(), "Loading", "Login in corso...", false);
+		
 		hint_itemArrayList = new ArrayList<ItemHintListFragment>();
 		RequestParams param = new RequestParams();
 		String NULL = null;
@@ -87,10 +93,12 @@ public class DialogHint extends Dialog {
 		param.put("longitudine",longitudine);
 		param.put("id_elemnto",NULL);
 		param.put("descrizione",descrizione);
+		
 		MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
 
 			@Override
 			public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+				progressDialog.dismiss();
 				for (int i = 0; i < response.length(); i++) 
 					try {
 						if(response.getJSONObject(i).has("id_elemento"))
@@ -114,6 +122,8 @@ public class DialogHint extends Dialog {
 
 			@Override
 			public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+				progressDialog.dismiss();
+				Toast.makeText(getContext(), "Errore connessione - suggerimenti non ricevuti", Toast.LENGTH_SHORT).show();
 				Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
 			}
 		});

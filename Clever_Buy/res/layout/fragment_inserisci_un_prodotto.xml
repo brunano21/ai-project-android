@@ -169,10 +169,7 @@
             android:layout_alignRight="@+id/ip_spin_categoria"
             android:layout_below="@+id/ip_et_ulteriori_dettagli"
             android:layout_marginTop="23dp"
-            android:editable="false"
-            android:ems="10"
-            android:enabled="false"
-            android:focusable="false" />
+            android:ems="10"/>
 
         <Spinner
             android:id="@+id/ip_spin_argomento"

@@ -3,7 +3,6 @@ package it.polito.ai.project.main;
 import it.polito.ai.project.R;
 import it.polito.ai.project.adapter.NavDrawerListAdapter;
 import it.polito.ai.project.fragment.AboutFragment;
-import it.polito.ai.project.fragment.AquireBarCodeFragment;
 import it.polito.ai.project.fragment.HomeFragment;
 import it.polito.ai.project.fragment.InScadenzaFragment;
 import it.polito.ai.project.fragment.InserisciUnProdottoFragment;
@@ -13,7 +12,6 @@ import it.polito.ai.project.fragment.ValutaInserzioneFragment;
 import it.polito.ai.project.model.NavDrawerItem;
 
 import java.util.ArrayList;
-import java.util.Currency;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -23,7 +21,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
-import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -103,12 +100,9 @@ public class MainActivity extends Activity {
 			public void onProviderDisabled(String provider) {}
 		};
 
-		// Register the listeners with the Location Manager to receive location updates
 		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 25, locationListener);
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 25, locationListener);
 
-
-		//TODO inviare ai vari frammenti la posizione
 		//String locationProvider = LocationManager.NETWORK_PROVIDER;
 		String locationProvider = LocationManager.NETWORK_PROVIDER;
 		currentBestLocation = locationManager.getLastKnownLocation(locationProvider);
@@ -117,18 +111,7 @@ public class MainActivity extends Activity {
 		// Remove the listener you previously added
 		//locationManager.removeUpdates(locationListener);
 
-
 		/* END GPS LOCATION  */
-
-
-
-
-
-
-
-
-
-
 
 		mTitle = mDrawerTitle = getTitle();
 

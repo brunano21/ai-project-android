@@ -1,7 +1,6 @@
 package it.polito.ai.project.main;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.http.Header;
 import org.json.JSONArray;
@@ -103,7 +102,7 @@ public class SplashScreen extends Activity {
 
 
 
-			_et_username.setInputType( InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS |  InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+			_et_username.setInputType( InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS |  InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);  // TYPE_TEXT_VARIATION_VISIBLE_PASSWORD suggerito in molti forum dato che non c'è un type per gli username
 			_et_password.setInputType( InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 			_et_conferma_password.setInputType( InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 			_et_mail.setInputType( InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS | InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
@@ -143,41 +142,44 @@ public class SplashScreen extends Activity {
 		_tv_login.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				// se tocchi qui vai alla pagina login
-				_linearLayout_home_registration_login.removeAllViews();
-				_linearLayout_home_registration_login.addView(_tv_mail);
-				_linearLayout_home_registration_login.addView(_et_mail);
-				_linearLayout_home_registration_login.addView(_tv_password);
-				_linearLayout_home_registration_login.addView(_et_password);
-				_linearLayout_home_registration_login.addView(_buttonLogin);
-				_linearLayout_home_registration_login.addView(_buttonSalta);
-				_linearLayout_home_registration_login.addView(_tv_registration);
-				_linearLayout_home_registration_login.addView(_cb_auto_login);
-
-
+				showLoginView();
 			}
 		});
 
 		_tv_registration.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				_linearLayout_home_registration_login.removeAllViews();
-				_linearLayout_home_registration_login.addView(_tv_username);
-				_linearLayout_home_registration_login.addView(_et_username);
-				_linearLayout_home_registration_login.addView(_tv_password);
-				_linearLayout_home_registration_login.addView(_et_password);
-				_linearLayout_home_registration_login.addView(_tv_conferma_password);
-				_linearLayout_home_registration_login.addView(_et_conferma_password);
-				_linearLayout_home_registration_login.addView(_tv_mail);
-				_linearLayout_home_registration_login.addView(_et_mail);
-				_linearLayout_home_registration_login.addView(_buttonRegistration);
-				_linearLayout_home_registration_login.addView(_buttonSalta);
-				_linearLayout_home_registration_login.addView(_tv_login);
+				showRegistrationView();
 			}
 		});
 
 		TextWatcher onSearchFieldTextChanged = new TextWatcher(){
 			public void afterTextChanged(Editable s) {
 
-				if(!"".equals(_et_mail.getText().toString()) && !"".equals(_et_password.getText().toString()) && !"".equals(_et_mail.getText().toString()))
+				int length_username = _et_username.getText().toString().length();
+				int length_password = _et_password.getText().toString().length();
+				int length_mail     = _et_mail.getText().toString().length();
+				int length_username_trim = _et_username.getText().toString().replaceAll(" ", "").length();
+				int length_password_trim = _et_password.getText().toString().replaceAll(" ", "").length();
+				int length_mail_trim     = _et_mail.getText().toString().replaceAll(" ", "").length();
+
+				if(length_username != length_username_trim){
+					Toast.makeText(getApplicationContext(), "Username - spazi non consentiti", Toast.LENGTH_SHORT).show();
+					return;
+				}
+				
+				if(length_password != length_password_trim){
+					Toast.makeText(getApplicationContext(), "Password - spazi non consentiti", Toast.LENGTH_SHORT).show();
+					return;
+				}
+				
+				if(length_mail != length_mail_trim){
+					Toast.makeText(getApplicationContext(), "Mail - spazi non consentiti", Toast.LENGTH_SHORT).show();
+					return;
+				}
+				
+				
+				
+				if(!"".equals(_et_username.getText().toString()) && !"".equals(_et_password.getText().toString()) && !"".equals(_et_mail.getText().toString()))
 					_buttonRegistration.setEnabled(true);
 				else
 					_buttonRegistration.setEnabled(false);
@@ -204,6 +206,8 @@ public class SplashScreen extends Activity {
 		_et_mail.addTextChangedListener(onSearchFieldTextChanged);
 
 	}
+
+
 
 
 
@@ -252,6 +256,7 @@ public class SplashScreen extends Activity {
 								// registazione avvenuta con successo
 								progressDialog.dismiss();
 								Toast.makeText(_context, "Controlla la tua casella di posta per abilitare il tuo account", Toast.LENGTH_LONG).show();
+								showLoginView();
 							} else {
 								// registrazione fallita
 								JSONObject a = new JSONObject(jsonObj.getString("errors"));
@@ -269,6 +274,8 @@ public class SplashScreen extends Activity {
 						}
 					}
 
+					
+
 					@Override
 					public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 						Log.v(EXTRA_MESSAGE , "onFailure error : " + throwable.getMessage() + "content : " + responseString);
@@ -282,7 +289,35 @@ public class SplashScreen extends Activity {
 		});
 
 	} // fine addListnerOnButton()
+	
 
+	protected void showRegistrationView() {
+		_linearLayout_home_registration_login.removeAllViews();
+		_linearLayout_home_registration_login.addView(_tv_username);
+		_linearLayout_home_registration_login.addView(_et_username);
+		_linearLayout_home_registration_login.addView(_tv_password);
+		_linearLayout_home_registration_login.addView(_et_password);
+		_linearLayout_home_registration_login.addView(_tv_conferma_password);
+		_linearLayout_home_registration_login.addView(_et_conferma_password);
+		_linearLayout_home_registration_login.addView(_tv_mail);
+		_linearLayout_home_registration_login.addView(_et_mail);
+		_linearLayout_home_registration_login.addView(_buttonRegistration);
+		_linearLayout_home_registration_login.addView(_buttonSalta);
+		_linearLayout_home_registration_login.addView(_tv_login);
+	}
+	
+	private void showLoginView() {
+		_linearLayout_home_registration_login.removeAllViews();
+		_linearLayout_home_registration_login.addView(_tv_mail);
+		_linearLayout_home_registration_login.addView(_et_mail);
+		_linearLayout_home_registration_login.addView(_tv_password);
+		_linearLayout_home_registration_login.addView(_et_password);
+		_linearLayout_home_registration_login.addView(_buttonLogin);
+		_linearLayout_home_registration_login.addView(_buttonSalta);
+		_linearLayout_home_registration_login.addView(_tv_registration);
+		_linearLayout_home_registration_login.addView(_cb_auto_login);
+		
+	}
 
 	protected void funzioneLogin(String username, String password) {
 
