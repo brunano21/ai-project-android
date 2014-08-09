@@ -40,11 +40,10 @@ public class SplashScreen extends Activity {
 
 	private CheckBox _cb_auto_login;
 
-	private TextView _tv_username, _tv_password, _tv_conferma_password, _tv_mail, _tv_registration, _tv_login, _tv_error_message;
+	private TextView _tv_username, _tv_password, _tv_conferma_password, _tv_mail, _tv_registration, _tv_login;
 	private EditText _et_username, _et_password, _et_conferma_password, _et_mail;
 	private Button	_buttonLogin, _buttonRegistration, _buttonSalta;
 
-	
 	private Context _context;
 	private ProgressDialog progressDialog;
 
@@ -81,7 +80,6 @@ public class SplashScreen extends Activity {
 			_tv_mail = new TextView(this.getApplicationContext());
 			_tv_registration = new TextView(this.getApplicationContext());
 			_tv_login = new TextView(this.getApplicationContext());
-			_tv_error_message = new TextView(this.getApplicationContext());
 
 			_et_username = new EditText(this.getApplicationContext());
 			_et_password = new EditText(this.getApplicationContext());
@@ -121,9 +119,8 @@ public class SplashScreen extends Activity {
 			_linearLayout_home_registration_login.addView(_tv_password);
 			_linearLayout_home_registration_login.addView(_et_password);
 			_linearLayout_home_registration_login.addView(_buttonLogin);
-			_linearLayout_home_registration_login.addView(_buttonSalta);
+			//_linearLayout_home_registration_login.addView(_buttonSalta);
 			_linearLayout_home_registration_login.addView(_tv_registration);
-			_linearLayout_home_registration_login.addView(_tv_error_message);
 			_linearLayout_home_registration_login.addView(_cb_auto_login);
 
 			addListnerOnTexts();
@@ -302,7 +299,7 @@ public class SplashScreen extends Activity {
 		_linearLayout_home_registration_login.addView(_tv_mail);
 		_linearLayout_home_registration_login.addView(_et_mail);
 		_linearLayout_home_registration_login.addView(_buttonRegistration);
-		_linearLayout_home_registration_login.addView(_buttonSalta);
+		//_linearLayout_home_registration_login.addView(_buttonSalta);
 		_linearLayout_home_registration_login.addView(_tv_login);
 	}
 	
@@ -313,7 +310,7 @@ public class SplashScreen extends Activity {
 		_linearLayout_home_registration_login.addView(_tv_password);
 		_linearLayout_home_registration_login.addView(_et_password);
 		_linearLayout_home_registration_login.addView(_buttonLogin);
-		_linearLayout_home_registration_login.addView(_buttonSalta);
+		//_linearLayout_home_registration_login.addView(_buttonSalta);
 		_linearLayout_home_registration_login.addView(_tv_registration);
 		_linearLayout_home_registration_login.addView(_cb_auto_login);
 		
@@ -384,7 +381,7 @@ public class SplashScreen extends Activity {
 
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				_tv_error_message.setText(isChecked?"true":"false");
+				//_tv_error_message.setText(isChecked?"true":"false");
 			}
 		});
 	}

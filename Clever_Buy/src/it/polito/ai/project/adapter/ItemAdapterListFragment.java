@@ -106,9 +106,8 @@ public class ItemAdapterListFragment extends ArrayAdapter<ItemListFragment> {
 			@Override
 			public void onClick(View v) {
 				ItemListFragment itemToRemove = (ItemListFragment)v.getTag();
-				//Toast.makeText(getContext(), "delete "+itemToRemove.getDescrizione(), Toast.LENGTH_SHORT).show();
-				
-				eliminaElemento( itemToRemove.getId_lista_desideri() ,itemToRemove.getId_elemento());
+				if(!itemToRemove.isAcquistato())
+					eliminaElemento( itemToRemove.getId_lista_desideri() ,itemToRemove.getId_elemento());
 				//TODO inva info al server
 				remove(itemToRemove);
 				notifyDataSetChanged();

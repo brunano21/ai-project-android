@@ -2,16 +2,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/relativeLayout1"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content" 
+    android:padding="5dp">
 
     <TextView
         android:id="@+id/spinner_item_indirizzo_supermercato"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_below="@+id/spinner_item_nome_supermercato"
-        android:layout_marginTop="15dp"
-        android:text="provincia" />
+        android:layout_marginTop="10dp"
+        android:text="indirizzo" />
 
     <TextView
         android:id="@+id/spinner_item_distanza_supermercato"
@@ -27,8 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:padding="5dp"
+        android:layout_alignRight="@+id/spinner_item_id_supermercato"
         android:text="nome"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 

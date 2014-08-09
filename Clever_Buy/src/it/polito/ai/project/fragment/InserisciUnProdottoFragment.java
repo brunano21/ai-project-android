@@ -120,9 +120,9 @@ public class InserisciUnProdottoFragment extends Fragment {
 		spin_categoria 		= (Spinner) rootView.findViewById(R.id.ip_spin_categoria);
 		spin_sottocategoria = (Spinner) rootView.findViewById(R.id.ip_spin_sottocategoria);
 		spin_supermercato 	= (Spinner) rootView.findViewById(R.id.ip_spin_supermercato);
-		spin_argomento 		= (Spinner) rootView.findViewById(R.id.ip_spin_argomento);
+spin_argomento 		= (Spinner) rootView.findViewById(R.id.ip_spin_argomento);
 
-		switch_data_fine = (Switch) rootView.findViewById(R.id.ip_switch_data_fine);
+		switch_data_fine 	= (Switch) rootView.findViewById(R.id.ip_switch_data_fine);
 		switch_ulteriori_dettagli = (Switch) rootView.findViewById(R.id.ip_switch_ulteriori_dettagli);
 
 		et_valore_argomento.setEnabled(false);
@@ -528,7 +528,7 @@ public class InserisciUnProdottoFragment extends Fragment {
 				position = categoriaSpinnerArrayAdapter.getPosition(jsonObj.getString("categoria"));
 				spin_categoria.setSelection(position);
 				spin_categoria.setEnabled(false);
-				spin_categoria.setClickable(false);
+				//spin_categoria.setClickable(false);
 
 				ArrayList<String> tmp = new ArrayList<String>();
 				tmp.add(jsonObj.getString("sottocategoria"));
@@ -536,7 +536,8 @@ public class InserisciUnProdottoFragment extends Fragment {
 				sottocategoriaSpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
 				spin_sottocategoria.setEnabled(false);
-				spin_sottocategoria.setClickable(false);
+				//TODO
+				//spin_sottocategoria.setClickable(false);
 
 
 
@@ -547,7 +548,8 @@ public class InserisciUnProdottoFragment extends Fragment {
 				spin_categoria.setEnabled(true);
 				spin_categoria.setClickable(true);
 				spin_sottocategoria.setEnabled(true);
-				spin_sottocategoria.setClickable(true);
+				//TODO
+				//spin_sottocategoria.setClickable(true);
 
 			}
 		} catch (JSONException e) {
@@ -600,7 +602,7 @@ public class InserisciUnProdottoFragment extends Fragment {
 								Integer.valueOf(response.getJSONObject(i).getInt("id")), 
 								response.getJSONObject(i).getString("nome"), 
 								response.getJSONObject(i).getString("indirizzo"),
-								Float.valueOf(response.getJSONObject(i).getLong("distanza"))
+								response.getJSONObject(i).getDouble("distanza")
 								));
 
 					supermercatiCustomAdapter = new SupermercatoCustomAdapter(getActivity(), R.layout.supermercato_custom_spinner, supermercatiArrayList);
@@ -642,7 +644,8 @@ public class InserisciUnProdottoFragment extends Fragment {
 		spin_categoria.setEnabled(true);
 		spin_categoria.setClickable(true);
 		spin_sottocategoria.setEnabled(true);
-		spin_sottocategoria.setClickable(true);
+		//TODO
+		//spin_sottocategoria.setClickable(true);
 
 		spin_supermercato.setSelection(0);
 

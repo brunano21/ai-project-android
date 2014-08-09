@@ -2,11 +2,22 @@ package it.polito.ai.project.fragment;
 
 import it.polito.ai.project.R;
 import it.polito.ai.project.main.ItemHintListFragment;
+import it.polito.ai.project.main.ItemListFragment;
 import it.polito.ai.project.main.MainActivity;
+import it.polito.ai.project.main.MapSort;
 import it.polito.ai.project.main.MyHttpClient;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.TreeMap;
 
 import org.apache.http.Header;
 import org.joda.time.DateTime;
@@ -44,38 +55,38 @@ public class DialogHint extends Dialog {
 	private Button _dialogButton;
 
 	public myOnClickListener myListener;
-	
+
 	private String id_elemento;
 	private String descrizione;
 
 	private ProgressDialog progressDialog;
-	
-	public DialogHint(Context context, myOnClickListener myclick, String descrizione) {
-        super(context);
-        this.myListener = myclick;
-        this.descrizione = descrizione;
-    }
 
-	   // This is my interface //
-    public interface myOnClickListener {
-        void onButtonClick(ItemHintListFragment item);
-    }
- 
+	public DialogHint(Context context, myOnClickListener myclick, String descrizione) {
+		super(context);
+		this.myListener = myclick;
+		this.descrizione = descrizione;
+	}
+
+	// This is my interface //
+	public interface myOnClickListener {
+		void onButtonClick(ItemHintListFragment item);
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
- 		setContentView(R.layout.fragment_list_dialog_hint);
+		setContentView(R.layout.fragment_list_dialog_hint);
 		setTitle("Ricerca Clever");
-		
+
 		_dialogButton = (Button) findViewById(R.id.dialog_hint_dialogButtonOK);
 		// Watch for button clicks.
 		_dialogButton.setOnClickListener(new android.view.View.OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				dismiss();
 			}
 		});
-		
+
 		_hint_listView = (ListView) findViewById(R.id.dialog_hint_lv_items);
 
 		hint_itemAdapter = new ItemHintAdapterListFragment( getContext(), R.layout.fragment_list_dialog_hint_item, getHintsFromServer(Double.toString(MainActivity.getLocation().getLatitude()),Double.toString(MainActivity.getLocation().getLongitude()),descrizione));
@@ -84,7 +95,7 @@ public class DialogHint extends Dialog {
 
 	private List<ItemHintListFragment> getHintsFromServer(String longitudine, String latitudine, String descrizione) {
 		progressDialog = ProgressDialog.show(getContext(), "Loading", "Login in corso...", false);
-		
+
 		hint_itemArrayList = new ArrayList<ItemHintListFragment>();
 		RequestParams param = new RequestParams();
 		String NULL = null;
@@ -93,12 +104,16 @@ public class DialogHint extends Dialog {
 		param.put("longitudine",longitudine);
 		param.put("id_elemnto",NULL);
 		param.put("descrizione",descrizione);
-		
+
 		MyHttpClient.post("/todolist", param, new JsonHttpResponseHandler() {
 
 			@Override
 			public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 				progressDialog.dismiss();
+
+				ArrayList<String> arrayDescrizione = new ArrayList<String>();
+				ArrayList<String> arrayRisultati = new ArrayList<String>();
+
 				for (int i = 0; i < response.length(); i++) 
 					try {
 						if(response.getJSONObject(i).has("id_elemento"))
@@ -114,6 +129,8 @@ public class DialogHint extends Dialog {
 						String foto = response.getJSONObject(i).getString("foto");
 						hint = new ItemHintListFragment(id_inserzione, selezionato, descrizione, data_fine, supermercato, prezzo, foto);
 						hint_itemArrayList.add(hint);
+						arrayDescrizione.add(hint.getDescrizione());
+						arrayRisultati = calcolaSuggerimenti(arrayDescrizione);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -130,22 +147,48 @@ public class DialogHint extends Dialog {
 
 		return hint_itemArrayList;
 	}
-	
-	
-	
-	
+
+
+
+//TODO -> da spostara
+	protected ArrayList<String> calcolaSuggerimenti(ArrayList<String> arrayDescrizione) {
+		ArrayList<String> risultato = new ArrayList<String>();
+		HashMap<String, Integer> cache = new HashMap<String, Integer>();
+		String currentWord = null;
+		//Collection<Integer> collection = null;
+		for(String i : arrayDescrizione)
+		{
+			StringTokenizer st = new StringTokenizer(i);
+			//---- Split by space ------
+			while (st.hasMoreElements()) {
+				currentWord = (String) st.nextElement();
+				if(cache.containsKey(currentWord)) 				
+					cache.put(currentWord, cache.get(currentWord) + 1);
+				else				
+					cache.put(currentWord, 1);
+			}
+		}
+		
+		Map map = MapSort.sortByValue(cache);
+		Set set = map.keySet();
+		//TODO elimina elementi -> lascia i 15 piu belli
+		risultato.addAll(set);
+		return  risultato;
+	}
+
+
 	class ItemHintAdapterListFragment  extends ArrayAdapter<ItemHintListFragment> {
 		private int resource;
 		private LayoutInflater inflater;
 		private List<ItemHintListFragment> items;
-		
+
 		public ItemHintAdapterListFragment(Context context, int resourceId, List<ItemHintListFragment> items) {
 			super(context, resourceId, items);
 			resource = resourceId;
 			inflater = LayoutInflater.from(context);
 			this.items = items;
 		}
-		
+
 
 		@Override
 		public View getView(int position, View v, ViewGroup parent) {
@@ -164,19 +207,19 @@ public class DialogHint extends Dialog {
 			holder.supermercato = (TextView) v.findViewById(R.id.list_dialog_item_tv_supermercato);
 			holder.foto = (ImageView) v.findViewById(R.id.list_dialog_item_iv_foto);
 			holder.buttonAggiungi = (Button) v.findViewById(R.id.list_dialog_item_b_aggiungi);
-			
+
 			holder.data_fine.setText( DateTimeFormat.forPattern("dd/MM/yyyy").print( holder.item.getData_fine()) );
 			holder.descrizione.setText(holder.item.getDescrizione() );
 			holder.prezzo.setText(holder.item.getPrezzo() + " €");
 			holder.supermercato.setText(holder.item.getSupermercato() );
 			holder.seleziona = item.isSelezionato();
-				
+
 			if(!"".equals(holder.item.getFoto())) {
 				byte[] decodedString = Base64.decode(holder.item.getFoto(), Base64.DEFAULT);
 				Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length); 
 				holder.foto.setImageBitmap(decodedByte);
 			}
-			
+
 			holder.buttonAggiungi.setTag(holder.item);
 			v.setTag(holder);
 
@@ -187,26 +230,26 @@ public class DialogHint extends Dialog {
 					dismiss();		
 				}
 			});
-			
-		
-	     
-			
+
+
+
+
 
 			return v;
 		}
 
-		
+
 	}
-	
+
 	private static class ViewHolder {
-			ItemHintListFragment item;
-			ImageView foto;
-			TextView descrizione;
-			TextView data_fine;
-			TextView prezzo;
-			TextView supermercato;
-			Button buttonAggiungi;
-			Boolean seleziona;
-			
-		}
+		ItemHintListFragment item;
+		ImageView foto;
+		TextView descrizione;
+		TextView data_fine;
+		TextView prezzo;
+		TextView supermercato;
+		Button buttonAggiungi;
+		Boolean seleziona;
+
+	}
 }

@@ -4,9 +4,9 @@ public class Supermercato {
 	private int Id;
 	private String Nome;
 	private String Indirizzo;
-	private Float Distanza;
+	private Double Distanza;
 	
-	public Supermercato(int id, String nome, String indirizzo, Float distanza) {
+	public Supermercato(int id, String nome, String indirizzo, Double distanza) {
 		this.Id = id;
 		this.Nome = nome;
 		this.Indirizzo = indirizzo;
@@ -32,10 +32,10 @@ public class Supermercato {
 	public void setIndirizzo(String indirizzo) {
 		Indirizzo = indirizzo;
 	}
-	public Float getDistanza() {
+	public Double getDistanza() {
 		return Distanza;
 	}
-	public void setDistanza(Float distanza) {
+	public void setDistanza(Double distanza) {
 		Distanza = distanza;
 	}
 }

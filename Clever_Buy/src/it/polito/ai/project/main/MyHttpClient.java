@@ -7,7 +7,8 @@ public class MyHttpClient {
 	//private static final String BASE_URL = "http://192.168.1.131:8080/supermarket/android";
 
 	//private static final String BASE_URL = "http://87.10.96.38:8080/supermarket/android";
-	private static final String BASE_URL = "http://192.168.1.23:8080/supermarket/android";
+	private static final String BASE_URL = "http://172.20.238.43:80/supermarket/android";
+	//private static final String BASE_URL = "http://192.168.43.12:8080/supermarket/android";
 
 
 	private static AsyncHttpClient client = new AsyncHttpClient();

@@ -4,6 +4,7 @@ import it.polito.ai.project.R;
 import it.polito.ai.project.adapter.NavDrawerListAdapter;
 import it.polito.ai.project.fragment.AboutFragment;
 import it.polito.ai.project.fragment.HomeFragment;
+import it.polito.ai.project.fragment.IMiglioriAffariFragment;
 import it.polito.ai.project.fragment.InScadenzaFragment;
 import it.polito.ai.project.fragment.InserisciUnProdottoFragment;
 import it.polito.ai.project.fragment.LeMieInserzioniFragment;
@@ -12,11 +13,28 @@ import it.polito.ai.project.fragment.ValutaInserzioneFragment;
 import it.polito.ai.project.model.NavDrawerItem;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+
+import org.apache.http.Header;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -34,13 +52,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
 	// User Session Manager Class
 	UserSessionManager session;
-	
-	
+
+
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
 	private ActionBarDrawerToggle mDrawerToggle;
@@ -57,6 +76,9 @@ public class MainActivity extends Activity {
 
 	private ArrayList<NavDrawerItem> navDrawerItems;
 	private NavDrawerListAdapter adapter;
+	private static ArrayList<ItemHintListFragment> miglioriAffari_itemArrayList = new ArrayList<ItemHintListFragment>();
+	//TODO
+	private NavDrawerItem i_migliori_affari_Drawew;
 
 	private SparseArray<Fragment> fragmentArray;
 
@@ -67,6 +89,10 @@ public class MainActivity extends Activity {
 		return currentBestLocation;
 	}
 
+	public static ArrayList<ItemHintListFragment> getMiglioriAffari_itemArrayList(){
+		return miglioriAffari_itemArrayList;
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -74,7 +100,7 @@ public class MainActivity extends Activity {
 
 		// Session class instance
 		session = new UserSessionManager(getApplicationContext());
-		
+
 		fragmentArray = new SparseArray<Fragment>();
 
 
@@ -138,13 +164,18 @@ public class MainActivity extends Activity {
 		navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(3, -1)));
 		// le_tue_liste
 		navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons.getResourceId(4, -1)));
-		// i_migliori_affari
-		navDrawerItems.add(new NavDrawerItem(navMenuTitles[5], navMenuIcons.getResourceId(5, -1)));
+		// i_migliori_affari"
+		//TODO
+		i_migliori_affari_Drawew = new NavDrawerItem(navMenuTitles[5], navMenuIcons.getResourceId(5, -1));
+		navDrawerItems.add(i_migliori_affari_Drawew);
 		// in_scadenza
 		navDrawerItems.add(new NavDrawerItem(navMenuTitles[6], navMenuIcons.getResourceId(6, -1)));
 		// about
 		navDrawerItems.add(new NavDrawerItem(navMenuTitles[7], navMenuIcons.getResourceId(7, -1)));
 
+		
+		
+		
 		// statistiche
 		//navDrawerItems.add(new NavDrawerItem(navMenuTitles[6], 0));
 		// premium
@@ -163,6 +194,11 @@ public class MainActivity extends Activity {
 		// setting the nav drawer list adapter
 		adapter = new NavDrawerListAdapter(getApplicationContext(), navDrawerItems);
 		mDrawerList.setAdapter(adapter);
+
+		aggiungiNotificaDrawer(0);
+		
+		//TODO chiedi suggerimenti al server
+		inviaRichiestaListaDescrizioni();
 
 		// enabling action bar app icon and behaving it as toggle button
 		getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -194,6 +230,139 @@ public class MainActivity extends Activity {
 
 
 	}
+
+
+	private void inviaRichiestaListaDescrizioni() {
+		// TODO voglio gli utimi 40 record della tabella lista desideri + gli ultimi 40 della lista_spesa_prodotti
+		RequestParams param = new RequestParams();
+		param.put("cmd","lista_descrizioni");
+		//param.put("id_lista_desideri",String.valueOf(idLista));
+		MyHttpClient.post("/abitudini", param, new JsonHttpResponseHandler() {
+
+			@Override
+			public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+				ArrayList<String> arrayDescrizioni = new ArrayList<String>();
+				ArrayList<Integer> arrayContatori = new ArrayList<Integer>();
+				ArrayList<String> risultatoDescrizioni;
+				for (int i = 0; i < response.length(); i++) 
+					try {
+						String descrizione = response.getJSONObject(i).getString("descrizione");
+						Integer contatore = Integer.valueOf( response.getJSONObject(i).getString("contatore") );
+						arrayDescrizioni.add(descrizione);
+						arrayContatori.add(contatore);
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				risultatoDescrizioni = calcolaSuggerimenti(arrayDescrizioni,arrayContatori);
+				riceviSuggerimentiDaVisualizzare(risultatoDescrizioni);
+			}
+			@Override
+			public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+				Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
+			}
+		});
+	}
+
+
+
+	protected void riceviSuggerimentiDaVisualizzare(ArrayList<String> risultatoDescrizioni) {
+		// TODO
+		if(risultatoDescrizioni.size()==0)
+			return;
+		String stringa_lista_descrizioni = "";
+		for(String tmp : risultatoDescrizioni){
+			stringa_lista_descrizioni += "\"%" + tmp + "%\" ";
+		}
+		RequestParams param = new RequestParams();
+		param.put("cmd","ottieni_suggerimenti_acquisti");
+		param.put("latitudine",Double.toString(MainActivity.getLocation().getLatitude()));
+		param.put("longitudine",Double.toString(MainActivity.getLocation().getLongitude()));
+		param.put("array_descrizioni",stringa_lista_descrizioni);
+		MyHttpClient.post("/abitudini", param, new JsonHttpResponseHandler() {
+
+			@Override
+			public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+				for (int i = 0; i < response.length(); i++) 
+					try {
+						if(response.getJSONObject(i).has("id_elemento"))
+							continue;
+						ItemHintListFragment hint = null;
+						DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
+						int id_inserzione = response.getJSONObject(i).getInt("id_inserzione");
+						boolean selezionato = false;
+						String descrizione = response.getJSONObject(i).getString("descrizione");
+						DateTime data_fine = formatter.parseDateTime(response.getJSONObject(i).getString("data_fine"));
+						String supermercato = response.getJSONObject(i).getString("supermercato");
+						String prezzo = response.getJSONObject(i).getString("prezzo");
+						String foto = response.getJSONObject(i).getString("foto");
+						hint = new ItemHintListFragment(id_inserzione, selezionato, descrizione, data_fine, supermercato, prezzo, foto);
+						miglioriAffari_itemArrayList.add(hint);
+						//System.out.println("fromServer - " + hint.getItem_id() + " " + hint.getDescrizione() + " " +  hint.getPrezzo() + " " + hint.getSupermercato() + " " + hint.getData_fine());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				aggiungiNotificaDrawer(miglioriAffari_itemArrayList.size());
+				
+			}
+			@Override
+			public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+				Log.v("ERROR" , "onFailure error : " + throwable.getMessage() + " \n content : " + responseString);
+			}
+		});		
+	}
+
+	protected void aggiungiNotificaDrawer(int size) {
+		// TODO Auto-generated method stub
+
+		i_migliori_affari_Drawew.setCounterVisibility(true);
+		i_migliori_affari_Drawew.setCount(String.valueOf(size));
+		i_migliori_affari_Drawew.setCounterVisibility(true);
+		//navDrawerItems.get(5).setCount(String.valueOf(size));
+		adapter.notifyDataSetChanged();
+	}
+
+	protected ArrayList<String> calcolaSuggerimenti(ArrayList<String> arrayDescrizione, ArrayList<Integer> arrayContatori) {
+		ArrayList<String> risultato = new ArrayList<String>();
+		HashMap<String, Integer> cache = new HashMap<String, Integer>();
+		String currentWord = null;
+		int posizione = 0;
+		//Collection<Integer> collection = null;
+		for(String i : arrayDescrizione)
+		{
+			StringTokenizer st = new StringTokenizer(i);
+			//---- Split by space ------
+			while (st.hasMoreElements()) {
+				currentWord = (String) st.nextElement();
+				if(cache.containsKey(currentWord)) 				
+					cache.put(currentWord, cache.get(currentWord) + arrayContatori.get(posizione));
+				else				
+					cache.put(currentWord, arrayContatori.get(posizione));
+			}
+			posizione++;
+		}
+
+		Map<String, Integer> map = MapSort.sortByValue(cache);
+		Set<String> set = map.keySet();
+		if(set.size()>10)
+		{
+			//TODO inserisci solo i 5 piu occorrenti
+			Iterator<String> tmp = set.iterator();
+			int esci = 0;
+			while(tmp.hasNext() && esci<10)
+			{
+				risultato.add(tmp.next());
+				esci++;
+			}
+		}
+		else
+			risultato.addAll(set);
+		return  risultato;
+	}
+
+
+
+
+
 
 	/**
 	 * Slide menu item click listener
@@ -231,7 +400,7 @@ public class MainActivity extends Activity {
 			finish();
 			startActivity(intent);
 			return true;
-			
+
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -245,7 +414,7 @@ public class MainActivity extends Activity {
 		// if nav drawer is opened, hide the action items
 		boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
 		for(int i = 0; i < menu.size(); i++)
-	        menu.getItem(i).setVisible(!drawerOpen);
+			menu.getItem(i).setVisible(!drawerOpen);
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -255,12 +424,11 @@ public class MainActivity extends Activity {
 	public void displayView(int position) {
 
 		// update the main content by replacing fragments
-		System.out.println("posizione frammento: " + position + "Nome frammento:" +  navMenuTitles[position] );
+		//		System.out.println("posizione frammento: " + position + "Nome frammento:" +  navMenuTitles[position] );
 
 		String stringFragment = navMenuTitles[position];
 
 		Fragment fragment = null;
-		Log.i("DEBUG", "sono passato--> " + position);
 
 		switch(position){
 		case 0: 			// home
@@ -287,6 +455,7 @@ public class MainActivity extends Activity {
 			fragment = new ListFragment();
 			break;
 		case 5: 			// i_migliori_affari
+			fragment = new IMiglioriAffariFragment();
 			break;
 		case 6: 			// in_scadenza
 			fragment = new InScadenzaFragment();
@@ -354,23 +523,23 @@ public class MainActivity extends Activity {
 		Integer id = idInserzione;
 		bundle.putInt("idInserzione", id);
 		fragment.setArguments(bundle);
-		
+
 		FragmentManager fragmentManager = getFragmentManager();
 		FragmentTransaction ft = fragmentManager.beginTransaction();
 		ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right, 0, 0);
 		ft.replace(R.id.frame_container, fragment, "modificaInserzione");
 		ft.addToBackStack(null);
 		ft.commit();
-		
+
 		mDrawerList.setItemChecked(1, true);
 		mDrawerList.setSelection(1);
 		setTitle(navMenuTitles[1]);
-		
-	    return;
+
+		return;
 	}
-	
-	
-	
+
+
+
 	/** Determines whether one Location reading is better than the current Location fix
 	 * @param location  The new Location that you want to evaluate
 	 * @param currentBestLocation  The current Location fix, to which you want to compare the new one

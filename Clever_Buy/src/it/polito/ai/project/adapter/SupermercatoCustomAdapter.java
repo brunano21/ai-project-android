@@ -57,9 +57,9 @@ public class SupermercatoCustomAdapter extends ArrayAdapter<String> {
 		nome.setText(tempValues.getNome());
 		indirizzo.setText(tempValues.getIndirizzo());
 		id.setText(Integer.toString(tempValues.getId()));
-		
-		if(tempValues.getDistanza() <= 1)
-			distanza.setText(new DecimalFormat("###").format(tempValues.getDistanza()/1000) + "m");
+		System.out.println(tempValues.getDistanza());
+		if(tempValues.getDistanza() <= (Double) 1.000)
+			distanza.setText(new DecimalFormat("###").format(tempValues.getDistanza()*1000) + "m");
 		else
 			distanza.setText(new DecimalFormat("###.###").format(tempValues.getDistanza()) + "km");
 		return row;
